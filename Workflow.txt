@@ -1,4 +1,5 @@
 - (dla zapełnienia details) dodanie podobnych filmów
+- dodanie production companies
 - Dodanie opcji rejestracji/logowania
 - Dodanie strony panelu użytkownika
 - Dodanie opcji dodawania ocen 

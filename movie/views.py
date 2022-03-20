@@ -45,6 +45,8 @@ def get_similar(request, pk):
 
 def predict_score(baseMovie):
     print('Selected Movie: ',baseMovie.title)
+    baseMovieBin = Binary.objects.get(tmdb_id = baseMovie.tmdb_id)
+
     bm_genres = baseMovie.get_genres()
     query = Q()
     for genre in bm_genres:
@@ -68,12 +70,12 @@ def predict_score(baseMovie):
             #print(movie.tmdb_id)
             if movie.tmdb_id != baseMovie.tmdb_id:
                 if "1" in movie.genres and "1" in movie.keywords:
-                    dist = Similarity(baseMovie.tmdb_id, movie.tmdb_id)
+                    dist = Similarity(baseMovieBin, movie)
                     distances.append((movie.tmdb_id, dist))
                 else:
                     print("This movie has no genres or keywords: "+ str(movie.tmdb_id))
 
-
+        print(distances)
         distances.sort(key=operator.itemgetter(1))
         neighbors = []
     
@@ -93,35 +95,14 @@ def predict_score(baseMovie):
     
     return id_list
 
-def Similarity(movieId1, movieId2):
-    binary_genres = Binary._meta.get_field('genres')
+def Similarity(baseMovie, compMovie):
 
-    a = Binary.objects.get(tmdb_id = movieId1)
-    b = Binary.objects.get(tmdb_id = movieId2)
-    
-    genresA = binary_genres.value_from_object(a)
-    genresA = bin_str_tolist(genresA)
-    genresB = binary_genres.value_from_object(b)
-    genresB = bin_str_tolist(genresB)
-
-    #print(genresA)
-    #print(genresB)
-
-    genreDistance = spatial.distance.cosine(genresA, genresB)
-
-    binary_keywords = Binary._meta.get_field('keywords')
-
-    keywordsA = binary_keywords.value_from_object(a)
-    keywordsA = bin_str_tolist(keywordsA)
-    keywordsB = binary_keywords.value_from_object(b)
-    keywordsB = bin_str_tolist(keywordsB)
-
-    #print(keywordsA)
-    #print(keywordsB)
-
-    wordsDistance = spatial.distance.cosine(keywordsA, keywordsB)
+    genreDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.genres), bin_str_tolist(compMovie.genres)))*0.25
+    wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))
 
     return genreDistance + wordsDistance
+    #return genreDistance
+    #return wordsDistance
 
 def bin_str_tolist(binary_string):
     binary_string = binary_string.replace(",","")
