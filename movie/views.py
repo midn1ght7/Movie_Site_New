@@ -176,9 +176,8 @@ def collabRecommendation(request, tmdb_id):
     print("Starting Collaborative Recommendation of movie tmdb_id: "+str(tmdb_id))
     selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
     min_movie_ratings = 10
-    min_user_ratings = 10
     #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
-    no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by())
+    no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by('-tmdb_id'))
     print("Length of no_users_voted:",len(no_users_voted))
     #check if the movie was rated considering min_movie_ratings
     movie_in_ratings = False
@@ -188,22 +187,20 @@ def collabRecommendation(request, tmdb_id):
             break
     
     if(movie_in_ratings == True):
-        #make a list of only user ids of users who voted at least x=(min_user_ratings) times
-        no_movies_voted = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(ratings__gte=min_user_ratings).values_list('user_id').order_by())
         #make a list of only userr ids of users who liked the requested movie:
         rating_val=6
-        users_who_liked = (Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by())
+        users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('user_id'))
         while(len(users_who_liked) > 1500):
             if(rating_val>=9):
-                users_who_liked = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('-ratings'))[:1500]
-                # for user in users_who_liked:
-                #     print(user[0])
+                users_who_liked = list(Rating.objects.values_list('user_id', flat=True).annotate(ratings=Count('user_id')).filter(tmdb_id=tmdb_id, rating__gte=rating_val).order_by('-ratings')[:1500])
             else:
                 rating_val += 1
-                users_who_liked = (Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('user_id'))
-            
+                users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('user_id'))
+
             print("WHILE(Length of users_who_liked:",len(users_who_liked),")")
+
         print("Length of users_who_liked:",len(users_who_liked))
+        users_who_liked.sort()
         #make a list of genres to make the final_dataset more accurate and smaller
         try:
             print("filtering by genres and keywords...")
@@ -225,11 +222,7 @@ def collabRecommendation(request, tmdb_id):
                 
                 if(shared_keywords >= 1):
                     filtered_tmdb_ids.append(movie.tmdb_id)
-                    #print(movie.title)
-                    
-            
-            filter1 = Q(tmdb_id__in = no_users_voted)
-            filter2 = Q(user_id__in = no_movies_voted)
+    
             filter3 = Q(tmdb_id__in = filtered_tmdb_ids)
             filter4 = Q(user_id__in = users_who_liked)
 
@@ -241,61 +234,27 @@ def collabRecommendation(request, tmdb_id):
 
             values_array = []
 
-            movies_ids = []
-            user_ids = []
-            for label in final_dataset.values(): 
-                if(label['tmdb_id_id'] not in movies_ids):
-                    movies_ids.append(label['tmdb_id_id'])
-                if(label['user_id'] not in user_ids):
-                    user_ids.append(label['user_id'])
-
-            print("length of movies_ids:", len(movies_ids))
-            print("length of user_ids:", len(user_ids))
-
-            for index, movie in enumerate(movies_ids):
-                print(index,":",movie)
             print("Converting query_set to array...")
 
-            #convert the query_set to array of rating arrays
+            #convert the query_set to array of rating arrays and update the movie ids
+            filtered_tmdb_ids = []
             for movie in final_dataset:
+                filtered_tmdb_ids.append(movie['tmdb_id_id'])
                 array = []
-                for user in user_ids:
+                for user in users_who_liked:
                     data = movie[str(user)]
                     array.append(data)
                 values_array.append(array)
             
             print("length of values_array:", len(values_array))
-
-            #for index, value in enumerate(values_array):
-                #print(index,":", value)
             
             n_movies_to_recommend = 10
             id_list = []
             score_list = []
 
-            # csr_data = csr_matrix(values_array)
-
-            # knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=20, n_jobs=-1)
-            # knn.fit(csr_data)
-                
-            # print("Calculating nearest neighbors V1...")
-            # distances , indices = knn.kneighbors(csr_data[movies_ids.index(tmdb_id)],n_neighbors=n_movies_to_recommend+1)    
-            # rec_movie_indices = sorted(list(zip(indices.squeeze().tolist(),distances.squeeze().tolist())),key=lambda x: x[1])[:0:-1]
-            # print(rec_movie_indices)
-            # recommend_frame = []
-                    
-            # for val in rec_movie_indices:
-            #     print(val)
-            #     idx = movies_ids[val[0]]
-            #     print(idx)
-            #     found_movie = Movie.objects.get(tmdb_id=idx)
-            #     id_list.append(found_movie.tmdb_id)
-            #     recommend_frame.append({'Title':found_movie.title,'Distance':val[1],'index:':val[0],'tmdb_id:':idx})
-            # #print(recommend_frame)
-
             print("Calculating nearest neighbors V2...")
-            our_movie = values_array[movies_ids.index(tmdb_id)]
-            #print(our_movie)
+            our_movie = values_array[filtered_tmdb_ids.index(tmdb_id)]
+
             distances = []
             our_movie_avg = sum(our_movie)/len(our_movie)
             print("Our Movie average vote:",our_movie_avg)
@@ -310,14 +269,18 @@ def collabRecommendation(request, tmdb_id):
                     if (len(ratings) >= 10 and rating_avg>7):
                         print("Rating average:",rating_avg)
                         dist = spatial.distance.cosine(our_movie, value) * ((10-rating_avg)*0.5)
-                        distances.append((movies_ids[index], dist))
+                        distances.append((filtered_tmdb_ids[index], dist))
 
             distances.sort(key=operator.itemgetter(1))
             neighbors = []
-            
-            for x in range(n_movies_to_recommend):
-                neighbors.append(distances[x])
 
+            if(len(distances)<n_movies_to_recommend):
+                for x in range(len(distances)):
+                    neighbors.append(distances[x])
+            else:
+                for x in range(n_movies_to_recommend):
+                    neighbors.append(distances[x])
+            
             for neighbor in neighbors:
                 print(neighbor)
                 id_list.append(neighbor[0])
@@ -327,8 +290,8 @@ def collabRecommendation(request, tmdb_id):
             movies = list(Movie.objects.filter(tmdb_id__in=id_list))
             return JsonResponse(similar_response(movies, id_list, score_list), safe=False)
 
-        except:
-            print("There was an error")
+        except Exception as error:
+            print(error)
             return JsonResponse([], safe=False)
     else:
         print("Not one rating for this movie exists in the database")
