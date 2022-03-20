@@ -17,6 +17,13 @@
                 <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
                 <a id="app-name" href="/">Movie Recommendation App</a>
             </div>
+            <div class="user">
+                {% if user.is_authenticated %}
+                <p>Welcome <a href ="/user/{{ user.id }}">{{ user }}</a>! <a href="/logout">logout</a></p>
+                {% else %}
+                <p>Login <a href="/login">here</a></p>
+                {% endif %}
+            </div>
         </div>
             {% block title %}
 

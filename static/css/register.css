@@ -56,7 +56,7 @@
     align-self: center;
 }
 
-.user-ratings{
+.user-scroller-top{
     max-width: var(--maxPrimaryPageWidthMinusPad);
 }
 

@@ -27,6 +27,13 @@
                     <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
+            <div class="user">
+                {% if user.is_authenticated %}
+                <p>Welcome <a href ="/user/{{ user.id }}">{{ user }}</a>! <a href="/logout">logout</a></p>
+                {% else %}
+                <p>Login <a href="/login">here</a></p>
+                {% endif %}
+            </div>
         </div>
         <main id="main">
             <!-- <h2 id="current-list">Details</h2> -->
