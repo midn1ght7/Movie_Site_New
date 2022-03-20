@@ -79,6 +79,9 @@ async function getSimilar()
     const response = await fetch(`/get_similar/${id}`,{method:'GET'});
     const responseJSON = await response.json();
     console.log(responseJSON);
+    responseJSON.forEach(item => {
+        showRecommendations(item);
+    })
 }
 
 /*
@@ -103,7 +106,7 @@ async function getRecommendations()
 }
 
 getRecommendations();
-
+*/
 function showRecommendations(data){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
@@ -111,7 +114,7 @@ function showRecommendations(data){
     movieEl.innerHTML = `
     <div class="image_content">
         <a href="/details/${data.id}" title="${data.title}">
-            <img loading="lazy" class="backdrop" src="${BACKDROP_URL+data.backdrop_path}">
+            <img loading="lazy" class="backdrop" src="/${data.backdrop}">
         </a>
     </div>
     <p class="movie-flex">
@@ -122,4 +125,3 @@ function showRecommendations(data){
     </p>`;
     document.getElementById("scroller").appendChild(movieEl);
 }
-*/
