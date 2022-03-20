@@ -7,14 +7,11 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.generic import ListView, DetailView
 from numpy import moveaxis
-from sklearn import neighbors
 from .models import Movie, Binary
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
-from django.core import serializers
 from django.db.models import Q
 from rating.models import Rating
-from django.contrib.auth.models import User
 
 from scipy import spatial
 import operator
@@ -167,9 +164,6 @@ def addRating(request, tmdb_id, rating):
         return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
 from django_pivot.pivot import pivot
-from django_pivot.histogram import histogram
-from sklearn.neighbors import NearestNeighbors
-from scipy.sparse import csr_matrix
 from django.db.models import Count
 
 def collabRecommendation(request, tmdb_id):
@@ -177,7 +171,8 @@ def collabRecommendation(request, tmdb_id):
     selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
     min_movie_ratings = 10
     #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
-    no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by('-tmdb_id'))
+    no_users_voted = (Rating.objects.values_list('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).order_by('tmdb_id'))
+    print(no_users_voted)
     print("Length of no_users_voted:",len(no_users_voted))
     #check if the movie was rated considering min_movie_ratings
     movie_in_ratings = False
@@ -189,13 +184,13 @@ def collabRecommendation(request, tmdb_id):
     if(movie_in_ratings == True):
         #make a list of only userr ids of users who liked the requested movie:
         rating_val=6
-        users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('user_id'))
+        users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id', flat = True).order_by('user_id'))
         while(len(users_who_liked) > 1500):
             if(rating_val>=9):
                 users_who_liked = list(Rating.objects.values_list('user_id', flat=True).annotate(ratings=Count('user_id')).filter(tmdb_id=tmdb_id, rating__gte=rating_val).order_by('-ratings')[:1500])
             else:
                 rating_val += 1
-                users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id').order_by('user_id'))
+                users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id', flat = True).order_by('user_id'))
 
             print("WHILE(Length of users_who_liked:",len(users_who_liked),")")
 
