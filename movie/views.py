@@ -1,3 +1,4 @@
+from email.mime import base
 from msilib.schema import Binary, ListView
 import weakref
 from django.shortcuts import render
@@ -9,6 +10,8 @@ from .models import Movie, Binary
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
+from django.db.models import Q
+
 
 from scipy import spatial
 import operator
@@ -42,15 +45,29 @@ def get_similar(request, pk):
 
 def predict_score(baseMovie):
     print('Selected Movie: ',baseMovie.title)
+    bm_genres = baseMovie.get_genres()
+    query = Q()
+    for genre in bm_genres:
+        query = query | Q(genres__icontains=genre)
 
-    binary_set = Binary.objects.all()
+    filtered_tmdb_ids = []
+
+    for movie in Movie.objects.filter(query):
+        filtered_tmdb_ids.append(movie.tmdb_id)
+    
+    print("Filtered movies:", len(filtered_tmdb_ids))
+    
+    binary_set = Binary.objects.filter(tmdb_id__in=filtered_tmdb_ids)
+
+    #binary_set = Binary.objects.all()
 
     def getNeighbors(K):
         distances = []
     
         for movie in binary_set:
+            #print(movie.tmdb_id)
             if movie.tmdb_id != baseMovie.tmdb_id:
-                if "1" in movie.genres and   "1" in movie.keywords:
+                if "1" in movie.genres and "1" in movie.keywords:
                     dist = Similarity(baseMovie.tmdb_id, movie.tmdb_id)
                     distances.append((movie.tmdb_id, dist))
                 else:
