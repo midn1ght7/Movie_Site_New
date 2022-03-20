@@ -25,7 +25,7 @@ async function userRatings(user_ratings){
         show_moreEl.setAttribute("onclick", ``);
         show_moreEl.innerHTML = `
             <p class="movie-flex">
-                <a class="title" href="" title="See all ${user_ratings.length} ratings">
+                <a class="title" href="/user/${user_id}/ratings" title="See all ${user_ratings.length} ratings">
                     <bdi>See all ${user_ratings.length} ratings</bdi>
                 </a>
             </p>`;

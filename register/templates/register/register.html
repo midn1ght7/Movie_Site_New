@@ -4,13 +4,16 @@
 
 {% block content %}
 <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
-<div class="register">
-    <h3>Create an Account</h3>
-
-    <form method = "POST" class="form-group">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-success">Register</button>
-    </form>
+<div class="register-base">
+    <div class="register">
+        <h3>Create an Account</h3>
+    
+        <form method = "POST" class="form-group">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-success">Register</button>
+        </form>
+    </div>
 </div>
+
 {% endblock %}

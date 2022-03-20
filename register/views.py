@@ -29,6 +29,9 @@ def register(response):
 def user(request, user_id):
     return render(request, "register/user.html")
 
+def userRatings(request, user_id):
+    return render(request, "register/userRatings.html")
+
 def getUser(request, user_id):
     try:
         user = User.objects.get(id = user_id)
@@ -47,6 +50,23 @@ def getUserRatings(request, user_id):
     except Exception as error:
         print(error)
         return JsonResponse({'user_id': "null"})
+
+def getUserRatings2(request, user_id):
+    try:
+        result = []
+        user_ratings = list(Rating.objects.filter(user_id = user_id).order_by('tmdb_id'))
+        for rating in user_ratings:
+            movie = Movie.objects.get(tmdb_id=rating.tmdb_id_id)
+            movie = movie.serialize()
+            movie["user_id"] = rating.user_id
+            movie["user_rating"] = rating.rating
+            result.append(movie)
+
+        return JsonResponse({'user_id': user_id, 'user_ratings': result}, safe=False)
+
+    except Exception as error:
+        print(error)
+        return JsonResponse({'user_id': "null", 'user_ratings': []})
 
 def userRecommendationResponse(movies,id_list,percent_list):
     result = []

@@ -1,5 +1,5 @@
 Do poprawy:
-- Dodanie strony panelu użytkownika (dodanie własnych list i rekomendacji do nich) + możliwość zobaczenia wszystkich swoich ocen
+- Dodanie strony panelu użytkownika (dodanie własnych list i rekomendacji do nich)
 - Rekomendacja
 - Zaimportować oceny z innej bazy danych
 
@@ -13,9 +13,10 @@ Zrobione:
 - Dodanie opcji dodawania ocen 
 - Dodanie production companies / reżysera / oryginalnego języka
 - Dodanie stylów do logowania i rejestracji
+- Dodanie strony panelu użytkownika
 - Możliwość usunięcia oceny
 - Dodanie strony szukajki
-
+- User - możliwość zobaczenia wszystkich swoich ocen
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)
