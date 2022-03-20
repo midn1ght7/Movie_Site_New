@@ -59,6 +59,7 @@ function getMovieDetails(id)
     window.location = `/details/${id}`;
 }
 
+
 //SEARCH BUTTON
 window.onload=function(){
     var search_form = document.getElementById("form-search");
@@ -79,6 +80,7 @@ window.onload=function(){
             })
         }
     })
+
 }
 
 

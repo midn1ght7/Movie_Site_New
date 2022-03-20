@@ -53,24 +53,6 @@ body
     margin-top: 4px;
 }
 
-.search button
-{
-    padding: 6px 10px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    margin-right: 16px;
-    background: #ddd;
-    font-size: 17px;
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-}
-
-.topnav .search button:hover 
-{
-    background: #ccc;
-}
-
 .topnav #movies-icon{
     /* padding: 6px 10px; */
     margin-top: 8px;
@@ -84,8 +66,92 @@ body
     color:var(--primaryFontColor);
 }
 
+.user{
+    margin-right: 20px;
+}
+
+.user p, a{
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--primaryFontColor);
+}
+.welcome{
+    max-width: 90%;
+    justify-content: center;
+    margin: auto;
+}
+
+.welcome p{
+    font-weight: 600;
+    font-size: 1.5em;
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.search #form-search{
+    padding-top: 10px;
+}
+
+#form-search{
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+}
+
+.search{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#search-input{
+    height: 35px;
+    width: 25%;
+    border: none;
+    font-size: 1.1em;
+    border-radius: 7px;
+}
+
+.search button
+{
+    padding: 8px 10px;
+    margin-left: 6px;
+    margin-bottom: 8px;
+    margin-right: 16px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.search button:hover 
+{
+    background: #ccc;
+}
+
+
 h2{
     font-size: 30px;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.btn-switch{
+    padding: 15px 30px;
+    margin-bottom: 8px;
+    margin-right: 16px;
+    background: var(--secondary-color);
+    color: var(--primaryFontColor);
+    font-weight: 600;
+    font-size: 22px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
 }
 
 #current-list{

@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <title>Movies</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        
+        <div class="topnav">
+            <div class="homepage">
+                <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
+                <a id="app-name" href="/">Movie Recommendation App</a>
+            </div>
+        </div>
+        <div class="register">
+            {% block title %}
+
+            {% endblock %}
+            {% block content %}
+    
+            {% endblock %}
+        </div>
+    </body>
+</html>

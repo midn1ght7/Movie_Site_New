@@ -20,44 +20,36 @@
                 <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
                 <a id="app-name" href="/">Movie Recommendation App</a>
             </div>
+            <div class="user">
+                {% if user.is_authenticated %}
+                <p>Welcome {{ user }}! <a href="/logout">logout</a></p>
+                {% else %}
+                <p>Login <a href="/login">here</a></p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="welcome">
+            
             <div class="search">
+                <p>Welcome! What do you want to search for?</p>
                 <form id="form-search">
                     <input id="search-input" type="text" placeholder="Search...">
                     <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
-            <div class="user">
-                <p>Login <a href="/login">here</a></p>
+            <div class="buttons">
+                <button class="btn-switch" id="btn_popular">Most Popular</button>
+                <button class="btn-switch" id="btn_top">Top Rated</button>
             </div>
-        </div>
+        </div>  
         <main id="main">
             <h2 id="current-list">Current List</h2>
             <div id="list-movies">
-                <!-- {% for movie in movies %}
-                    <div class="movie">
-                        <img src={{movie.poster}} alt="Poster">
-                        <div class="movie-info">
-                            <h3>{{movie.title}}</h3>
-                            <span class="green">{{movie.vote_average}}</span>
-                        </div>
-                        <div class="overview">
-                            <h3>Overview</h3>
-                            {{movie.overview}}                        
-                        </div>
-                    </div>
-                {% endfor %} -->
-                <!-- <div class="movie">
-                    <img src="https://www.themoviedb.org/t/p/original/ycnD50TobAbVRdazTfxZExEqtk7.jpg" alt="Poster">
-                        <div class="movie-info">
-                            <h3>Movie Title</h3>
-                            <span class="green">9.8</span>
-                        </div>
-                        <div class="overview">
-                            <h3>Overview</h3>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam.
-                        </div>
-                    </div>
-                </div> -->
+            </div>
+            <div class="buttons">
+                <button class="btn-switch" id="btn-previous-page">Previous Page</button>
+                <button class="btn-switch" id="btn-next-page">Next Page</button>
+                
             </div>
         </main>
     </body>

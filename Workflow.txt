@@ -5,6 +5,7 @@ Do poprawy:
 Do dodania:
 - Dodanie strony panelu użytkownika
 - Dodanie strony szukajki
+- Wymiana ocen z TMDB na oceny z bazy
 
 Zrobione:
 - Dodanie podobnych filmów
@@ -12,3 +13,4 @@ Zrobione:
 - Dodanie opcji logowania
 - Dodanie opcji dodawania ocen 
 - Dodanie production companies / reżysera / oryginalnego języka
+- Dodanie stylów do logowania i rejestracji

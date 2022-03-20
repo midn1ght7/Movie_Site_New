@@ -1,0 +1,23 @@
+.register{
+    margin-left: 20px;
+    font-size: 1.1em;
+}
+
+.register .form-group{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.register .btn-success{
+    margin-top: 15px;
+    max-width: 150px;
+    padding: 10px 15px;
+    background: var(--secondary-color);
+    color: var(--primaryFontColor);
+    font-weight: 600;
+    font-size: 22px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
