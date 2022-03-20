@@ -1,7 +1,6 @@
 let url = window.location.href
 var url_split = url.split('/')
 let user_id = url_split[url_split.length-1];
-var user_valid = false;
 let user_data = null;
 let rated_movies = []
 
@@ -9,10 +8,6 @@ async function checkUser(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     console.log(data);
-    if(data.user_id!="null")
-    {
-        user_valid = true;
-    }
     return data;
 }
 

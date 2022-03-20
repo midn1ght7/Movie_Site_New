@@ -35,7 +35,8 @@ def getUser(request, user_id):
         return JsonResponse({'user_id': user_id, 'username': user.username, 'date_joined': user.date_joined})
     except Exception as error:
         print(error)
-        return JsonResponse({'user_id': "null"})
+
+        return JsonResponse({'user_id': "null", 'username': "null", 'date_joined': "null"})
 
 def getUserRatings(request, user_id):
     try:
@@ -67,34 +68,17 @@ def getUserRecommendations(request, user_id):
         else:
             shared = int((ur_count)/2)
         print("Minimum shared movie ratings:", shared)
+        
         #make a list of rated movies by the user
 
-        filtered_tmdb_ids = list(user_ratings.values_list('tmdb_id', flat=True).distinct())
+        filtered_tmdb_ids = list(user_ratings.values_list('tmdb_id', flat=True).distinct().order_by('-tmdb_id'))
         print("made filtered_tmdb_ids of size:",len(filtered_tmdb_ids))
 
-        # filtered_tmdb_ids = []
-        # for movie in user_ratings:
-        #     filtered_tmdb_ids.append(movie.tmdb_id)
-
-        filtered_users_ids = list(Rating.objects.values_list('user_id', flat=True).annotate(amount=Count('user_id')).filter(tmdb_id__in = filtered_tmdb_ids, amount__gte = shared).order_by('-amount'))
-        #for user in users:
-            #print(user)
-
-        #filtered_users_ids = list(operator.itemgetter(*'user_id')(users))
-
-        # filtered_users_ids = []
-        # for user in users:
-        #     print(user)
-        #     filtered_users_ids.append(user['user_id'])
+        filtered_users_ids = list(Rating.objects.values_list('user_id', flat=True).annotate(amount=Count('user_id')).filter(tmdb_id__in = filtered_tmdb_ids, amount__gte = shared).order_by('-user_id'))
 
         print("made filtered users of size:",len(filtered_users_ids))
 
         final_queryset = Rating.objects.filter(user_id__in = filtered_users_ids, tmdb_id__in = filtered_tmdb_ids)
-
-        movies_ids = list(final_queryset.order_by().values_list('tmdb_id', flat=True).distinct())
-        user_ids = list(final_queryset.order_by().values_list('user_id', flat=True).distinct())
-
-        print("User Ids size:",len(user_ids))
 
         #filtering the dataset using our lists
         final_dataset = pivot(final_queryset, 'user_id', 'tmdb_id_id', 'rating', default=0)
@@ -102,58 +86,35 @@ def getUserRecommendations(request, user_id):
 
         values_array = []
 
-        # movies_ids = []
-        # user_ids = []
-
-        # for label in final_dataset.values(): 
-        #     #print (label);
-        #     if(label['tmdb_id_id'] not in movies_ids):
-        #         movies_ids.append(label['tmdb_id_id'])
-        #     if(label['user_id'] not in user_ids):
-        #         user_ids.append(label['user_id'])
-
-        # print("length of movies_ids:", len(movies_ids))
-        # print("length of user_ids:", len(user_ids))
-
         print("Converting query_set to array...")
 
         #convert the query_set to array of rating arrays
         for user in final_dataset:
             array = []
-            for movie in movies_ids:
+            for movie in filtered_tmdb_ids:
                 data = user[str(movie)]
                 array.append(data)
             values_array.append(array)
             
         print("length of values_array:", len(values_array))
-
-        # for index, value in enumerate(values_array):
-        #     if(user_ids[index] == 3 or user_ids[index] == 66201 or user_ids[index] == 110847):
-        #             print(user_ids[index],":", value)
             
-        if len(user_ids)>50:
+        if len(filtered_users_ids)>50:
             n_similar_users = 50
         else:
-            n_similar_users = int(len(user_ids))
+            n_similar_users = int(len(filtered_users_ids))
 
         user_id_list = []
         user_score_list = []
 
         print("Calculating nearest neighbors...")
-        #print("User ID:",user_id)
-        #print("Index of user ID:",user_ids.index(user_id))
-        #print("User ID:",user_ids[user_ids.index(user_id)])
-        our_user = values_array[user_ids.index(user_id)]
+        our_user = values_array[filtered_users_ids.index(user_id)]
         print("User",user_id,"ratings:",len(our_user))
 
         distances = []
         for index, value in enumerate(values_array):
             if our_user != value:
-                #print(index)
-                #print(user_ids[index])
-                
                 dist = spatial.distance.cosine(our_user, value)
-                distances.append((user_ids[index], dist))
+                distances.append((filtered_users_ids[index], dist))
 
         distances.sort(key=operator.itemgetter(1))
         neighbors = []
@@ -162,11 +123,10 @@ def getUserRecommendations(request, user_id):
             neighbors.append(distances[x])
 
         for neighbor in neighbors:
-            print(neighbor)
             user_id_list.append(neighbor[0])
             user_score_list.append(neighbor[1])
 
-        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 8).exclude(tmdb_id__in = movies_ids)
+        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 8).exclude(tmdb_id__in = filtered_tmdb_ids)
 
         tmdbs_ratings = [] 
         for rating in ratings_by_similar_users:
@@ -174,7 +134,6 @@ def getUserRecommendations(request, user_id):
 
         counted_movies = {i:tmdbs_ratings.count(i) for i in tmdbs_ratings}
         counted_movies = sorted(counted_movies.items(), key=operator.itemgetter(1), reverse=True)
-        #print(counted_movies)
 
         n_movies_to_recommend = 10
         mv_id_list = []
@@ -185,7 +144,6 @@ def getUserRecommendations(request, user_id):
                 print(counted_movies[i])
                 mv_id_list.append(counted_movies[i][0])
                 mv_percent_list.append((counted_movies[i][1]/n_similar_users)*100)
-                #print(counted_movies[movie][0])
 
         else:
             for movie in counted_movies:
