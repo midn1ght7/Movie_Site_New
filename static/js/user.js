@@ -62,6 +62,10 @@ async function showUserInfo(){
         userRatings(user_ratings.user_ratings)
         userRecommendations();
     }
+    else{
+        htmlScrollers("user-ratings", "You haven't rated any movie yet.", "ratings-scroller")
+        htmlScrollers("recommended-user", "Here you will find recommended movies just for you.", "recommendation-scroller")
+    }
 }
 
 function styleTitle(title){

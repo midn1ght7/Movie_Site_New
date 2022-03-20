@@ -226,7 +226,7 @@ div.scroller::-webkit-scrollbar-thumb {
     padding: 20px;
     border-radius: 4px;
     max-width: 500px;
-    height: 200px;
+    height: 230px;
 }
 /* .ModalOpen { overflow: hidden; } */
 .is-hidden { display: none; }
@@ -262,11 +262,15 @@ div.scroller::-webkit-scrollbar-thumb {
     font-size: 2.2rem;
 }
 
+.p-remove{
+    font-size: 1.5rem;
+}
+
 .p-rate a{
     margin-right: 20px;
 }
 
-.p-rate a:hover, #sp_yourrating:hover{
+.p-rate a:hover, #sp_yourrating:hover, .p-remove a:hover{
     color: var(--effectColor);
     cursor: pointer;
 }

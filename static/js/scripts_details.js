@@ -296,11 +296,33 @@ window.onload = function() {
     document.getElementById('rate-10').onclick = function(){
         postRating(10)
     }
+    document.getElementById('rate-remove').onclick = function(){
+        removeRating()
+    }
 
     function postRating(rating){
         if(user_valid==true){
             console.log("USER VALID!");
             fetch(`/addRating/${tmdb_id}/${rating}`).then((response) => {
+                if (response.ok) {
+                    modalClose()
+                    return response.json();
+                }
+                else{
+                    throw new Error("Error fetching: "+item);
+                }
+            })
+            location.reload();
+        }
+        else{
+            console.log("USER INVALID!");
+        }
+    }
+
+    function removeRating(){
+        if(user_valid==true){
+            console.log("USER VALID!");
+            fetch(`/removeRating/${tmdb_id}`).then((response) => {
                 if (response.ok) {
                     modalClose()
                     return response.json();

@@ -163,6 +163,24 @@ def addRating(request, tmdb_id, rating):
     else:
         return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
+def removeRating(request, tmdb_id):
+    print("Remove Rating: ",tmdb_id)
+    if request.user.is_authenticated:
+        current_user = request.user
+        try:
+            movie = Movie.objects.get(tmdb_id=tmdb_id)
+            query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
+            print("Query exists")
+            query.delete()
+            print("Removed rating from "+str(query.rating)+" of "+ current_user.id + " of movie " + movie)
+        except Rating.DoesNotExist:
+            print("Query does not exist")
+
+        return JsonResponse({'user_id': current_user.id, 'user_rating': "remove"})
+            
+    else:
+        return JsonResponse({'user_id': "null", 'user_rating': "null"})
+
 from django_pivot.pivot import pivot
 from django.db.models import Count
 
@@ -172,7 +190,6 @@ def collabRecommendation(request, tmdb_id):
     min_movie_ratings = 10
     #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
     no_users_voted = (Rating.objects.values_list('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).order_by('tmdb_id'))
-    print(no_users_voted)
     print("Length of no_users_voted:",len(no_users_voted))
     #check if the movie was rated considering min_movie_ratings
     movie_in_ratings = False

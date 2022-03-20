@@ -14,4 +14,5 @@ urlpatterns = [
     path('collabRecommendation/<int:tmdb_id>', views.collabRecommendation, name="collabRecommendation"),
     path('getRating/<int:tmdb_id>', views.getRating, name="getRating"),
     path('addRating/<int:tmdb_id>/<int:rating>', views.addRating, name="addRating"),
+    path('removeRating/<int:tmdb_id>', views.removeRating, name="removeRating"),
 ] 

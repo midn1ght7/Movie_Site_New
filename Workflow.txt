@@ -1,9 +1,11 @@
 Do poprawy:
+- Dodanie strony panelu użytkownika (dodanie własnych list i rekomendacji do nich) + możliwość zobaczenia wszystkich swoich ocen
 - Rekomendacja
 - Zaimportować oceny z innej bazy danych
 
+
 Do dodania:
-- Dodanie strony panelu użytkownika
+- Możliwość usunięcia oceny
 - Dodanie strony szukajki
 - Wymiana ocen z TMDB na oceny z bazy
 
@@ -14,3 +16,7 @@ Zrobione:
 - Dodanie opcji dodawania ocen 
 - Dodanie production companies / reżysera / oryginalnego języka
 - Dodanie stylów do logowania i rejestracji
+
+
+Filmy do sprawdzenia:
+- Taxi Driver (za mało ocen)
