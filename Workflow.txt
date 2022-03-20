@@ -1,4 +1,4 @@
-- dodanie production companies / reżysera
+- dodanie production companies / reżysera / grupy wiekowej
 - Dodanie strony panelu użytkownika
 - Dodanie strony szukajki
 - Dodanie opcji rekomendacji + w miarę potrzeb rozwinięcie bazy danych

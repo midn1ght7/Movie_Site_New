@@ -50,11 +50,11 @@ def predict_score(baseMovie):
     baseMovieBin = Binary.objects.get(tmdb_id = baseMovie.tmdb_id)
 
     bm_genres = baseMovie.get_genres()
+    filtered_tmdb_ids = []
+
     query = Q()
     for genre in bm_genres:
         query = query | Q(genres__icontains=genre)
-
-    filtered_tmdb_ids = []
 
     for movie in Movie.objects.filter(query):
         filtered_tmdb_ids.append(movie.tmdb_id)
@@ -62,8 +62,6 @@ def predict_score(baseMovie):
     print("Filtered movies:", len(filtered_tmdb_ids))
     
     binary_set = Binary.objects.filter(tmdb_id__in=filtered_tmdb_ids)
-
-    #binary_set = Binary.objects.all()
 
     def getNeighbors(K):
         distances = []
@@ -98,7 +96,8 @@ def predict_score(baseMovie):
 def Similarity(baseMovie, compMovie):
 
     genreDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.genres), bin_str_tolist(compMovie.genres)))*0.25
-    wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))
+    
+    wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))*2
 
     return genreDistance + wordsDistance
 
@@ -151,17 +150,43 @@ from scipy.sparse import csr_matrix
 from django.db.models import Count
 
 def collabRecommendation(request, tmdb_id):
-    min_movie_ratings = 1
-    min_user_ratings = 1
+    print("Starting collabRecommendation...")
+    selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
+    min_movie_ratings = 10
+    min_user_ratings = 80
+    print("no_users_voted...")
     #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
     no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by())
+    print("no_movies_voted...")
     #make a list of only user ids of users who voted at least x=(min_user_ratings) times
     no_movies_voted = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(ratings__gte=min_user_ratings).values_list('user_id').order_by())
+    #make a list of genres to make the final_dataset more accurate and smaller
+    print("filtering by genres and keywords...")
+    bm_genres = selected_movie.get_genres()
+    bm_keywords = selected_movie.get_keywords()
+
+    query1 = Q()
+    for genre in bm_genres:
+        query1 = query1 | Q(genres__icontains=genre)
+
+    filtered_tmdb_ids = []
+    
+    for movie in Movie.objects.filter(query1):
+        shared_keywords = 0
+        for keyword in movie.get_keywords():
+            for bm_keyword in bm_keywords:
+                if keyword == bm_keyword:
+                    shared_keywords += 1
+        
+        if(shared_keywords >= 1):
+            filtered_tmdb_ids.append(movie.tmdb_id)
+            print(movie.title)
     filter1 = Q(tmdb_id__in = no_users_voted)
     filter2 = Q(user_id__in = no_movies_voted)
+    filter3 = Q(tmdb_id__in = filtered_tmdb_ids)
     #filtering the dataset using our lists
-    final_dataset = pivot(Rating.objects.filter(filter1 & filter2), 'tmdb_id_id', 'user_id', 'rating', default=0)
-
+    final_dataset = pivot(Rating.objects.filter(filter1 & filter2 & filter3), 'tmdb_id_id', 'user_id', 'rating', default=0)
+    print("made the final_dataset!")
     values_array = []
 
     movies_ids = []
@@ -172,37 +197,42 @@ def collabRecommendation(request, tmdb_id):
         if(label['user_id'] not in user_ids):
             user_ids.append(label['user_id'])
 
-    #convert the query_set to array of rating arrays
-    for movie in final_dataset:
-        array = []
-        for user in user_ids:
-            data = movie[str(user)]
-            array.append(data)
-        values_array.append(array)
+    if tmdb_id in movies_ids:
+        print("Converting query_set to array...")
+        #convert the query_set to array of rating arrays
+        for movie in final_dataset:
+            array = []
+            for user in user_ids:
+                data = movie[str(user)]
+                array.append(data)
+            values_array.append(array)
 
-    csr_data = csr_matrix(values_array)
+        csr_data = csr_matrix(values_array)
 
-    knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=20, n_jobs=-1)
-    knn.fit(csr_data)
+        knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=20, n_jobs=-1)
+        knn.fit(csr_data)
 
-    n_movies_to_recommend = 5
+        n_movies_to_recommend = 10
 
-    movie_list = Movie.objects.get(tmdb_id=tmdb_id)
-    if movie_list:        
+        id_list = []
+            
+        print("Calculating nearest neighbors...")
         distances , indices = knn.kneighbors(csr_data[movies_ids.index(tmdb_id)],n_neighbors=n_movies_to_recommend+1)    
         rec_movie_indices = sorted(list(zip(indices.squeeze().tolist(),distances.squeeze().tolist())),key=lambda x: x[1])[:0:-1]
         recommend_frame = []
-        id_list = []
+                
         for val in rec_movie_indices:
             print(val)
             idx = movies_ids[val[0]]
             print(idx)
             found_movie = Movie.objects.get(tmdb_id=idx)
             id_list.append(found_movie.tmdb_id)
-            recommend_frame.append({'Title':found_movie.title,'Distance':val[1]})
+            recommend_frame.append({'Title':found_movie.title,'Distance':val[1],'index:':val[0],'tmdb_id:':idx})
         print(recommend_frame)
 
         movies = list(Movie.objects.filter(tmdb_id__in=id_list))
         return JsonResponse([movie.serialize() for movie in movies], safe=False)
+
     else:
-        return "No movies found. Please check your input"
+        print("Can't recommend. This movie doesn't have enough ratings.")
+        return JsonResponse({data: "null"})

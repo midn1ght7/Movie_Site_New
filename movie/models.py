@@ -68,6 +68,10 @@ class Movie(models.Model):
         #print(keyword_list)
         return keyword_list
 
+    def get_raw_genres(self):
+        genre_list = self.genres
+        return genre_list
+
 class Binary(models.Model):
     tmdb_id = models.IntegerField()
     genres = models.TextField()
