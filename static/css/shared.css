@@ -8,8 +8,10 @@
     --primary-color:rgb(22, 22, 22);
     --secondary-color:rgb(44,44,44);
     --third-color: rgb(11,11,11);
+    --out-color: rgb(16,16,16);
     --scrollerGray: 66,66,66;
     --maxPrimaryPageWidth: 1400px;
+    --maxPrimaryPageWidthMinusPad: 1340px;
     --primaryFontColor: #ffffff;
     --effectColor: rgb(192, 235, 0);
 }
@@ -18,7 +20,7 @@ body
 {
     margin: 0;
     font-family: 'Ubuntu', sans-serif;
-    background-color:var(--primary-color);
+    background-color:var(--out-color);
     color:var(--primaryFontColor);
 }
 

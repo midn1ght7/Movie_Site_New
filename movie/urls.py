@@ -8,6 +8,7 @@ urlpatterns = [
     path('get_popular/<int:start>/<int:finish>', views.get_popular, name="get_popular"),
     path('get_top/<int:start>/<int:finish>', views.get_top, name="get_top"),
     path('get_movie/<int:pk>', views.get_movie, name="get_movie"),
+    path('get_movie_tmdb/<int:tmdb>', views.get_movie_tmdb, name="get_movie_tmdb"),
     path('search/<str:term>', views.search, name="search"),
     path('get_similar/<int:pk>', views.get_similar, name="get_similar"),
     path('collabRecommendation/<int:tmdb_id>', views.collabRecommendation, name="collabRecommendation"),

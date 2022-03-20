@@ -36,8 +36,12 @@ def get_top(request, start, finish):
     return JsonResponse([movie.serialize() for movie in movies], safe=False)
 
 def get_movie(request, pk):
-    movies = Movie.objects.get(pk=pk)
-    return JsonResponse([movies.serialize()], safe=False)
+    movie = Movie.objects.get(pk=pk)
+    return JsonResponse([movie.serialize()], safe=False)
+
+def get_movie_tmdb(request, tmdb):
+    movie = Movie.objects.get(tmdb_id=tmdb)
+    return JsonResponse([movie.serialize()], safe=False)
 
 def search(request, term):
     movies = list(Movie.objects.filter(title__icontains=term).order_by('-popularity'))
