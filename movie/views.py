@@ -46,6 +46,7 @@ def similar_response(movies,id_list,score_list):
         movie = movie.serialize()
         movie["similarity_score"] = (score_list[id_list.index(tmdb_id)])
         result.append(movie)
+    result = sorted(result, key=lambda d: d["similarity_score"])
     return result
 
 def get_similar(request, pk):

@@ -1,10 +1,14 @@
-- dodanie production companies / reżysera / oryginalnego języka
-- Dodanie strony panelu użytkownika
-- Dodanie strony szukajki
-- Dodanie opcji rekomendacji + w miarę potrzeb rozwinięcie bazy danych
+Do poprawy:
+- Rekomendacja
 - Zaimportować oceny z innej bazy danych
 
-- (dla zapełnienia details) dodanie podobnych filmów
+Do dodania:
+- Dodanie strony panelu użytkownika
+- Dodanie strony szukajki
+
+Zrobione:
+- Dodanie podobnych filmów
 - Dodanie opcji rejestracji
 - Dodanie opcji logowania
 - Dodanie opcji dodawania ocen 
+- Dodanie production companies / reżysera / oryginalnego języka
