@@ -145,20 +145,32 @@ async function getSimilar()
 {
     const response = await fetch(`/get_similar/${id}`,{method:'GET'});
     const responseJSON = await response.json();
-    console.log(responseJSON);
-    responseJSON.forEach(item => {
-        showScroller(item, "scroller-sim");
-    })
+    console.log("Content-based Recommendation response:",responseJSON);
+    if (responseJSON.length !== 0){
+        htmlRecommendations("Content-based recommendation", "scroller-sim");
+        responseJSON.forEach(item => {
+            showScroller(item, "scroller-sim");
+        })
+    }
+    else{
+        console.log("/collabRecommendation returned an empty array");
+    }
 }
 
 async function collabRecommendation()
 {
     const response = await fetch(`/collabRecommendation/${tmdb_id}`,{method:'GET'});
     const responseJSON = await response.json();
-    console.log(responseJSON);
-    responseJSON.forEach(item => {
-        showScroller(item, "scroller-rec");
-    })
+    console.log("Collaborative Recommendation response:",responseJSON);
+    if (responseJSON.length !== 0){
+        htmlRecommendations("Collaborative recommendation", "scroller-rec");
+        responseJSON.forEach(item => {
+            showScroller(item, "scroller-rec");
+        })
+    }
+    else{
+        console.log("/collabRecommendation returned an empty array");
+    }
 }
 
 
@@ -177,6 +189,19 @@ async function checkUserRating(){
     else{
         return data.user_rating;
     }
+}
+
+function htmlRecommendations(h3_text, div2_id){
+    let h3 = document.createElement('h3'); 
+    h3.textContent = h3_text;
+    let div1 = document.createElement('div');
+    div1.className = "recommendations-scroller";
+    let div2 = document.createElement('div');
+    div2.className = "scroller";
+    div2.id = div2_id;
+    div1.appendChild(div2);
+    document.getElementById('recommendations').appendChild(h3);
+    document.getElementById('recommendations').appendChild(div1);
 }
 
 function showScroller(data, appendto){

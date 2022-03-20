@@ -164,57 +164,64 @@ from scipy.sparse import csr_matrix
 from django.db.models import Count
 
 def collabRecommendation(request, tmdb_id):
-    print("Starting collabRecommendation...")
+    print("Starting collabRecommendation (movie tmdb_id "+str(tmdb_id)+")")
     selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
     min_movie_ratings = 10
     min_user_ratings = 80
-    print("no_users_voted...")
     #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
     no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by())
-    print("no_movies_voted...")
-    #make a list of only user ids of users who voted at least x=(min_user_ratings) times
-    no_movies_voted = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(ratings__gte=min_user_ratings).values_list('user_id').order_by())
-    #make a list of genres to make the final_dataset more accurate and smaller
-    try:
-        rating_obj = Rating.objects.filter(tmdb_id=tmdb_id)
-        print("filtering by genres and keywords...")
-        bm_genres = selected_movie.get_genres()
-        bm_keywords = selected_movie.get_keywords()
+    #check if the movie was rated considering min_movie_ratings
+    movie_in_ratings = False
+    for i in no_users_voted:
+        if (tmdb_id == i[0]):
+            movie_in_ratings = True
+            break
+    
+    if(movie_in_ratings == True):
+        #make a list of only user ids of users who voted at least x=(min_user_ratings) times
+        no_movies_voted = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(ratings__gte=min_user_ratings).values_list('user_id').order_by())
+        #make a list of genres to make the final_dataset more accurate and smaller
+        try:
+            print("filtering by genres and keywords...")
+            bm_genres = selected_movie.get_genres()
+            bm_keywords = selected_movie.get_keywords()
 
-        query1 = Q()
-        for genre in bm_genres:
-            query1 = query1 | Q(genres__icontains=genre)
+            query1 = Q()
+            for genre in bm_genres:
+                query1 = query1 | Q(genres__icontains=genre)
 
-        filtered_tmdb_ids = []
-        
-        for movie in Movie.objects.filter(query1):
-            shared_keywords = 0
-            for keyword in movie.get_keywords():
-                for bm_keyword in bm_keywords:
-                    if keyword == bm_keyword:
-                        shared_keywords += 1
+            filtered_tmdb_ids = []
             
-            if(shared_keywords >= 1):
-                filtered_tmdb_ids.append(movie.tmdb_id)
-                #print(movie.title)
-        filter1 = Q(tmdb_id__in = no_users_voted)
-        filter2 = Q(user_id__in = no_movies_voted)
-        filter3 = Q(tmdb_id__in = filtered_tmdb_ids)
-        #filtering the dataset using our lists
-        final_dataset = pivot(Rating.objects.filter(filter1 & filter2 & filter3), 'tmdb_id_id', 'user_id', 'rating', default=0)
-        print("made the final_dataset!")
-        values_array = []
+            for movie in Movie.objects.filter(query1):
+                shared_keywords = 0
+                for keyword in movie.get_keywords():
+                    for bm_keyword in bm_keywords:
+                        if keyword == bm_keyword:
+                            shared_keywords += 1
+                
+                if(shared_keywords >= 1):
+                    filtered_tmdb_ids.append(movie.tmdb_id)
 
-        movies_ids = []
-        user_ids = []
-        for label in final_dataset.values(): 
-            if(label['tmdb_id_id'] not in movies_ids):
-                movies_ids.append(label['tmdb_id_id'])
-            if(label['user_id'] not in user_ids):
-                user_ids.append(label['user_id'])
+            filter1 = Q(tmdb_id__in = no_users_voted)
+            filter2 = Q(user_id__in = no_movies_voted)
+            filter3 = Q(tmdb_id__in = filtered_tmdb_ids)
 
-        if tmdb_id in movies_ids:
+            #filtering the dataset using our lists
+            final_dataset = pivot(Rating.objects.filter(filter1 & filter2 & filter3), 'tmdb_id_id', 'user_id', 'rating', default=0)
+            print("made the final_dataset!")
+
+            values_array = []
+
+            movies_ids = []
+            user_ids = []
+            for label in final_dataset.values(): 
+                if(label['tmdb_id_id'] not in movies_ids):
+                    movies_ids.append(label['tmdb_id_id'])
+                if(label['user_id'] not in user_ids):
+                    user_ids.append(label['user_id'])
+
             print("Converting query_set to array...")
+            
             #convert the query_set to array of rating arrays
             for movie in final_dataset:
                 array = []
@@ -249,9 +256,9 @@ def collabRecommendation(request, tmdb_id):
             movies = list(Movie.objects.filter(tmdb_id__in=id_list))
             return JsonResponse([movie.serialize() for movie in movies], safe=False)
 
-        else:
-            print("Can't recommend. This movie doesn't have enough ratings.")
-            return JsonResponse({"null"})
-    except Rating.DoesNotExist:
+        except:
+            print("There was an error")
+            return JsonResponse([], safe=False)
+    else:
         print("Not one rating for this movie exists in the database")
-        return JsonResponse({"data": "null"})
+        return JsonResponse([], safe=False)
