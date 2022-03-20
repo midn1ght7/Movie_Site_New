@@ -1,4 +1,3 @@
-
 var last_fetch = null;
 var start = 0;
 var finish = 20;
@@ -87,31 +86,7 @@ function getMovieDetails(id)
     window.location = `/details/${id}`;
 }
 
-
-
-window.onload=function(){
-
-    //SEARCH BUTTON
-    var search_form = document.getElementById("form-search");
-    search_form.addEventListener('submit', e =>{
-        e.preventDefault();
-        const searchTerm = document.getElementById("search-input").value;
-        if(searchTerm){
-            fetch(`/search/${searchTerm}`).then((response) => {
-                if (response.ok) {
-                    last_fetch = searchTerm;
-                    document.getElementById("btn-load-more").style.visibility = 'hidden'
-                    return response.json();
-                }
-                else{
-                    throw new Error("Error fetching: "+item);
-                }
-            }).then(movies =>
-            {
-                showMovies(movies, "Search: "+searchTerm);
-            })
-        }
-    })
+window.addEventListener('load', function() {
 
     //POPULAR BUTTON
     var popular_btn = document.getElementById("btn_popular");
@@ -141,7 +116,7 @@ window.onload=function(){
             }
         }
     }
-}   
+});
 
 
 

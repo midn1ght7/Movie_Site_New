@@ -65,14 +65,15 @@ span.red{
     flex-direction: row;
 }
 
-.topnav input[type=text] 
-{
+#search-input{
+    height: 35px;
+    width: 500px;
+    border: none;
+    font-size: 1.1em;
+    border-radius: 7px;
     padding: 6px;
     margin-top: 8px;
     margin-bottom: 8px;
-    font-size: 17px;
-    border: none;
-    border-radius: 10px;
 }
 
 .topnav #app-name{

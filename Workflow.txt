@@ -3,10 +3,7 @@ Do poprawy:
 - Rekomendacja
 - Zaimportować oceny z innej bazy danych
 
-
 Do dodania:
-- Możliwość usunięcia oceny
-- Dodanie strony szukajki
 - Wymiana ocen z TMDB na oceny z bazy
 
 Zrobione:
@@ -16,6 +13,8 @@ Zrobione:
 - Dodanie opcji dodawania ocen 
 - Dodanie production companies / reżysera / oryginalnego języka
 - Dodanie stylów do logowania i rejestracji
+- Możliwość usunięcia oceny
+- Dodanie strony szukajki
 
 
 Filmy do sprawdzenia:

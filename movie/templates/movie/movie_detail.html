@@ -1,125 +1,92 @@
+{% extends "../movie/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-
-        <meta charset="UTF-8">
-        <title>Movies</title>
-        <meta name="viewport" content="width=device-width">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link href="{% static 'css/shared.css' %}" rel="stylesheet" type="text/css" />
-        <link href="{% static 'css/details.css' %}" rel="stylesheet" type="text/css" />
-        <script src="{% static 'js/scripts_details.js' %}"></script>
-        <!-- API version 3 documentation: 
-            https://developers.themoviedb.org/3/search
-            https://developers.themoviedb.org/3/movies
-        -->
-    </head>
-    <body>
-        <div class="topnav">
-            <div class="homepage">
-                <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
-                <a id="app-name" href="/">Movie Recommendation App</a>
-            </div>
-            <div class="search">
-                <form id="form-search">
-                    <input id="search-input" type="text" placeholder="Search...">
-                    <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-            <div class="user">
-                {% if user.is_authenticated %}
-                <p>Welcome <a href ="/user/{{ user.id }}">{{ user }}</a>! <a href="/logout">logout</a></p>
-                {% else %}
-                <p>Login <a href="/login">here</a></p>
-                {% endif %}
-            </div>
-        </div>
-        <main id="main">
-            <!-- <h2 id="current-list">Details</h2> -->
-            <div class = "movie-details-back" id="movie-details-background">
-                <div class = "movie-details-back-bg">
-                    <div class="movie-details">
-                        <div class="movie-details-poster">
-                            <img id="poster" src="" alt="Poster">
+{% block content %}
+<link href="{% static 'css/details.css' %}" rel="stylesheet" type="text/css" />
+<script src="{% static 'js/scripts_details.js' %}"></script>
+<main id="main">
+    <!-- <h2 id="current-list">Details</h2> -->
+    <div class = "movie-details-back" id="movie-details-background">
+        <div class = "movie-details-back-bg">
+            <div class="movie-details">
+                <div class="movie-details-poster">
+                    <img id="poster" src="" alt="Poster">
+                </div>
+                <div class="movie-details-info">
+                    <div class="title">
+                        <h2 class="7">
+                            <a id="a-title"></a>
+                            <span class="tag release_date" id="span-release-date"></span>
+                        </h2>
+                        <div class="genres">
+                            <a id="a-genres"></a>
                         </div>
-                        <div class="movie-details-info">
-                            <div class="title">
-                                <h2 class="7">
-                                    <a id="a-title"></a>
-                                    <span class="tag release_date" id="span-release-date"></span>
-                                </h2>
-                                <div class="genres">
-                                    <a id="a-genres"></a>
-                                </div>
-                            </div>
-                            <div class="rating_div">
-                                <div class="rating_item">
-                                    <a id="rating_title">TMDB Rating</a>
-                                    <span class="" id="sp_tmdbrating"></span>
-                                </div>
-                                {% if user.is_authenticated %}
-                                <div class="rating_item">
-                                    <a id="rating_title">Your Rating</a>
-                                    <span class="" id="sp_yourrating"></span>
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="details-overview" id="details-overview">
-                                <h3>Overview</h3>
-                            </div>
+                    </div>
+                    <div class="rating_div">
+                        <div class="rating_item">
+                            <a id="rating_title">TMDB Rating</a>
+                            <span class="" id="sp_tmdbrating"></span>
                         </div>
+                        {% if user.is_authenticated %}
+                        <div class="rating_item">
+                            <a id="rating_title">Your Rating</a>
+                            <span class="" id="sp_yourrating"></span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="details-overview" id="details-overview">
+                        <h3>Overview</h3>
                     </div>
                 </div>
             </div>
-            <div class= "movie-content">
-                <div class="facts" id="facts">
-                    <section id="original_title">
-                        <!-- <h3>Original Title</h3>
-                        らんま½ -->
-                    </section>
-                    <section id="director">
-                        <!-- <h3>Original Title</h3>
-                        らんま½ -->
-                    </section>
-                    <section id="tagline">
-                        <!-- <h3>Tagline</h3>
-                        In the Dark Ages, Magic was a weapon. Love was a mystery. Adventure was everywhere... And Dragons were real. -->
-                    </section>
-                    <section id="status">
-                        <!-- <h3>Status</h3>
-                        Ended -->
-                    </section>
-                    <section class="keywords" id="keywords">
-                        <!-- <h3>Keywords</h3>
-                        <ul>
-                            <li>    
-                                <a class="rounded">mixed martial arts</a>
-                            </li>
-                            <li>
-                                <a class="rounded">curse</a>
-                            </li>
-                            <li>
-                                <a class="rounded">based on manga</a>
-                            </li>
-                        </ul> -->
-                    </section>
-                </div>
-                <div class="recommendations" id="recommendations">
-                </div>
-            </div>
-        </main>
-        <div id="myModal" class="Modal is-hidden is-visuallyHidden">
-            <!-- Modal content -->
-            <div class="Modal-content">
-              <span id="closeModal" class="Close">&times;</span>
-              <div class="div-rate">
-                    <p>Rate this movie</p>
-                    <p class="p-rate"><a id="rate-1">1</a><a id="rate-2">2</a><a id="rate-3">3</a><a id="rate-4">4</a><a id="rate-5">5</a><a id="rate-6">6</a><a id="rate-7">7</a><a id="rate-8">8</a><a id="rate-9">9</a><a id="rate-10">10</a></p>
-                    <p class="p-remove"><a id="rate-remove">Remove rating</a></p>
-                </div>
-            </div>
         </div>
-    </body>
-</html>
+    </div>
+    <div class= "movie-content">
+        <div class="facts" id="facts">
+            <section id="original_title">
+                <!-- <h3>Original Title</h3>
+                らんま½ -->
+            </section>
+            <section id="director">
+                <!-- <h3>Original Title</h3>
+                らんま½ -->
+            </section>
+            <section id="tagline">
+                <!-- <h3>Tagline</h3>
+                In the Dark Ages, Magic was a weapon. Love was a mystery. Adventure was everywhere... And Dragons were real. -->
+            </section>
+            <section id="status">
+                <!-- <h3>Status</h3>
+                Ended -->
+            </section>
+            <section class="keywords" id="keywords">
+                <!-- <h3>Keywords</h3>
+                <ul>
+                    <li>    
+                        <a class="rounded">mixed martial arts</a>
+                    </li>
+                    <li>
+                        <a class="rounded">curse</a>
+                    </li>
+                    <li>
+                        <a class="rounded">based on manga</a>
+                    </li>
+                </ul> -->
+            </section>
+        </div>
+        <div class="recommendations" id="recommendations">
+        </div>
+    </div>
+</main>
+<div id="myModal" class="Modal is-hidden is-visuallyHidden">
+    <!-- Modal content -->
+    <div class="Modal-content">
+      <span id="closeModal" class="Close">&times;</span>
+      <div class="div-rate">
+            <p>Rate this movie</p>
+            <p class="p-rate"><a id="rate-1">1</a><a id="rate-2">2</a><a id="rate-3">3</a><a id="rate-4">4</a><a id="rate-5">5</a><a id="rate-6">6</a><a id="rate-7">7</a><a id="rate-8">8</a><a id="rate-9">9</a><a id="rate-10">10</a></p>
+            <p class="p-remove"><a id="rate-remove">Remove rating</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

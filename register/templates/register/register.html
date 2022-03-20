@@ -1,8 +1,9 @@
 {% extends "../register/base.html" %}
-
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content %}
+<link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
 <div class="register">
     <h3>Create an Account</h3>
 

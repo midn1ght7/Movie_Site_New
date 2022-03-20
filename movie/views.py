@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView
 from numpy import moveaxis
 from .models import Movie, Binary
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 from rating.models import Rating
 
@@ -22,7 +22,6 @@ def movie_list(request):
 
 def movie_detail(request, pk):
     return render(request, 'movie/movie_detail.html')
-
 
 def get_popular(request, start, finish):
     movies = list(Movie.objects.all().order_by('-popularity'))[start:finish]
@@ -41,6 +40,10 @@ def get_movie_tmdb(request, tmdb):
     return JsonResponse([movie.serialize()], safe=False)
 
 def search(request, term):
+    #movies = list(Movie.objects.filter(title__icontains=term).order_by('-popularity'))
+    return render(request, 'movie/movie_search.html')
+
+def getSearch(request, term):
     movies = list(Movie.objects.filter(title__icontains=term).order_by('-popularity'))
     return JsonResponse([movie.serialize() for movie in movies], safe=False)
 

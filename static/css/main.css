@@ -1,38 +1,7 @@
 .welcome{
-    max-width: 90%;
+    width: 100%;
     justify-content: center;
-    margin: auto;
-}
-
-.welcome p{
-    font-weight: 600;
-    font-size: 1.5em;
-    margin-bottom: 0px;
     margin-top: 10px;
-}
-
-.search #form-search{
-    padding-top: 10px;
-}
-
-#form-search{
-    display: flex;
-    flex-direction: row;
-    align-content: flex-start;
-}
-
-.search{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-#search-input{
-    height: 35px;
-    width: 25%;
-    border: none;
-    font-size: 1.1em;
-    border-radius: 7px;
 }
 
 .buttons{

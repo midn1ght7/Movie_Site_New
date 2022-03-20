@@ -227,7 +227,7 @@ function showScroller(data, appendto){
 }
 
 
-window.onload = function() {
+window.addEventListener('load', function() {
     // Get the modal
     var modal = document.getElementById('myModal');
     // Get the main container and the body
@@ -337,5 +337,5 @@ window.onload = function() {
             console.log("USER INVALID!");
         }
     }
-}
+});
 
