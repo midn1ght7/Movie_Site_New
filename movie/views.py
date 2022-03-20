@@ -52,9 +52,10 @@ def similar_response(movies,id_list,score_list):
 def get_similar(request, pk):
     similar_to = Movie.objects.get(pk=pk)
     neighbors = predict_score(similar_to)
+
     id_list = []
     score_list = []
-    print('\nRecommended Movies: \n')
+    print('\nContent-based recommended movies: \n')
     for index, neighbor in enumerate(neighbors):
         print(neighbor)
         id_list.append(neighbor[0])
@@ -82,7 +83,7 @@ def predict_score(baseMovie):
     for movie in Movie.objects.filter(genre_query & keyword_query & Q(vote_count__gte=100)):
         filtered_tmdb_ids.append(movie.tmdb_id)
     
-    print("Filtered movies:", len(filtered_tmdb_ids))
+    print("Filtered movies for content-based recommendation:", len(filtered_tmdb_ids))
     
     binary_set = Binary.objects.filter(tmdb_id__in=filtered_tmdb_ids)
 
@@ -164,7 +165,7 @@ from scipy.sparse import csr_matrix
 from django.db.models import Count
 
 def collabRecommendation(request, tmdb_id):
-    print("Starting collabRecommendation (movie tmdb_id "+str(tmdb_id)+")")
+    print("Starting Collaborative Recommendation of movie tmdb_id: "+str(tmdb_id))
     selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
     min_movie_ratings = 10
     min_user_ratings = 80
@@ -221,7 +222,7 @@ def collabRecommendation(request, tmdb_id):
                     user_ids.append(label['user_id'])
 
             print("Converting query_set to array...")
-            
+
             #convert the query_set to array of rating arrays
             for movie in final_dataset:
                 array = []
