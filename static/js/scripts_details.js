@@ -58,7 +58,7 @@ async function showMovieDetails()
         data = data[0]
         console.log(data);
         tmdb_id = data.tmdb_id;
-        console.log(tmdb_id)
+        console.log("TMDB_ID of selected movie:",tmdb_id)
         document.getElementById("poster").src=`/${data.poster}`;
         document.getElementById("a-title").text=`${data.title}`;
         document.getElementById("movie-details-background").style.backgroundImage = `url(/${data.backdrop})`;
@@ -194,7 +194,10 @@ function showScroller(data, appendto){
             <bdi>${styleTitle(data.title)}</bdi>
         </a>
         <span class="vote_average">${data.vote_average}</span>
-    </p>`;
+    </p>
+    <a class="title"">
+    Distance: ${Math.round(data.similarity_score*1000)/1000}
+    </a>`;
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
 

@@ -7,6 +7,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.generic import ListView, DetailView
 from numpy import moveaxis
+from sklearn import neighbors
 from .models import Movie, Binary
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -38,12 +39,28 @@ def search(request, term):
     movies = list(Movie.objects.filter(title__icontains=term).order_by('-popularity'))
     return JsonResponse([movie.serialize() for movie in movies], safe=False)
 
+def similar_response(movies,id_list,score_list):
+    result = []
+    for movie in movies:
+        tmdb_id = movie.tmdb_id
+        movie = movie.serialize()
+        movie["similarity_score"] = (score_list[id_list.index(tmdb_id)])
+        result.append(movie)
+    return result
+
 def get_similar(request, pk):
     similar_to = Movie.objects.get(pk=pk)
-    similar_list = predict_score(similar_to)
+    neighbors = predict_score(similar_to)
+    id_list = []
+    score_list = []
+    print('\nRecommended Movies: \n')
+    for index, neighbor in enumerate(neighbors):
+        print(neighbor)
+        id_list.append(neighbor[0])
+        score_list.append(neighbor[1])
 
-    movies = list(Movie.objects.filter(tmdb_id__in=similar_list))
-    return JsonResponse([movie.serialize() for movie in movies], safe=False)
+    movies = list(Movie.objects.filter(tmdb_id__in=id_list))
+    return JsonResponse(similar_response(movies, id_list, score_list), safe=False)
 
 def predict_score(baseMovie):
     print('Selected Movie: ',baseMovie.title)
@@ -61,7 +78,7 @@ def predict_score(baseMovie):
     for keyword in bm_keywords:
         keyword_query = keyword_query | Q(keywords__icontains=keyword)
 
-    for movie in Movie.objects.filter(genre_query & keyword_query):
+    for movie in Movie.objects.filter(genre_query & keyword_query & Q(vote_count__gte=100)):
         filtered_tmdb_ids.append(movie.tmdb_id)
     
     print("Filtered movies:", len(filtered_tmdb_ids))
@@ -86,22 +103,15 @@ def predict_score(baseMovie):
 
     K = 10
     neighbors = getNeighbors(K)
-
-    id_list = []
     
-    print('\nRecommended Movies: \n')
-    for index, neighbor in enumerate(neighbors):
-        print(neighbor)
-        id_list.append(neighbor[0])
-    
-    return id_list
+    return neighbors
 
 def Similarity(baseMovie, compMovie):
 
     genreDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.genres), bin_str_tolist(compMovie.genres)))*0.5
     wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))
-    directorDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.directors), bin_str_tolist(compMovie.directors)))*0.25
-    languageDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.languages), bin_str_tolist(compMovie.languages)))*0.25
+    directorDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.directors), bin_str_tolist(compMovie.directors)))*0.3
+    languageDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.languages), bin_str_tolist(compMovie.languages)))*0.2
     return genreDistance + wordsDistance + directorDistance + languageDistance
 
 def bin_str_tolist(binary_string):
