@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView
 from numpy import moveaxis
 from .models import Movie, Binary
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.db.models import Q
 
@@ -106,3 +106,29 @@ def bin_str_tolist(binary_string):
     for char in binary_string:
         binary_list.append(int(char))
     return binary_list
+
+def getUserInfo(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        if hasattr(current_user, 'account'):
+            print (current_user.account.ratings)
+            return JsonResponse({'user_id': current_user.id, 'user_ratings': current_user.account.ratings})
+        else:
+            return JsonResponse({'user_id': current_user.id, 'user_ratings': "null"})
+    else:
+        return JsonResponse({'user_id': "null", 'user_ratings': "null"})
+
+# def createMovieList(response):
+#     if response.method == "POST":
+#         form = CreateNewList(response.POST)
+
+#         if form.is_valid():
+#             n = form.cleaned_data["name"]
+#             response.user.movielist_set.create(name=n)
+        
+#         return HttpResponseRedirect("/%i" %t.id)
+
+#     else:
+#         form = CreateNewList()
+        
+#     return render(response, "movie/movie_list.html", {"form":form})

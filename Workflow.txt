@@ -1,4 +1,4 @@
-- dodanie production companies
+- dodanie production companies / reżysera
 - Dodanie strony panelu użytkownika
 - Dodanie opcji dodawania ocen 
 - Dodanie strony szukajki

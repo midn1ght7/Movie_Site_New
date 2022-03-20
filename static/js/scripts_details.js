@@ -12,7 +12,8 @@ const EXAMPLE = BASE_URL + '/movie/550?'+API_KEY+'&query=';
 
 var url = window.location.pathname;
 var id = url.substring(9);
-//alert(id);
+var tmdb_id = null;
+
 
 function getColor(vote){
     if(vote>=7)
@@ -22,8 +23,11 @@ function getColor(vote){
     else if(vote>= 3){
         return 'orange';
     }
-    else{
+    else if(vote<3) {
         return 'red';
+    }
+    else {
+        return
     }
 }
 
@@ -46,23 +50,57 @@ function formatGenres(genres)
     return genres_string;
 }
 
-function showMovieDetails()
+async function showMovieDetails()
 {
-    fetch(`/get_movie/${id}`).then(response => response.json()).then(data =>
-    {
+    const response = await fetch(`/get_movie/${id}`,{method:'GET'});
+    var data = await response.json();
+    if(data){
         data = data[0]
+        console.log(data);
+        tmdb_id = data.tmdb_id;
+        console.log(tmdb_id)
         document.getElementById("poster").src=`/${data.poster}`;
         document.getElementById("a-title").text=`${data.title}`;
         document.getElementById("movie-details-background").style.backgroundImage = `url(/${data.backdrop})`;
         document.getElementById("span-release-date").innerHTML = formatReleaseDate(data.release_date);
-        document.getElementById("rating").innerHTML = data.vote_average;
-        document.getElementById("rating").className = `${getColor(data.vote_average)}`;
+        document.getElementById("sp_tmdbrating").innerHTML = data.vote_average;
+        document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
+        if(document.getElementById('sp_yourrating') !== null)
+        {
+            let userRatingResponse = await checkUserRating();
+            console.log("userRatingResponse:", userRatingResponse);
+            document.getElementById("sp_yourrating").innerHTML = userRatingResponse;
+            document.getElementById("sp_yourrating").className = `${getColor(userRatingResponse)}`;
+        }
+        document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
+        document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
+        ${data.overview}`;
+        moreMovieDetails(data);
+        getSimilar();
+    }
+    /*
+    fetch(`/get_movie/${id}`).then(response => response.json()).then(data =>
+    {
+        data = data[0]
+        console.log(data);
+        tmdb_id = data.tmdb_id;
+        console.log(tmdb_id)
+        document.getElementById("poster").src=`/${data.poster}`;
+        document.getElementById("a-title").text=`${data.title}`;
+        document.getElementById("movie-details-background").style.backgroundImage = `url(/${data.backdrop})`;
+        document.getElementById("span-release-date").innerHTML = formatReleaseDate(data.release_date);
+        document.getElementById("sp_tmdbrating").innerHTML = data.vote_average;
+        document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
+        alert(checkUserRating().then(alert));
+        //document.getElementById("sp_yourrating").innerHTML = checkUserRating();
+        //document.getElementById("sp_yourrating").className = `${getColor(data.vote_average)}`;
         document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
         document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
         ${data.overview}`;
         moreMovieDetails(data);
         getSimilar();
     })
+    */
 }
 showMovieDetails();
 
@@ -125,6 +163,27 @@ async function getSimilar()
     responseJSON.forEach(item => {
         showRecommendations(item);
     })
+}
+
+
+async function checkUserRating(){
+    const response = await fetch(`/getUserInfo`,{method:'GET'});
+    const data = await response.json();
+    //console.log(data);
+    //console.log(data.user_ratings);
+        var found = false;
+        for (const item of data.user_ratings) {
+            if(item.tmdb_id == tmdb_id)
+            {
+                found = true;   
+                return item.rating;
+            }
+        }
+
+        if (found == false)
+        {
+            return "Rate"
+        }
 }
 
 function showRecommendations(data){

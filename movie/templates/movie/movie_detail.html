@@ -45,7 +45,19 @@
                                     <a id="a-genres"></a>
                                 </div>
                             </div>
-                            <span class="" id="rating"></span>
+                            <div class="rating_div">
+                                <div class="rating_item">
+                                    <a id="rating_title">TMDB Rating</a>
+                                    <span class="" id="sp_tmdbrating"></span>
+                                </div>
+                                {% if user.is_authenticated %}
+                                <div class="rating_item">
+                                    <a id="rating_title">Your Rating</a>
+                                    <span class="" id="sp_yourrating"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+
                             <div class="details-overview" id="details-overview">
                                 <h3>Overview</h3>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam.

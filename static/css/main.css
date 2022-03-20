@@ -229,7 +229,7 @@ main{
     display: flex;
 }
 
-.movie-details-info #rating{
+#sp_tmdbrating, #sp_yourrating{
     background-color: var(--primary-color);
     padding: 1.25rem 1.5rem;
     font-size: 1.8rem;
@@ -247,6 +247,24 @@ span.orange{
 
 span.red{
     color:red;
+}
+
+.rating_div{
+    padding: 1.25rem 0rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}   
+
+.rating_item{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin-right: 24px;
+}
+
+.rating_item a{
+    text-align: center;
 }
 
 .movie-content{
