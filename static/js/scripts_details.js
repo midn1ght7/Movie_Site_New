@@ -91,6 +91,14 @@ function moreMovieDetails(data){
         p.textContent = data.original_title;
         document.getElementById("original_title").appendChild(p);
     }
+    if(data.director){
+        let h3 = document.createElement('h3');
+        h3.textContent = "Director"
+        document.getElementById("director").appendChild(h3);
+        let p = document.createElement('p');
+        p.textContent = data.director;
+        document.getElementById("director").appendChild(p);
+    }
     if(data.tagline){
         let h3 = document.createElement('h3');
         h3.textContent = "Tagline"

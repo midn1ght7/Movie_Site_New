@@ -1,3 +1,4 @@
+from msilib import _directories
 from django.db import models
 import jsonfield
 from django.contrib.auth.models import User
@@ -11,16 +12,17 @@ class Movie(models.Model):
     backdrop = models.ImageField(upload_to='backdrops')
     #belongs_to_collection
     budget = models.IntegerField()
+    director = models.CharField(max_length=100)
     genres = jsonfield.JSONField()
     #homepage
     #imdb_id
     keywords = jsonfield.JSONField()
-    #original_language
+    original_language = models.CharField(max_length=10)
     original_title = models.CharField(max_length=100)
     overview = models.TextField(max_length=1000, blank=True, null=True)
     popularity = models.FloatField()
     poster = models.ImageField(upload_to='posters')
-    #production_companies
+    production_company = models.CharField(max_length=100)
     #production_countries
     release_date = models.DateField()
     revenue = models.IntegerField()
@@ -42,12 +44,15 @@ class Movie(models.Model):
             "tmdb_id": self.tmdb_id,
             "backdrop": str(self.backdrop),
             "budget": self.budget,
+            "director": self.director,
             "genres": self.genres,
             "keywords": self.keywords,
+            "original_language": self.original_language,
             "original_title": self.original_title,
             "overview": self.overview,
             "popularity": self.popularity,
             "poster": str(self.poster),
+            "production_company": self.production_company,
             "release_date": self.release_date,
             "revenue": self.revenue,
             "runtime": self.runtime,
@@ -76,3 +81,5 @@ class Binary(models.Model):
     tmdb_id = models.IntegerField()
     genres = models.TextField()
     keywords = models.TextField()
+    directors = models.TextField()
+    languages = models.TextField()
