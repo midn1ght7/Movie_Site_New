@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <title>Movies</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
+        <script src="{% static 'js/scripts_details.js' %}"></script>
+        <!-- API version 3 documentation: 
+            https://developers.themoviedb.org/3/search
+            https://developers.themoviedb.org/3/movies
+        -->
+    </head>
+    <body>
+        <div class="topnav">
+            <div class="homepage">
+                <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
+                <a id="app-name" href="/">Movie Recommendation App</a>
+            </div>
+            <div class="search">
+                <form id="form-search">
+                    <input id="search-input" type="text" placeholder="Search...">
+                    <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+        <main id="main">
+            <!-- <h2 id="current-list">Details</h2> -->
+            <div class = "movie-details-back" id="movie-details-background">
+                <div class = "movie-details-back-bg">
+                    <div class="movie-details">
+                        <div class="movie-details-poster">
+                            <img id="poster" src="" alt="Poster">
+                        </div>
+                        <div class="movie-details-info">
+                            <div class="title">
+                                <h2 class="7">
+                                    <a id="a-title"></a>
+                                    <span class="tag release_date" id="span-release-date"></span>
+                                </h2>
+                                <div class="genres">
+                                    <a id="a-genres"></a>
+                                </div>
+                            </div>
+                            <span class="" id="rating"></span>
+                            <div class="details-overview" id="details-overview">
+                                <h3>Overview</h3>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class= "movie-content">
+                <div class="recommendations">
+                    <h3>Recommendations</h3>
+                    <div id="recommendations-scroller">
+                        <div class="scroller" id="scroller">
+                            <!-- <div class="scroller-item">
+                                <div class="image_content">
+                                    <a href="/details/4935" title="Movie Title">
+                                        <img loading="lazy" class="backdrop" src="https://image.tmdb.org/t/p/w250_and_h141_face/vwBa7djy1oxfxUjc7YtVgGNsjrT.jpg">
+                                    </a>
+                                </div>
+                                <p class="movie-flex">
+                                    <a class="title" href="/details/4935" title="Movie Title">
+                                        <bdi>Movie Title</bdi>
+                                    </a>
+                                    <span class="vote_average">84%</span>
+                                </p>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

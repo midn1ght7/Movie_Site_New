@@ -1,0 +1,5 @@
+- (dla zapełnienia details) dodanie podobnych filmów
+- Dodanie opcji rejestracji/logowania
+- Dodanie strony panelu użytkownika
+- Dodanie opcji dodawania ocen 
+- Dodanie opcji rekomendacji + w miarę potrzeb rozwinięcie bazy danych
