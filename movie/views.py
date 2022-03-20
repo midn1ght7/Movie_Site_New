@@ -67,7 +67,6 @@ def predict_score(baseMovie):
         distances = []
     
         for movie in binary_set:
-            #print(movie.tmdb_id)
             if movie.tmdb_id != baseMovie.tmdb_id:
                 if "1" in movie.genres and "1" in movie.keywords:
                     dist = Similarity(baseMovieBin, movie)
@@ -75,7 +74,6 @@ def predict_score(baseMovie):
                 else:
                     print("This movie has no genres or keywords: "+ str(movie.tmdb_id))
 
-        print(distances)
         distances.sort(key=operator.itemgetter(1))
         neighbors = []
     
@@ -101,8 +99,6 @@ def Similarity(baseMovie, compMovie):
     wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))
 
     return genreDistance + wordsDistance
-    #return genreDistance
-    #return wordsDistance
 
 def bin_str_tolist(binary_string):
     binary_string = binary_string.replace(",","")
