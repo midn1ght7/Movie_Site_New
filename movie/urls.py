@@ -10,4 +10,5 @@ urlpatterns = [
     path('search/<str:term>', views.search, name="search"),
     path('get_similar/<int:pk>', views.get_similar, name="get_similar"),
     path('getUserInfo', views.getUserInfo, name="getUserInfo"),
+    path('addRating/<int:tmdb_id>/<int:rating>', views.addRating, name="addRating"),
 ] 

@@ -1,6 +1,5 @@
 - dodanie production companies / reżysera
 - Dodanie strony panelu użytkownika
-- Dodanie opcji dodawania ocen 
 - Dodanie strony szukajki
 - Dodanie opcji rekomendacji + w miarę potrzeb rozwinięcie bazy danych
 
@@ -8,3 +7,4 @@
 - (dla zapełnienia details) dodanie podobnych filmów
 - Dodanie opcji rejestracji
 - Dodanie opcji logowania
+- Dodanie opcji dodawania ocen 

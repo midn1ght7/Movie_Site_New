@@ -11,6 +11,7 @@
     --scrollerGray: 66,66,66;
     --maxPrimaryPageWidth: 1400px;
     --primaryFontColor: #ffffff;
+    --effectColor: rgb(192, 235, 0);
 }
 
 body 
@@ -230,6 +231,7 @@ main{
 }
 
 #sp_tmdbrating, #sp_yourrating{
+    text-align: center;
     background-color: var(--primary-color);
     padding: 1.25rem 1.5rem;
     font-size: 1.8rem;
@@ -378,3 +380,69 @@ div.scroller::-webkit-scrollbar-thumb {
     border-radius: 20px;
 }
 
+.Modal {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    padding-top: 100px;
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0.4);
+    -webkit-transition: 0.5s;
+    overflow: auto;
+    transition: all 0.3s linear;
+}
+.Modal-content {
+    background-color: var(--primary-color);
+    margin: auto;
+    padding: 20px;
+    border-radius: 4px;
+    max-width: 500px;
+    height: 200px;
+}
+/* .ModalOpen { overflow: hidden; } */
+.is-hidden { display: none; }
+.is-visuallyHidden { opacity: 0; }
+
+.Close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 16px;
+}
+
+.Close:hover, .Close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.is-blurred {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+}
+
+.div-rate{
+    text-align: center;
+    
+}
+
+.div-rate p{
+    font-weight: 700;
+}
+
+.p-rate{
+    font-size: 2.2rem;
+}
+
+.p-rate a{
+    margin-right: 20px;
+}
+
+
+.p-rate a:hover, #sp_yourrating:hover{
+    color: var(--effectColor);
+    cursor: pointer;
+}

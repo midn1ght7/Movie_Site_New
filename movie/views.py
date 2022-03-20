@@ -11,7 +11,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.db.models import Q
-
+from account.models import Account
+from django.contrib.auth.models import User
 
 from scipy import spatial
 import operator
@@ -118,17 +119,42 @@ def getUserInfo(request):
     else:
         return JsonResponse({'user_id': "null", 'user_ratings': "null"})
 
-# def createMovieList(response):
-#     if response.method == "POST":
-#         form = CreateNewList(response.POST)
 
-#         if form.is_valid():
-#             n = form.cleaned_data["name"]
-#             response.user.movielist_set.create(name=n)
-        
-#         return HttpResponseRedirect("/%i" %t.id)
+import json
 
-#     else:
-#         form = CreateNewList()
-        
-#     return render(response, "movie/movie_list.html", {"form":form})
+def addRating(request, tmdb_id, rating):
+    print("Add Rating: ",tmdb_id, rating)
+    if request.user.is_authenticated:
+        current_user = request.user
+        if hasattr(current_user, 'account'):
+            print (current_user.account.ratings)
+            toadd = {"tmdb_id": tmdb_id, "rating": rating}
+            jsonfile = json.loads(json.dumps(current_user.account.ratings))
+            exists = False
+            for item in jsonfile:
+                print(item["tmdb_id"])
+                if item["tmdb_id"] == tmdb_id:
+                    exists = True
+                    print("Rating exists, updating...")
+                    item["rating"] = rating
+            if exists == False:
+                print("Rating does not exists, appending...")
+                jsonfile.append(toadd)
+
+            updateRatinginDB(current_user.id, jsonfile)
+            return JsonResponse({'user_id': current_user.id, 'user_ratings': jsonfile})
+        else:
+            account = Account.objects.create(user_id=current_user.id, ratings=[])
+            account.save()
+            toadd = {"tmdb_id": tmdb_id, "rating": rating}
+            jsonfile = json.loads(json.dumps([]))
+            jsonfile.append(toadd)
+            updateRatinginDB(current_user.id, jsonfile)
+            return JsonResponse({'user_id': current_user.id, 'user_ratings': jsonfile})
+    else:
+        return JsonResponse({'user_id': "null", 'user_ratings': "null"})
+
+def updateRatinginDB(user_id, jsonfile):
+    record = Account.objects.get(user_id = user_id)
+    record.ratings = jsonfile
+    record.save()

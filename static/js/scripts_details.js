@@ -13,7 +13,7 @@ const EXAMPLE = BASE_URL + '/movie/550?'+API_KEY+'&query=';
 var url = window.location.pathname;
 var id = url.substring(9);
 var tmdb_id = null;
-
+var user_valid = false;
 
 function getColor(vote){
     if(vote>=7)
@@ -169,21 +169,22 @@ async function getSimilar()
 async function checkUserRating(){
     const response = await fetch(`/getUserInfo`,{method:'GET'});
     const data = await response.json();
-    //console.log(data);
+    console.log(data);
     //console.log(data.user_ratings);
-        var found = false;
-        for (const item of data.user_ratings) {
-            if(item.tmdb_id == tmdb_id)
-            {
-                found = true;   
-                return item.rating;
-            }
+    if(data.user_id!="null")
+    {
+        user_valid = true;
+    }
+    var found = false;
+    for (const item of data.user_ratings) {
+        if (item.tmdb_id == tmdb_id) {
+            found = true;
+            return item.rating;
         }
-
-        if (found == false)
-        {
-            return "Rate"
-        }
+    }
+    if (found == false) {
+        return "Rate"
+    }
 }
 
 function showRecommendations(data){
@@ -204,3 +205,95 @@ function showRecommendations(data){
     </p>`;
     document.getElementById("scroller").appendChild(movieEl);
 }
+
+
+window.onload = function() {
+    // Get the modal
+    var modal = document.getElementById('myModal');
+    // Get the main container and the body
+    var body = document.getElementsByTagName('body');
+    var container = document.getElementById('main');
+    if(document.getElementById('sp_yourrating') !== null)
+    {
+        document.getElementById("sp_yourrating").onclick = function() {
+            modal.className = "Modal is-visuallyHidden";
+            setTimeout(function() {
+            container.className = "MainContainer is-blurred";
+            modal.className = "Modal";
+            }, 100);
+            container.parentElement.className = "ModalOpen";
+        }
+    }
+    // Get the close button
+    var btnClose = document.getElementById("closeModal");
+    // Close the modal
+    btnClose.onclick = modalClose
+
+    function modalClose(){
+        modal.className = "Modal is-hidden is-visuallyHidden";
+        body.className = "";
+        container.className = "MainContainer";
+        container.parentElement.className = "";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.className = "Modal is-hidden";
+            body.className = "";
+            container.className = "MainContainer";
+            container.parentElement.className = "";
+        }
+    }
+
+    document.getElementById('rate-1').onclick = function(){
+        postRating(1)
+    }
+    document.getElementById('rate-2').onclick = function(){
+        postRating(2)
+    }
+    document.getElementById('rate-3').onclick = function(){
+        postRating(3)
+    }
+    document.getElementById('rate-4').onclick = function(){
+        postRating(4)
+    }
+    document.getElementById('rate-5').onclick = function(){
+        postRating(5)
+    }
+    document.getElementById('rate-6').onclick = function(){
+        postRating(6)
+    }
+    document.getElementById('rate-7').onclick = function(){
+        postRating(7)
+    }
+    document.getElementById('rate-8').onclick = function(){
+        postRating(8)
+    }
+    document.getElementById('rate-9').onclick = function(){
+        postRating(9)
+    }
+    document.getElementById('rate-10').onclick = function(){
+        postRating(10)
+    }
+
+    function postRating(rating){
+        if(user_valid==true){
+            console.log("USER VALID!");
+            fetch(`/addRating/${tmdb_id}/${rating}`).then((response) => {
+                if (response.ok) {
+                    modalClose()
+                    return response.json();
+                }
+                else{
+                    throw new Error("Error fetching: "+item);
+                }
+            })
+            location.reload();
+        }
+        else{
+            console.log("USER INVALID!");
+        }
+    }
+}
+
