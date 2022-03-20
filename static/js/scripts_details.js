@@ -60,10 +60,53 @@ function showMovieDetails()
         document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
         document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
         ${data.overview}`;
+        moreMovieDetails(data);
         getSimilar();
     })
 }
 showMovieDetails();
+
+function moreMovieDetails(data){
+    if(data.original_title){
+        let h3 = document.createElement('h3');
+        h3.textContent = "Original Title"
+        document.getElementById("original_title").appendChild(h3);
+        let p = document.createElement('p');
+        p.textContent = data.original_title;
+        document.getElementById("original_title").appendChild(p);
+    }
+    if(data.tagline){
+        let h3 = document.createElement('h3');
+        h3.textContent = "Tagline"
+        document.getElementById("tagline").appendChild(h3);
+        let p = document.createElement('p');
+        p.textContent = data.tagline;
+        document.getElementById("tagline").appendChild(p);
+    }
+    if(data.status){
+        let h3 = document.createElement('h3');
+        h3.textContent = "Status"
+        document.getElementById("status").appendChild(h3);
+        let p = document.createElement('p');
+        p.textContent = data.status;
+        document.getElementById("status").appendChild(p);
+    }
+    if(data.keywords)
+    {
+        let ul = document.createElement('ul');
+        let h3 = document.createElement('h3');
+        data.keywords.keywords.forEach(keyword => {
+            //console.log(keyword.name);
+            
+            let li = document.createElement('li');
+            li.innerHTML= `<a class="rounded">${keyword.name}</a>`
+            ul.appendChild(li);
+        })
+        h3.textContent = "Keywords"
+        document.getElementById("keywords").appendChild(h3);
+        document.getElementById("keywords").appendChild(ul);
+    }
+}
 
 function styleTitle(title){
     if(title.length > 24)
@@ -84,29 +127,6 @@ async function getSimilar()
     })
 }
 
-/*
-async function getRecommendations()
-{
-    const response = await fetch(`/get_recommendations/${id}`,{method:'GET'});
-    const responseJSON = await response.json();
-    //console.log(responseJSON);
-    var newData = responseJSON[0];
-    var array = [];
-    for (var i in newData)
-    {
-        array.push([newData[i]]);
-    }
-    //console.log(array);
-    array.forEach(item => {
-        fetch(BASE_URL+'/movie/'+item+'?'+API_KEY+LANG).then(response => response.json()).then(data =>{
-            console.log(data);
-            showRecommendations(data);
-        }) 
-    })
-}
-
-getRecommendations();
-*/
 function showRecommendations(data){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
