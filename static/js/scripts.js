@@ -1,3 +1,8 @@
+
+var last_fetch = null;
+var start = 0;
+var finish = 20;
+
 function getColor(vote){
     if(vote>=7)
     {
@@ -34,9 +39,14 @@ async function showMovies(movies, title){
     })
 }
 
-async function queryMovies(){
-    fetch('/get_popular').then((response) => {
+async function getPopular(){
+    fetch(`/get_popular/${start}/${finish}`).then((response) => {
         if (response.ok) {
+            if(last_fetch != "popular"){
+                last_fetch = "popular";
+                start = 0;
+                finish = 20;
+            }
             return response.json();
         }
         else{
@@ -44,11 +54,29 @@ async function queryMovies(){
         }
     }).then(movies =>
     {
-        showMovies(movies, "Top 20 Most Popular Movies");
+        showMovies(movies, "Most Popular Movies");
     })
 }
 
-queryMovies();
+async function getTop(){
+    fetch(`/get_top/${start}/${finish}`).then((response) => {
+        if (response.ok) {
+            if(last_fetch != "top"){
+                last_fetch = "top";
+                start = 0;
+                finish = 20;
+            }
+            return response.json();
+        }
+        else{
+            throw new Error("Error fetching: "+item);
+        }
+    }).then(movies =>
+    {
+        showMovies(movies, "Top Rated Movies");
+    })
+}
+getTop()
 
 function getMovieDetails(id)
 {
@@ -60,8 +88,10 @@ function getMovieDetails(id)
 }
 
 
-//SEARCH BUTTON
+
 window.onload=function(){
+
+    //SEARCH BUTTON
     var search_form = document.getElementById("form-search");
     search_form.addEventListener('submit', e =>{
         e.preventDefault();
@@ -69,6 +99,8 @@ window.onload=function(){
         if(searchTerm){
             fetch(`/search/${searchTerm}`).then((response) => {
                 if (response.ok) {
+                    last_fetch = searchTerm;
+                    document.getElementById("btn-load-more").style.visibility = 'hidden'
                     return response.json();
                 }
                 else{
@@ -81,7 +113,35 @@ window.onload=function(){
         }
     })
 
-}
+    //POPULAR BUTTON
+    var popular_btn = document.getElementById("btn_popular");
+    popular_btn.onclick = function (){
+        getPopular();
+        load_btn.style.visibility = 'visible';
+    }
+
+    //TOP BUTTON
+    var top_btn = document.getElementById("btn_top");
+    top_btn.onclick = function () {
+        getTop();
+        load_btn.style.visibility = 'visible';
+    }
+
+    //LOAD MORE BUTTON 
+    var load_btn = document.getElementById("btn-load-more");
+    load_btn.onclick = function (){
+        if(last_fetch != null){
+            if(last_fetch == "popular"){
+                finish = finish + 20;
+                getPopular();
+            }
+            if(last_fetch == "top"){
+                finish = finish + 20;
+                getTop();
+            }
+        }
+    }
+}   
 
 
 

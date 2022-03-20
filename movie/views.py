@@ -27,8 +27,12 @@ def movie_detail(request, pk):
     return render(request, 'movie/movie_detail.html')
 
 
-def get_popular(request):
-    movies = list(Movie.objects.all().order_by('-popularity'))[:20]
+def get_popular(request, start, finish):
+    movies = list(Movie.objects.all().order_by('-popularity'))[start:finish]
+    return JsonResponse([movie.serialize() for movie in movies], safe=False)
+
+def get_top(request, start, finish):
+    movies = list(Movie.objects.filter(vote_count__gte = 1000).order_by('-vote_average'))[start:finish]
     return JsonResponse([movie.serialize() for movie in movies], safe=False)
 
 def get_movie(request, pk):

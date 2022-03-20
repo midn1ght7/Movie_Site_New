@@ -21,3 +21,7 @@
     border-radius: 7px;
     cursor: pointer;
 }
+
+.register a{
+    font-weight: 600;
+}
