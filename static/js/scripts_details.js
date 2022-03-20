@@ -78,29 +78,6 @@ async function showMovieDetails()
         moreMovieDetails(data);
         getSimilar();
     }
-    /*
-    fetch(`/get_movie/${id}`).then(response => response.json()).then(data =>
-    {
-        data = data[0]
-        console.log(data);
-        tmdb_id = data.tmdb_id;
-        console.log(tmdb_id)
-        document.getElementById("poster").src=`/${data.poster}`;
-        document.getElementById("a-title").text=`${data.title}`;
-        document.getElementById("movie-details-background").style.backgroundImage = `url(/${data.backdrop})`;
-        document.getElementById("span-release-date").innerHTML = formatReleaseDate(data.release_date);
-        document.getElementById("sp_tmdbrating").innerHTML = data.vote_average;
-        document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
-        alert(checkUserRating().then(alert));
-        //document.getElementById("sp_yourrating").innerHTML = checkUserRating();
-        //document.getElementById("sp_yourrating").className = `${getColor(data.vote_average)}`;
-        document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
-        document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
-        ${data.overview}`;
-        moreMovieDetails(data);
-        getSimilar();
-    })
-    */
 }
 showMovieDetails();
 
@@ -161,13 +138,18 @@ async function getSimilar()
     const responseJSON = await response.json();
     console.log(responseJSON);
     responseJSON.forEach(item => {
-        showRecommendations(item);
+        showScroller(item);
     })
+}
+
+async function collabRecommendation()
+{
+    const response = await fetch(`/collabRecommendation/${id}`,{method:'GET'});
 }
 
 
 async function checkUserRating(){
-    const response = await fetch(`/getUserInfo`,{method:'GET'});
+    const response = await fetch(`/getRating/${tmdb_id}`,{method:'GET'});
     const data = await response.json();
     console.log(data);
     //console.log(data.user_ratings);
@@ -175,19 +157,15 @@ async function checkUserRating(){
     {
         user_valid = true;
     }
-    var found = false;
-    for (const item of data.user_ratings) {
-        if (item.tmdb_id == tmdb_id) {
-            found = true;
-            return item.rating;
-        }
-    }
-    if (found == false) {
+    if (data.user_rating == "null") {
         return "Rate"
+    }
+    else{
+        return data.user_rating;
     }
 }
 
-function showRecommendations(data){
+function showScroller(data){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
     movieEl.setAttribute("onclick",`getMovieDetails(${data.id})`);      

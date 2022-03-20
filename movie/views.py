@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.db.models import Q
 from account.models import Account
+from rating.models import Rating
 from django.contrib.auth.models import User
 
 from scipy import spatial
@@ -108,53 +109,40 @@ def bin_str_tolist(binary_string):
         binary_list.append(int(char))
     return binary_list
 
-def getUserInfo(request):
+def getRating(request, tmdb_id):
     if request.user.is_authenticated:
         current_user = request.user
-        if hasattr(current_user, 'account'):
-            print (current_user.account.ratings)
-            return JsonResponse({'user_id': current_user.id, 'user_ratings': current_user.account.ratings})
-        else:
-            return JsonResponse({'user_id': current_user.id, 'user_ratings': "null"})
+        try:
+            query = Rating.objects.get(user_id=current_user.id, tmdb_id = tmdb_id)
+            print("Query exists")
+            rating = query.rating
+        except Rating.DoesNotExist:
+            print("Query does not exist")
+            rating = "null"
+        return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
     else:
-        return JsonResponse({'user_id': "null", 'user_ratings': "null"})
-
-
-import json
+        return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
 def addRating(request, tmdb_id, rating):
     print("Add Rating: ",tmdb_id, rating)
     if request.user.is_authenticated:
         current_user = request.user
-        if hasattr(current_user, 'account'):
-            print (current_user.account.ratings)
-            toadd = {"tmdb_id": tmdb_id, "rating": rating}
-            jsonfile = json.loads(json.dumps(current_user.account.ratings))
-            exists = False
-            for item in jsonfile:
-                print(item["tmdb_id"])
-                if item["tmdb_id"] == tmdb_id:
-                    exists = True
-                    print("Rating exists, updating...")
-                    item["rating"] = rating
-            if exists == False:
-                print("Rating does not exists, appending...")
-                jsonfile.append(toadd)
+        try:
+            query = Rating.objects.get(user_id=current_user.id, tmdb_id = tmdb_id)
+            print("Query exists")
+            print("Changed rating from "+str(query.rating)+" to "+str(rating))
+            query.rating = rating
+            query.save()
+        except Rating.DoesNotExist:
+            print("Query does not exist")
+            Rating.objects.create(user_id=current_user.id, tmdb_id = tmdb_id, rating=rating)
 
-            updateRatinginDB(current_user.id, jsonfile)
-            return JsonResponse({'user_id': current_user.id, 'user_ratings': jsonfile})
-        else:
-            account = Account.objects.create(user_id=current_user.id, ratings=[])
-            account.save()
-            toadd = {"tmdb_id": tmdb_id, "rating": rating}
-            jsonfile = json.loads(json.dumps([]))
-            jsonfile.append(toadd)
-            updateRatinginDB(current_user.id, jsonfile)
-            return JsonResponse({'user_id': current_user.id, 'user_ratings': jsonfile})
+        return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
+            
     else:
-        return JsonResponse({'user_id': "null", 'user_ratings': "null"})
+        return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
-def updateRatinginDB(user_id, jsonfile):
-    record = Account.objects.get(user_id = user_id)
-    record.ratings = jsonfile
-    record.save()
+def collabRecommendation(request, pk):
+    similar_to = Movie.objects.get(pk=pk)
+    final_dataset = Movie.objects.raw('SELECT id FROM myapp_person')
+    return JsonResponse({'user_id': "null", 'user_ratings': "null"})

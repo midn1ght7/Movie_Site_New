@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'movie',
     'account.apps.AccountConfig',
     'register.apps.RegisterConfig',
+    'rating.apps.RatingConfig',
 ]
 
 MIDDLEWARE = [
