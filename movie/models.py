@@ -7,7 +7,7 @@ from django.conf import settings
 
 class Movie(models.Model):
     #adult = models.BooleanField(default=False)
-    tmdb_id = models.IntegerField()
+    tmdb_id = models.IntegerField(unique=True)
     backdrop = models.ImageField(upload_to='backdrops')
     #belongs_to_collection
     budget = models.IntegerField()

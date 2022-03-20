@@ -314,7 +314,7 @@ section.keywords ul li a {
     list-style-type: none;
 }
 
-#recommendations-scroller{
+.recommendations-scroller{
     max-width: var(--maxPrimaryPageWidth);
 
 }

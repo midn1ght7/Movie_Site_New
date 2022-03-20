@@ -1,5 +1,6 @@
 from email.mime import base
 from msilib.schema import Binary, ListView
+from typing import final
 import weakref
 from django.shortcuts import render
 
@@ -11,7 +12,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.db.models import Q
-from account.models import Account
 from rating.models import Rating
 from django.contrib.auth.models import User
 
@@ -113,7 +113,8 @@ def getRating(request, tmdb_id):
     if request.user.is_authenticated:
         current_user = request.user
         try:
-            query = Rating.objects.get(user_id=current_user.id, tmdb_id = tmdb_id)
+            movie = Movie.objects.get(tmdb_id=tmdb_id)
+            query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
             print("Query exists")
             rating = query.rating
         except Rating.DoesNotExist:
@@ -128,21 +129,80 @@ def addRating(request, tmdb_id, rating):
     if request.user.is_authenticated:
         current_user = request.user
         try:
-            query = Rating.objects.get(user_id=current_user.id, tmdb_id = tmdb_id)
+            movie = Movie.objects.get(tmdb_id=tmdb_id)
+            query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
             print("Query exists")
             print("Changed rating from "+str(query.rating)+" to "+str(rating))
             query.rating = rating
             query.save()
         except Rating.DoesNotExist:
             print("Query does not exist")
-            Rating.objects.create(user_id=current_user.id, tmdb_id = tmdb_id, rating=rating)
+            Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating)
 
         return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
             
     else:
         return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
-def collabRecommendation(request, pk):
-    similar_to = Movie.objects.get(pk=pk)
-    final_dataset = Movie.objects.raw('SELECT id FROM myapp_person')
-    return JsonResponse({'user_id': "null", 'user_ratings': "null"})
+from django_pivot.pivot import pivot
+from django_pivot.histogram import histogram
+from sklearn.neighbors import NearestNeighbors
+from scipy.sparse import csr_matrix
+from django.db.models import Count
+
+def collabRecommendation(request, tmdb_id):
+    min_movie_ratings = 1
+    min_user_ratings = 1
+    #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
+    no_users_voted = (Rating.objects.values('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).values_list('tmdb_id').order_by())
+    #make a list of only user ids of users who voted at least x=(min_user_ratings) times
+    no_movies_voted = (Rating.objects.values('user_id').annotate(ratings=Count('user_id')).filter(ratings__gte=min_user_ratings).values_list('user_id').order_by())
+    filter1 = Q(tmdb_id__in = no_users_voted)
+    filter2 = Q(user_id__in = no_movies_voted)
+    #filtering the dataset using our lists
+    final_dataset = pivot(Rating.objects.filter(filter1 & filter2), 'tmdb_id_id', 'user_id', 'rating', default=0)
+
+    values_array = []
+
+    movies_ids = []
+    user_ids = []
+    for label in final_dataset.values(): 
+        if(label['tmdb_id_id'] not in movies_ids):
+            movies_ids.append(label['tmdb_id_id'])
+        if(label['user_id'] not in user_ids):
+            user_ids.append(label['user_id'])
+
+    #convert the query_set to array of rating arrays
+    for movie in final_dataset:
+        array = []
+        for user in user_ids:
+            data = movie[str(user)]
+            array.append(data)
+        values_array.append(array)
+
+    csr_data = csr_matrix(values_array)
+
+    knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=20, n_jobs=-1)
+    knn.fit(csr_data)
+
+    n_movies_to_recommend = 5
+
+    movie_list = Movie.objects.get(tmdb_id=tmdb_id)
+    if movie_list:        
+        distances , indices = knn.kneighbors(csr_data[movies_ids.index(tmdb_id)],n_neighbors=n_movies_to_recommend+1)    
+        rec_movie_indices = sorted(list(zip(indices.squeeze().tolist(),distances.squeeze().tolist())),key=lambda x: x[1])[:0:-1]
+        recommend_frame = []
+        id_list = []
+        for val in rec_movie_indices:
+            print(val)
+            idx = movies_ids[val[0]]
+            print(idx)
+            found_movie = Movie.objects.get(tmdb_id=idx)
+            id_list.append(found_movie.tmdb_id)
+            recommend_frame.append({'Title':found_movie.title,'Distance':val[1]})
+        print(recommend_frame)
+
+        movies = list(Movie.objects.filter(tmdb_id__in=id_list))
+        return JsonResponse([movie.serialize() for movie in movies], safe=False)
+    else:
+        return "No movies found. Please check your input"

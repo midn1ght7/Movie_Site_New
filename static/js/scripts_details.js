@@ -77,6 +77,7 @@ async function showMovieDetails()
         ${data.overview}`;
         moreMovieDetails(data);
         getSimilar();
+        collabRecommendation();
     }
 }
 showMovieDetails();
@@ -138,13 +139,18 @@ async function getSimilar()
     const responseJSON = await response.json();
     console.log(responseJSON);
     responseJSON.forEach(item => {
-        showScroller(item);
+        showScroller(item, "scroller-sim");
     })
 }
 
 async function collabRecommendation()
 {
-    const response = await fetch(`/collabRecommendation/${id}`,{method:'GET'});
+    const response = await fetch(`/collabRecommendation/${tmdb_id}`,{method:'GET'});
+    const responseJSON = await response.json();
+    console.log(responseJSON);
+    responseJSON.forEach(item => {
+        showScroller(item, "scroller-rec");
+    })
 }
 
 
@@ -165,7 +171,7 @@ async function checkUserRating(){
     }
 }
 
-function showScroller(data){
+function showScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
     movieEl.setAttribute("onclick",`getMovieDetails(${data.id})`);      
@@ -181,7 +187,7 @@ function showScroller(data){
         </a>
         <span class="vote_average">${data.vote_average}</span>
     </p>`;
-    document.getElementById("scroller").appendChild(movieEl);
+    document.getElementById(`${appendto}`).appendChild(movieEl);
 }
 
 

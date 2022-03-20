@@ -2,7 +2,7 @@
 - Dodanie strony panelu użytkownika
 - Dodanie strony szukajki
 - Dodanie opcji rekomendacji + w miarę potrzeb rozwinięcie bazy danych
-
+- Zaimportować oceny z innej bazy danych
 
 - (dla zapełnienia details) dodanie podobnych filmów
 - Dodanie opcji rejestracji
