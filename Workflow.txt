@@ -5,7 +5,6 @@ Do poprawy:
 
 Do dodania:
 - Timestamp do oceny
-- Wymiana ocen z TMDB na oceny z bazy
 
 Zrobione:
 - Dodanie podobnych filmów
@@ -23,6 +22,7 @@ Zrobione:
 - Podświetlenie obiektów klikalnych na hover
 - Search by keyword
 - Search Dropdown (Title/Keyword)
+- Wymiana ocen z TMDB na oceny z bazy
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)

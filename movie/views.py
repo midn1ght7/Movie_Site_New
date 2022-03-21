@@ -331,7 +331,7 @@ def collabRecommendation(request, tmdb_id):
                             ratings.append(rating)
                     rating_avg = sum(ratings)/len(ratings)
 
-                    if (len(ratings) >= 10 and rating_avg>7):
+                    if (len(ratings) >= 10 and rating_avg>5):
                         print("Rating average:",rating_avg)
                         dist = spatial.distance.cosine(our_movie, value) * ((10-rating_avg)*0.5)
                         distances.append((filtered_tmdb_ids[index], dist))
