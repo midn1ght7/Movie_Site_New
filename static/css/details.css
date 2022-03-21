@@ -192,20 +192,6 @@ p.movie-flex{
     margin-top: 4px;
 }
 
-div.scroller::-webkit-scrollbar {
-    height: 12px;
-    width: 8px;
-}
-
-div.scroller::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-div.scroller::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--scrollerGray),1);
-    border-radius: 20px;
-}
-
 .Modal {
     display: block;
     position: fixed;
@@ -226,8 +212,8 @@ div.scroller::-webkit-scrollbar-thumb {
     margin: auto;
     padding: 20px;
     border-radius: 4px;
-    max-width: 500px;
-    height: 230px;
+    max-width: fit-content;
+    max-height: fit-content;
 }
 /* .ModalOpen { overflow: hidden; } */
 .is-hidden { display: none; }
@@ -267,11 +253,24 @@ div.scroller::-webkit-scrollbar-thumb {
     font-size: 1.5rem;
 }
 
-.p-rate a{
+.p-rate a, .p-remove a{
+    background-color: var(--secondary-color);
+    padding: 10px;
+    border: none;
+    border-radius: 7px;
     margin-right: 20px;
 }
 
-.p-rate a:hover, #sp_yourrating:hover, .p-remove a:hover, #sp_watchlist:hover{
-    color: var(--effectColor);
+div.scroller-item:hover, #sp_watchlist:hover, #sp_yourrating:hover, .p-rate a:hover, .p-remove a:hover{
+    background-color: var(--hoverColor);
     cursor: pointer;
+}
+
+section.keywords ul li a:hover{
+    background-color: #c7c7c7;
+    cursor: pointer;
+}
+
+.backdrop:hover{
+    filter: brightness(120%); 
 }

@@ -10,12 +10,13 @@
     --third-color: rgb(11,11,11);
     --darkest-color: rgb(5,5,5);
     --out-color: rgb(16,16,16);
-    --scrollerGray: rgb(55,55,55);
+    --scrollerGray: rgb(66,66,66);
     --maxPrimaryPageWidth: 1400px;
     --maxPrimaryPageWidthMinusPad: 1340px;
     --primaryFontColor: #ffffff;
     --effectColor: rgb(192, 235, 0);
     --hoverColor: rgb(66,66,66);
+    --secondaryHover: rgb(88,88,88);
 }
 
 body 
@@ -174,7 +175,7 @@ div.user, div.user-dropdown{
     background-color: var(--primary-color);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    z-index: 3;
   }
   
   /* Links inside the dropdown */
@@ -198,3 +199,26 @@ div.user, div.user-dropdown{
   .user-dropdown:hover .user-dropdown-btn, .login-btn:hover, .homepage-btn:hover, .btn-switch:hover{
     background-color: var(--hoverColor);
   }
+
+  .movie-flex.title:hover{
+      text-decoration: underline;
+  }
+
+
+div.scroller::-webkit-scrollbar {
+    height: 12px;
+    width: 8px;
+}
+
+div.scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+div.scroller::-webkit-scrollbar-thumb {
+    background-color: var(--scrollerGray);
+    border-radius: 20px;
+}
+
+div.scroller::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondaryHover);
+}

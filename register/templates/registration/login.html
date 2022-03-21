@@ -6,8 +6,7 @@
 <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
 <div class="register-base">
     <div class="register">
-        <h3>Login Here</h3>
-
+        <h3>Login</h3>
         <form method = "post" class="form-group">
             {% csrf_token %}
             {{form|crispy}}

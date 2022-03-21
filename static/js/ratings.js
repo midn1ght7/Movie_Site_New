@@ -26,11 +26,11 @@ async function appendMovie(data){
     </div>
     <div class="item-data">
         <a class="item-title" href="/details/${data.id}" title="${data.title}">
-            <bdi>${styleTitle(data.title, data.release_date)}</bdi>
+            ${styleTitle(data.title, data.release_date)}
         </a>
         <span class="item-rating"><a><i class="fa fa-star"></i> </a>${data.user_rating}</span>
         <a class="item-overview">
-            <bdi>${data.overview}</bdi>
+            ${data.overview}
         </a>
     </div>`;
     document.getElementById(`ratings-content`).appendChild(ratingElement);

@@ -33,10 +33,10 @@ async function showUserRatings(user_ratings){
         }
         const show_moreEl = document.createElement('div');
         show_moreEl.classList.add('scroller-item-more');
-        show_moreEl.setAttribute("onclick", ``);
+        show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings/all';`);
         show_moreEl.innerHTML = `
             <p class="movie-flex">
-                <a class="title" href="/user/${user_id}/ratings" title="See all ${user_ratings.length} ratings">
+                <a class="title" title="See all ${user_ratings.length} ratings">
                     <bdi>See all ${user_ratings.length} ratings</bdi>
                 </a>
             </p>`;
@@ -94,15 +94,15 @@ function htmlScrollers(div_to_append, h3_text, div2_id){
 function showRatingScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
-    movieEl.setAttribute("onclick",`getMovieDetails(${data.id})`);      
+    movieEl.setAttribute("onclick",`location.href='/details/${data.id}';`);      
     movieEl.innerHTML = `
     <div class="image_content">
-        <a href="/details/${data.id}" title="${data.title}">
+        <a title="${data.title}">
             <img loading="lazy" class="poster" src="/${data.poster}">
         </a>
     </div>
     <p class="movie-flex">
-        <a class="title" href="/details/${data.id}" title="${data.title}">
+        <a class="title" title="${data.title}">
             <bdi>${styleTitle(data.title)}</bdi>
         </a>
         <span class="rating"><a><i class="fa fa-star"></i> </a>${data.user_rating}</span>
@@ -113,15 +113,15 @@ function showRatingScroller(data, appendto){
 function showRecommendationScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
-    movieEl.setAttribute("onclick",`getMovieDetails(${data.id})`);      
+    movieEl.setAttribute("onclick",`location.href='/details/${data.id}';`);      
     movieEl.innerHTML = `
     <div class="image_content">
-        <a href="/details/${data.id}" title="${data.title}">
+        <a title="${data.title}">
             <img loading="lazy" class="poster" src="/${data.poster}">
         </a>
     </div>
     <p class="movie-flex">
-        <a class="title" href="/details/${data.id}" title="${data.title}">
+        <a class="title" title="${data.title}">
             <bdi>${styleTitle(data.title)}</bdi>
         </a>
         <span class="rating"><a><i class="fa fa-percent"></i> </a>${parseInt(data.shared_by_percentage)}</span>

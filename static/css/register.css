@@ -17,8 +17,16 @@
     cursor: pointer;
 }
 
+.btn-success:hover{
+    background-color: var(--hoverColor);
+}
+
 .register a{
     font-weight: 600;
+}
+
+.register a:hover{
+    text-decoration: underline;
 }
 
 .user-profile{
@@ -79,6 +87,11 @@ div.scroller-item{
     margin-right:12px;
 }
 
+div.scroller-item:hover, div.scroller-item-more:hover{
+    box-shadow: inset 0 0 0 10em rgba(255, 255, 255, 0.2);
+    cursor:pointer;
+}
+
 div.scroller-item-more{
     margin-top: 10px;
     align-self: center;
@@ -136,20 +149,6 @@ p.movie-flex .rating{
     align-self: center;
 }
 
-div.scroller::-webkit-scrollbar {
-    height: 12px;
-    width: 8px;
-}
-
-div.scroller::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-div.scroller::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--scrollerGray),1);
-    border-radius: 20px;
-}
-
 div.register-base{
     font-size: 1.1em;
     display: flex;
@@ -169,4 +168,12 @@ div.register{
     padding-right: 30px;
     padding-left: 30px;
     align-self: center;
+}
+
+.item-title:hover{
+    text-decoration: underline;
+}
+
+.poster:hover{
+    filter: brightness(120%); 
 }

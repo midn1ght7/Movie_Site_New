@@ -4,7 +4,6 @@ Do poprawy:
 - Zaimportować oceny z innej bazy danych
 
 Do dodania:
-
 - Podświetlenie obiektów klikalnych na hover
 - Search by keyword/title dropdown
 - Timestamp do oceny

@@ -258,15 +258,15 @@ function htmlRecommendations(h3_text, div2_id){
 function showScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
-    movieEl.setAttribute("onclick",`getMovieDetails(${data.id})`);      
+    movieEl.setAttribute("onclick",`location.href='/details/${data.id}';`);
     movieEl.innerHTML = `
     <div class="image_content">
-        <a href="/details/${data.id}" title="${data.title}">
+        <a title="${data.title}">
             <img loading="lazy" class="backdrop" src="/${data.backdrop}">
         </a>
     </div>
     <p class="movie-flex">
-        <a class="title" href="/details/${data.id}" title="${data.title}">
+        <a class="title" title="${data.title}">
             <bdi>${styleTitle(data.title)}</bdi>
         </a>
         <span class="vote_average">${data.vote_average}</span>
