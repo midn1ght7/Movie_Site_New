@@ -24,16 +24,19 @@
                     <div class="rating_div">
                         <div class="rating_item">
                             <a id="rating_title">TMDB Rating</a>
-                            <span class="" id="sp_tmdbrating"></span>
+                            <span id="sp_tmdbrating"></span>
                         </div>
                         {% if user.is_authenticated %}
                         <div class="rating_item">
                             <a id="rating_title">Your Rating</a>
-                            <span class="" id="sp_yourrating"></span>
+                            <span id="sp_yourrating"></span>
+                        </div>
+                        <div class="rating_item">
+                            <a id="rating_title">Watchlist</a>
+                            <span id="sp_watchlist">Add to watchlist</span>
                         </div>
                         {% endif %}
                     </div>
-
                     <div class="details-overview" id="details-overview">
                         <h3>Overview</h3>
                     </div>

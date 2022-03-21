@@ -4,14 +4,28 @@ let user_id = url_split[url_split.length-2];
 let user_data = null;
 let rated_movies = []
 
-async function checkUser(){
+async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
-    //console.log(data);
-    return data;
+    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}`
+    document.getElementById("date-joined").innerHTML=`Member since ${formatDate(data.date_joined)}`
 }
 
-async function userRatings(user_ratings){
+async function userRatings(){
+    const response = await fetch(`/getUserRatings/${user_id}`,{method:'GET'});
+    const user_ratings = await response.json();
+    console.log(user_ratings);
+    if(user_ratings.user_ratings.length > 0){
+        showUserRatings(user_ratings.user_ratings)
+        userRecommendations();
+    }
+    else{
+        htmlScrollers("user-ratings", "You haven't rated any movie yet.", "ratings-scroller")
+        htmlScrollers("recommended-user", "Here you will find recommended movies just for you.", "recommendation-scroller")
+    }
+}
+
+async function showUserRatings(user_ratings){
     htmlScrollers("user-ratings", "Your Ratings", "ratings-scroller")
     if (user_ratings.length > 10) {
         for (i = 0; i < 10; i++) {
@@ -43,23 +57,6 @@ async function userRecommendations(){
         showRecommendationScroller(movie, "recommendation-scroller")
     }
 
-}
-
-async function showUserInfo(){
-    user_data = await checkUser();
-    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${user_data.username}`
-    document.getElementById("date-joined").innerHTML=`Member since ${formatDate(user_data.date_joined)}`
-    const response = await fetch(`/getUserRatings/${user_id}`,{method:'GET'});
-    const user_ratings = await response.json();
-    console.log(user_ratings);
-    if(user_ratings.user_ratings.length > 0){
-        userRatings(user_ratings.user_ratings)
-        userRecommendations();
-    }
-    else{
-        htmlScrollers("user-ratings", "You haven't rated any movie yet.", "ratings-scroller")
-        htmlScrollers("recommended-user", "Here you will find recommended movies just for you.", "recommendation-scroller")
-    }
 }
 
 function styleTitle(title){
@@ -133,6 +130,6 @@ function showRecommendationScroller(data, appendto){
 }
 
 window.onload = function() {
-    
-    showUserInfo();
+    userData();
+    userRatings();
 }

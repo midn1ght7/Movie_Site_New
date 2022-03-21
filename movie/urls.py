@@ -16,4 +16,6 @@ urlpatterns = [
     path('getRating/<int:tmdb_id>', views.getRating, name="getRating"),
     path('addRating/<int:tmdb_id>/<int:rating>', views.addRating, name="addRating"),
     path('removeRating/<int:tmdb_id>', views.removeRating, name="removeRating"),
+    path('checkIfInWatchlist/<int:tmdb_id>', views.checkIfInWatchlist, name="checkIfInWatchlist"),
+    path('addToWatchlist/<int:user_id>/<int:tmdb_id>', views.addToWatchlist, name="addToWatchlist"),
 ] 

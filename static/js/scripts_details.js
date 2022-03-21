@@ -13,6 +13,7 @@ const EXAMPLE = BASE_URL + '/movie/550?'+API_KEY+'&query=';
 var url = window.location.pathname;
 var id = url.substring(9);
 var tmdb_id = null;
+var user_id = null;
 var user_valid = false;
 
 function getColor(vote){
@@ -67,10 +68,13 @@ async function showMovieDetails()
         document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
         if(document.getElementById('sp_yourrating') !== null)
         {
-            let userRatingResponse = await checkUserRating();
-            console.log("userRatingResponse:", userRatingResponse);
-            document.getElementById("sp_yourrating").innerHTML = userRatingResponse;
-            document.getElementById("sp_yourrating").className = `${getColor(userRatingResponse)}`;
+            checkUserRating();
+        }
+        if(document.getElementById('sp_watchlist') !== null){
+            checkUserWatchlist();
+            document.getElementById("sp_watchlist").onclick = function (){
+                addToWatchlist()
+            }
         }
         document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
         document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
@@ -177,22 +181,65 @@ async function collabRecommendation()
     }
 }
 
-
-async function checkUserRating(){
-    const response = await fetch(`/getRating/${tmdb_id}`,{method:'GET'});
+async function checkUserWatchlist(){
+    const response = await fetch(`/checkIfInWatchlist/${tmdb_id}`,{method:'GET'});
     const data = await response.json();
     console.log(data);
     //console.log(data.user_ratings);
     if(data.user_id!="null")
     {
-        user_valid = true;
+        user_id = data.user_id;
+        if (data.in_watchlist == true) {
+            document.getElementById("sp_watchlist").innerHTML = "Remove from watchlist";
+        }
+        else{
+            document.getElementById("sp_watchlist").innerHTML = "Add to watchlist";
+        }
     }
-    if (data.user_rating == "null") {
-        return "Rate"
+}
+
+async function addToWatchlist() {
+    const response = await fetch(`/addToWatchlist/${user_id}/${tmdb_id}`,{method:'POST'});
+    if (response.ok){
+        const data = await response.json();
+        console.log(data);
+    }
+    else {
+        throw new Error("Error fetching: " + item);
+    }
+    checkUserWatchlist()
+}
+
+async function checkUserRating(){
+    const response = await fetch(`/getRating/${tmdb_id}`,{method:'GET'});
+    const data = await response.json();
+    console.log(data);
+    if(data.user_id!="null")
+    {
+        user_valid = true;
+        user_id = data.user_id;
+        if (data.user_rating == "null") {
+            document.getElementById("sp_yourrating").innerHTML = "Rate";
+        }
+        else{
+            document.getElementById("sp_yourrating").innerHTML = data.user_rating;
+            document.getElementById("sp_yourrating").className = `${getColor(data.user_rating)}`;
+        }
+    }
+}
+
+async function postRating(rating){
+    const response = await fetch(`/addRating/${tmdb_id}/${rating}`,{method:'POST'});
+    if (response.ok){
+        document.getElementById('myModal').className = "Modal is-hidden is-visuallyHidden";
+        document.getElementsByTagName('body').className = "";
+        document.getElementById('main').className = "MainContainer";
+        document.getElementById('main').parentElement.className = "";
     }
     else{
-        return data.user_rating;
+        throw new Error("Error fetching");
     }
+    checkUserRating();
 }
 
 function htmlRecommendations(h3_text, div2_id){
@@ -304,24 +351,7 @@ window.addEventListener('load', function() {
         removeRating()
     }
 
-    function postRating(rating){
-        if(user_valid==true){
-            console.log("USER VALID!");
-            fetch(`/addRating/${tmdb_id}/${rating}`).then((response) => {
-                if (response.ok) {
-                    modalClose()
-                    return response.json();
-                }
-                else{
-                    throw new Error("Error fetching: "+item);
-                }
-            })
-            location.reload();
-        }
-        else{
-            console.log("USER INVALID!");
-        }
-    }
+
 
     function removeRating(){
         if(user_valid==true){
@@ -335,7 +365,7 @@ window.addEventListener('load', function() {
                     throw new Error("Error fetching: "+item);
                 }
             })
-            location.reload();
+            checkUserRating();
         }
         else{
             console.log("USER INVALID!");

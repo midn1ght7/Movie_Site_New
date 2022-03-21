@@ -2,7 +2,7 @@ from email.mime import base
 from msilib.schema import Binary, ListView
 from typing import final
 import weakref
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 # Create your views here.
 from django.views.generic import ListView, DetailView
@@ -11,7 +11,8 @@ from .models import Movie, Binary
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
-from rating.models import Rating
+from rating.models import Rating, Watchlist
+from django.views.decorators.csrf import csrf_exempt
 
 from scipy import spatial
 import operator
@@ -146,25 +147,27 @@ def getRating(request, tmdb_id):
     else:
         return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
+@csrf_exempt
 def addRating(request, tmdb_id, rating):
-    print("Add Rating: ",tmdb_id, rating)
-    if request.user.is_authenticated:
-        current_user = request.user
-        try:
-            movie = Movie.objects.get(tmdb_id=tmdb_id)
-            query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
-            print("Query exists")
-            print("Changed rating from "+str(query.rating)+" to "+str(rating))
-            query.rating = rating
-            query.save()
-        except Rating.DoesNotExist:
-            print("Query does not exist")
-            Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating)
+    if request.method == "POST":
+        print("Add Rating: ",tmdb_id, rating)
+        if request.user.is_authenticated:
+            current_user = request.user
+            try:
+                movie = Movie.objects.get(tmdb_id=tmdb_id)
+                query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
+                print("Query exists")
+                print("Changed rating from "+str(query.rating)+" to "+str(rating))
+                query.rating = rating
+                query.save()
+            except Rating.DoesNotExist:
+                print("Query does not exist")
+                Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating)
 
-        return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
-            
-    else:
-        return JsonResponse({'user_id': "null", 'user_rating': "null"})
+            return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
+                
+        else:
+            return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
 def removeRating(request, tmdb_id):
     print("Remove Rating: ",tmdb_id)
@@ -183,6 +186,45 @@ def removeRating(request, tmdb_id):
             
     else:
         return JsonResponse({'user_id': "null", 'user_rating': "null"})
+
+def checkIfInWatchlist(request, tmdb_id):
+    if request.user.is_authenticated:
+        current_user = request.user
+        try:
+            movie = Movie.objects.get(tmdb_id=tmdb_id)
+            if Watchlist.objects.filter(user_id=current_user.id, movie=movie).exists():
+                print("User",current_user.id, "watchlist exists")
+                watchlist = True
+            else:
+                watchlist = False
+
+        except Exception as error:
+            print(error)
+            watchlist = False
+            
+        return JsonResponse({'user_id': current_user.id, 'in_watchlist': watchlist})
+    else:
+        return JsonResponse({'user_id': "null", 'in_watchlist': "null"})
+
+@csrf_exempt
+def addToWatchlist(request, user_id, tmdb_id):
+    if request.method == "POST":
+        movie = get_object_or_404(Movie, tmdb_id=tmdb_id)
+
+        # Check if the item already exists in that user watchlist
+        if Watchlist.objects.filter(user_id=user_id, movie=movie).exists():
+            print("Already in the watchlist - removing...")
+            query = Watchlist.objects.get(user_id=user_id, movie=movie)
+            query.movie.remove(movie)
+
+            return JsonResponse({'user_id': user_id, 'removed_from_watchlist': tmdb_id})
+        else:        
+            # Get the user watchlist or create it if it doesn't exists
+            user_watchlist, created = Watchlist.objects.get_or_create(user_id=user_id)
+            # Add the item through the ManyToManyField (Watchlist => item)
+            user_watchlist.movie.add(movie)
+
+            return JsonResponse({'user_id': user_id, 'added_to_watchlist': tmdb_id})
 
 from django_pivot.pivot import pivot
 from django.db.models import Count

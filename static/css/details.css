@@ -67,7 +67,7 @@
     display: flex;
 }
 
-#sp_tmdbrating, #sp_yourrating{
+#sp_tmdbrating, #sp_yourrating, #sp_watchlist{
     text-align: center;
     background-color: var(--primary-color);
     padding: 1.25rem 1.5rem;
@@ -271,7 +271,7 @@ div.scroller::-webkit-scrollbar-thumb {
     margin-right: 20px;
 }
 
-.p-rate a:hover, #sp_yourrating:hover, .p-remove a:hover{
+.p-rate a:hover, #sp_yourrating:hover, .p-remove a:hover, #sp_watchlist:hover{
     color: var(--effectColor);
     cursor: pointer;
 }

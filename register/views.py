@@ -1,9 +1,9 @@
 from winreg import REG_QWORD
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from .forms import RegisterForm
 from django.http import HttpResponseRedirect, JsonResponse
-from rating.models import Rating
+from rating.models import Rating, Watchlist
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -31,6 +31,12 @@ def userRatings(request, user_id):
 
 def userRatingsAll(request, user_id):
     return render(request, "register/userRatingsAll.html")
+
+def userWatchlist(request, user_id):
+    return render(request, "register/userWatchlist.html")
+
+def userLists(request, user_id):
+    return render(request, "register/userLists.html")
 
 def getUser(request, user_id):
     try:
@@ -157,6 +163,21 @@ def getUserRecommendations(request, user_id):
         movies = list(Movie.objects.filter(tmdb_id__in=mv_id_list))
         return JsonResponse(userRecommendationResponse(movies, mv_id_list, mv_percent_list), safe=False)
 
+    except Exception as error:
+        print(error)
+        return JsonResponse([], safe=False)
+
+def getUserWatchlist(request, user_id):
+    try:
+        user_watchlist, created = Watchlist.objects.get_or_create(user_id=user_id)
+
+        movies = []
+
+        for movie in user_watchlist.movie.all():
+            movie = movie.serialize()
+            movies.append(movie)
+
+        return JsonResponse({'user_id': user_id, 'user_watchlist': movies}, safe=False)
     except Exception as error:
         print(error)
         return JsonResponse([], safe=False)
