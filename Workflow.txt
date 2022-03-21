@@ -4,6 +4,10 @@ Do poprawy:
 - Zaimportować oceny z innej bazy danych
 
 Do dodania:
+
+- Podświetlenie obiektów klikalnych na hover
+- Search by keyword/title dropdown
+- Timestamp do oceny
 - Wymiana ocen z TMDB na oceny z bazy
 
 Zrobione:
@@ -17,6 +21,8 @@ Zrobione:
 - Możliwość usunięcia oceny
 - Dodanie strony szukajki
 - User - możliwość zobaczenia wszystkich swoich ocen
+- User - Watchlist
+- Drop down dla użytkownika + styl topnav
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)

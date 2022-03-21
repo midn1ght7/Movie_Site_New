@@ -14,8 +14,7 @@
         
         <div class="topnav">
             <div class="homepage">
-                <a href="/"><button id="movies-icon"><i class="fa fa-film"></i></button></a>
-                <a id="app-name" href="/">Movie Recommendation App</a>
+                <button class="homepage-btn" onclick="location.href='/'" type="button"><i class="fa fa-film"></i> Movie Recommendation App</button>
             </div>
             <div class="search">
                 <form id="form-search" method="post">
@@ -24,13 +23,20 @@
                     <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
-            <div class="user">
-                {% if user.is_authenticated %}
-                <p>Welcome <a href ="/user/{{ user.id }}/ratings">{{ user }}</a>! <a href="/logout">logout</a></p>
-                {% else %}
-                <p>Login <a href="/login">here</a></p>
-                {% endif %}
+            {% if user.is_authenticated %}
+            <div class="user-dropdown">
+                <button class="user-dropdown-btn"><i class="fa fa-user"></i> {{ user }} <i class="fa fa-caret-down"></i></button>
+                <div class="user-dropdown-content">
+                    <a href="/user/{{ user.id }}/ratings">Your Ratings</a>
+                    <a href="/user/{{ user.id }}/watchlist">Your Watchlist</a>
+                    <a href="/logout">Logout</a>
+                </div>
             </div>
+            {% else %}
+            <div class="user">
+                <button class="login-btn" onclick="location.href='/login'" type="button">Sign In</button>
+            </div>
+            {% endif %}
         </div>
             {% block title %}
 
