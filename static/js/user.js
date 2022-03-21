@@ -7,6 +7,7 @@ let rated_movies = []
 async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
+    user_data = data;
     document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}`
     document.getElementById("date-joined").innerHTML=`Member since ${formatDate(data.date_joined)}`
 }
@@ -20,13 +21,13 @@ async function userRatings(){
         userRecommendations();
     }
     else{
-        htmlScrollers("user-ratings", "You haven't rated any movie yet.", "ratings-scroller")
-        htmlScrollers("recommended-user", "Here you will find recommended movies just for you.", "recommendation-scroller")
+        htmlScrollers("user-ratings", `${user_data.username} haven't rated any movie yet.`, "ratings-scroller")
+        htmlScrollers("recommended-user", `Here you will find recommended movies for ${user_data.username}.`, "recommendation-scroller")
     }
 }
 
 async function showUserRatings(user_ratings){
-    htmlScrollers("user-ratings", "Your Ratings", "ratings-scroller")
+    htmlScrollers("user-ratings", ` ${user_data.username}'s ratings`, "ratings-scroller")
     if (user_ratings.length > 10) {
         for (i = 0; i < 10; i++) {
             showRatingScroller(user_ratings[i], "ratings-scroller");
@@ -50,7 +51,7 @@ async function showUserRatings(user_ratings){
 }
 
 async function userRecommendations(){
-    htmlScrollers("recommended-user", "Recommended for You based on similar users", "recommendation-scroller")
+    htmlScrollers("recommended-user", `Recommended for ${user_data.username} based on similar users:`, "recommendation-scroller")
     const response = await fetch(`/getUserRecommendations/${user_id}`,{method:'GET'});
     const responseJSON = await response.json();
     for (const movie of responseJSON){
