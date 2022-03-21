@@ -1,0 +1,25 @@
+{% extends "../movie/base.html" %}
+{% load static %}
+{% block content %}
+<div class="search">
+    <script src="{% static 'js/search.js' %}"></script>
+    <link href="{% static 'css/search.css' %}" rel="stylesheet" type="text/css" />
+    <div class="search-content" id="search-content">
+        <!-- <div class="search-item">
+            <div class="item-poster">
+                <a href="/details/4935" title="Movie Title">
+                    <img loading="lazy" class="poster" src="../../media/posters/65_p.jpg">
+                </a>
+            </div>
+            <div class="item-data">
+                <a class="item-title" href="/details/4935" title="Movie Title">
+                    <bdi>Movie Title (2010)</bdi>
+                </a>
+                <a class="item-overview">
+                    <bdi>Chihiro jest kapryśną, upartą dziesięcioletnią dziewczynką, która uważa, że cały świat powinien spełniać jej zachcianki. Gdy rodzice oznajmiają jej, że trzeba będzie wyprowadzić się z domu, Chihiro jest z tego powodu zła i nie myśli tego ukrywać. Zabrnąwszy w</bdi>
+                </a>
+            </div>
+        </div> -->
+    </div>
+</div>
+{% endblock %}

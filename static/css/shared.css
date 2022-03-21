@@ -200,9 +200,17 @@ div.user, div.user-dropdown{
     background-color: var(--hoverColor);
   }
 
-  .movie-flex.title:hover{
+  /* .movie-flex.title:hover{
       text-decoration: underline;
-  }
+  } */
+
+div.item-data .item-title:hover{
+    text-decoration: underline;
+}
+
+div.item-poster a img.poster:hover{
+    filter: brightness(120%); 
+}
 
 
 div.scroller::-webkit-scrollbar {

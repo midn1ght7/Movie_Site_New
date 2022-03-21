@@ -127,7 +127,7 @@ function moreMovieDetails(data){
             //console.log(keyword.name);
             
             let li = document.createElement('li');
-            li.innerHTML= `<a class="rounded">${keyword.name}</a>`
+            li.innerHTML= `<a class="rounded" href="/keyword/${keyword.name}">${keyword.name}</a>`
             ul.appendChild(li);
         })
         h3.textContent = "Keywords"

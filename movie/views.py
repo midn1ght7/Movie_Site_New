@@ -48,6 +48,14 @@ def getSearch(request, term):
     movies = list(Movie.objects.filter(title__icontains=term).order_by('-popularity'))
     return JsonResponse([movie.serialize() for movie in movies], safe=False)
 
+def keyword(request, keyword_name):
+    return render(request, 'movie/movie_keyword.html')
+
+def getKeyword(request, keyword_name):
+    keyword_name = '"name":'+'"'+keyword_name+'"'
+    movies = list(Movie.objects.filter(keywords__icontains=keyword_name).order_by('-popularity'))
+    return JsonResponse([movie.serialize() for movie in movies], safe=False)
+    
 def similar_response(movies,id_list,score_list):
     result = []
     for movie in movies:
