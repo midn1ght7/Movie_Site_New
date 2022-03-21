@@ -88,23 +88,41 @@ div.homepage{
     cursor: pointer;
 }
 
-div.user, div.user-dropdown{
-    margin-right: 12px;
+div.topnav .search{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 #search-input{
     height: 35px;
     width: 500px;
     border: none;
-    font-size: 1.1em;
-    border-radius: 7px;
+    font-size: 16px;
     padding: 6px;
-    margin-top: 8px;
-    margin-bottom: 8px;
 }
 
+#search-input:focus{
+    outline: none;
+}
 
+#search-submit{
+    padding: 8px 14px;
+    font-size: 18px;
+    background: var(--primary-color);
+    color: var(--primaryFontColor);
+    border: none;
+    border-radius: 0px 7px 7px 0px;
+    cursor: pointer;
+}
 
+#search-submit:hover{
+    background: var(--hoverColor);
+}
+
+div.user, div.user-dropdown{
+    margin-right: 12px;
+}
 
 .user{
     margin-right: 20px;
@@ -116,25 +134,6 @@ div.user, div.user-dropdown{
     text-decoration: none;
     color: var(--primaryFontColor);
 }
-
-.search button
-{
-    padding: 8px 10px;
-    margin-left: 6px;
-    margin-bottom: 8px;
-    margin-right: 16px;
-    background: #ddd;
-    font-size: 17px;
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-}
-
-.search button:hover 
-{
-    background: #ccc;
-}
-
 .btn-switch{
     padding: 15px 30px;
     margin-bottom: 8px;

@@ -8,19 +8,26 @@
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="{% static 'css/shared.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'css/select.css' %}" rel="stylesheet" type="text/css" />
         <script src="{% static 'js/search_button.js' %}"></script>
     </head>
     <body>
-        
         <div class="topnav">
             <div class="homepage">
                 <button class="homepage-btn" onclick="location.href='/'" type="button"><i class="fa fa-film"></i> Movie Recommendation App</button>
             </div>
+
             <div class="search">
+                <div class="search-dropdown">
+                    <button class="search-dropdown-btn" id="search-dropdown-btn"></button>
+                    <div id="search-dropdown" class="search-dropdown-content">
+                      <a id="drop-title">Title</a>
+                      <a id="drop-keyword">Keyword</a>
+                    </div>
+                </div>
                 <form id="form-search" method="post">
                     {% csrf_token %}
-                    <input id="search-input" type="text" placeholder="Search...">
-                    <button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
+                    <input id="search-input" type="text" placeholder="Search..."><button id="search-submit" type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
             {% if user.is_authenticated %}

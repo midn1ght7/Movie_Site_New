@@ -1,0 +1,52 @@
+/* Dropdown Button */
+.search-dropdown-btn {
+    background: var(--primary-color);
+    color: var(--primaryFontColor);
+    min-width: 110px;
+    padding: 9px 10px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    border-radius: 7px 0px 0px 7px;
+    cursor: pointer;
+}
+  
+/* Dropdown button on hover & focus */
+.search-dropdown-btn:hover, .search-dropdown-btn:focus {
+    background-color: var(--hoverColor);
+}
+  
+/* The container <div> - needed to position the dropdown content */
+.search-dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+/* Dropdown Content (Hidden by Default) */
+.search-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--primary-color);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 3;
+}
+  
+/* Links inside the dropdown */
+.search-dropdown-content a {
+    color: var(--primaryFontColor);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+  
+/* Change color of dropdown links on hover */
+.search-dropdown-content a:hover {
+    background-color: var(--hoverColor);
+    cursor: pointer;
+}
+  
+/* Show the dropdown menu (use JS to add this class to the .search-dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
