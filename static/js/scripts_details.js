@@ -170,6 +170,10 @@ async function collabRecommendation()
     }
     else{
         console.log("/collabRecommendation returned an empty array");
+        let div = document.createElement("div");
+        div.className = "recommendations-empty"
+        div.innerHTML = `<h3>There is not enough ratings for this movie in the database to create Collaborative Recommendations.</h3>`
+        document.getElementById('recommendations').appendChild(div);
     }
 }
 

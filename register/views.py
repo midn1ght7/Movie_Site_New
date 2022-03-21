@@ -26,11 +26,11 @@ def register(response):
 
     return render(response, "register/register.html", {"form":form})
 
-def user(request, user_id):
-    return render(request, "register/user.html")
-
 def userRatings(request, user_id):
     return render(request, "register/userRatings.html")
+
+def userRatingsAll(request, user_id):
+    return render(request, "register/userRatingsAll.html")
 
 def getUser(request, user_id):
     try:
@@ -43,20 +43,10 @@ def getUser(request, user_id):
 
 def getUserRatings(request, user_id):
     try:
-        user_ratings = list(Rating.objects.filter(user_id = user_id).order_by('tmdb_id'))
-        user_ratings = [rating.serialize() for rating in user_ratings]
-        return JsonResponse({'user_id': user_id, 'user_ratings': user_ratings})
-
-    except Exception as error:
-        print(error)
-        return JsonResponse({'user_id': "null"})
-
-def getUserRatings2(request, user_id):
-    try:
         result = []
         user_ratings = list(Rating.objects.filter(user_id = user_id).order_by('tmdb_id'))
         for rating in user_ratings:
-            movie = Movie.objects.get(tmdb_id=rating.tmdb_id_id)
+            movie = rating.tmdb_id
             movie = movie.serialize()
             movie["user_id"] = rating.user_id
             movie["user_rating"] = rating.rating
@@ -80,23 +70,17 @@ def userRecommendationResponse(movies,id_list,percent_list):
 
 def getUserRecommendations(request, user_id):
     try:
-        user_ratings = Rating.objects.filter(user_id = user_id).order_by('tmdb_id')
-        #filter users who have watched at least half of the movies the user in question watched
-        ur_count = user_ratings.count()
-        if(ur_count < 20):
-            shared = ur_count
-        else:
-            shared = int((ur_count)/2)
-        print("Minimum shared movie ratings:", shared)
-
         #make a list of rated movies by the user
-
-        filtered_tmdb_ids = list(user_ratings.values_list('tmdb_id', flat=True).distinct().order_by('tmdb_id'))
+        user_movies = list(Rating.objects.filter(user_id = user_id).values_list('tmdb_id', flat=True).distinct().order_by('tmdb_id'))
+        #take only those movies that have been rated at least 20 times
+        filtered_tmdb_ids = list(Rating.objects.values_list('tmdb_id', flat=True).annotate(amount=Count('tmdb_id')).filter(tmdb_id__in = user_movies, amount__gte = 20).order_by('tmdb_id'))
         print("made filtered_tmdb_ids of size:",len(filtered_tmdb_ids))
+        #create a variable for filtering user_ids
+        shared = int((len(filtered_tmdb_ids))/2)
 
+        #filter users who have watched at least half of the movies the user in question watched
         filtered_users_ids = list(Rating.objects.values_list('user_id', flat=True).annotate(amount=Count('user_id')).filter(tmdb_id__in = filtered_tmdb_ids, amount__gte = shared).order_by('user_id'))
-
-        print("made filtered users of size:",len(filtered_users_ids))
+        print("made filtered_users_ids of size:",len(filtered_users_ids))
 
         final_queryset = Rating.objects.filter(user_id__in = filtered_users_ids, tmdb_id__in = filtered_tmdb_ids)
 

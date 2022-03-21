@@ -1,13 +1,13 @@
 let url = window.location.href
 var url_split = url.split('/')
-let user_id = url_split[url_split.length-1];
+let user_id = url_split[url_split.length-2];
 let user_data = null;
 let rated_movies = []
 
 async function checkUser(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
     return data;
 }
 
@@ -15,10 +15,7 @@ async function userRatings(user_ratings){
     htmlScrollers("user-ratings", "Your Ratings", "ratings-scroller")
     if (user_ratings.length > 10) {
         for (i = 0; i < 10; i++) {
-            const response = await fetch(`/get_movie_tmdb/${user_ratings[i].tmdb_id}`, { method: 'GET' });
-            const movie_det = await response.json();
-            movie_det[0]["user_rating"] = user_ratings[i].rating;
-            showRatingScroller(movie_det[0], "ratings-scroller");
+            showRatingScroller(user_ratings[i], "ratings-scroller");
         }
         const show_moreEl = document.createElement('div');
         show_moreEl.classList.add('scroller-item-more');
@@ -33,10 +30,7 @@ async function userRatings(user_ratings){
     }
     else {
         for (const movie of user_ratings) {
-            const response = await fetch(`/get_movie_tmdb/${movie.tmdb_id}`, { method: 'GET' });
-            const movie_det = await response.json();
-            movie_det[0]["user_rating"] = movie.rating;
-            showRatingScroller(movie_det[0], "ratings-scroller");
+            showRatingScroller(movie, "ratings-scroller");
         }
     }
 }

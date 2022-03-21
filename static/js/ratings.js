@@ -1,6 +1,6 @@
 let url = window.location.href
 var url_split = url.split('/')
-let user_id = url_split[url_split.length-2];
+let user_id = url_split[url_split.length-3];
 let user_data = null;
 
 function styleTitle(title, release_date){
@@ -32,7 +32,7 @@ async function appendMovie(data){
 }
 
 async function showRatings(){
-    const response = await fetch(`/getUserRatings2/${user_id}`,{method:'GET'});
+    const response = await fetch(`/getUserRatings/${user_id}`,{method:'GET'});
     const user_ratings = await response.json();
     console.log(user_ratings);
     if(user_ratings.user_ratings.length > 0){
@@ -40,7 +40,6 @@ async function showRatings(){
         {
             appendMovie(movie);
         }
-        userRatings(user_ratings.user_ratings)
     }
 }
 

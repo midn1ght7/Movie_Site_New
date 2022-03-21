@@ -141,8 +141,9 @@ section.keywords ul li a {
 
 .recommendations-scroller{
     max-width: var(--maxPrimaryPageWidth);
-
 }
+
+
 
 div.scroller{
     overflow-y: hidden;
