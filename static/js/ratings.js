@@ -1,6 +1,6 @@
 let url = window.location.href
 var url_split = url.split('/')
-let user_id = url_split[url_split.length-3];
+let user_id = url_split[url_split.length-2];
 let user_data = null;
 
 async function userData(){
@@ -18,9 +18,7 @@ function styleTitle(title, release_date){
 function formatDate(date){
     console.log(date);
     year = date.substring(0, 4)
-    //console.log(year);
     month = date.substring(5,7)
-    //console.log(month)
     day = date.substring(8,10)
     return `${day}.${month}.${year}`
 }

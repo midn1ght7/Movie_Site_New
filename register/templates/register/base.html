@@ -33,6 +33,7 @@
             <div class="user-dropdown">
                 <button class="user-dropdown-btn"><i class="fa fa-user"></i> {{ user }} <i class="fa fa-caret-down"></i></button>
                 <div class="user-dropdown-content">
+                    <a href="/user/{{ user.id }}">Your Activity</a>
                     <a href="/user/{{ user.id }}/ratings">Your Ratings</a>
                     <a href="/user/{{ user.id }}/watchlist">Your Watchlist</a>
                     <a href="/logout">Logout</a>

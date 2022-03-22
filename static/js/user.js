@@ -1,8 +1,7 @@
 let url = window.location.href
 var url_split = url.split('/')
-let user_id = url_split[url_split.length-2];
+let user_id = url_split[url_split.length-1];
 let user_data = null;
-let rated_movies = []
 
 async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
@@ -26,28 +25,64 @@ async function userRatings(){
     }
 }
 
+async function userWatchlist(){
+    const response = await fetch(`/getUserWatchlist/${user_id}`,{method:'GET'});
+    const user_data = await response.json();
+    console.log(user_data);
+    if(user_data.user_watchlist.length > 0){
+        showUserWatchlist(user_data.user_watchlist)
+    }
+    else{
+        htmlScrollers("user-watchlist", `${user_data.username} doesn't have any movie in watchlist.`, "watchlist-scroller")
+    }
+}
+
 async function showUserRatings(user_ratings){
-    htmlScrollers("user-ratings", ` ${user_data.username}'s ratings`, "ratings-scroller")
+    htmlScrollers("user-ratings", ` ${user_data.username}'s most recently rated:`, "ratings-scroller")
     if (user_ratings.length > 10) {
         for (i = 0; i < 10; i++) {
             showRatingScroller(user_ratings[i], "ratings-scroller");
         }
-        const show_moreEl = document.createElement('div');
-        show_moreEl.classList.add('scroller-item-more');
-        show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings/all';`);
-        show_moreEl.innerHTML = `
-            <p class="movie-flex">
-                <a class="title" title="See all ${user_ratings.length} ratings">
-                    <bdi>See all ${user_ratings.length} ratings</bdi>
-                </a>
-            </p>`;
-        document.getElementById("user-ratings").appendChild(show_moreEl);
     }
     else {
         for (const movie of user_ratings) {
             showRatingScroller(movie, "ratings-scroller");
         }
     }
+    const show_moreEl = document.createElement('div');
+    show_moreEl.classList.add('scroller-item-more');
+    show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings/all';`);
+    show_moreEl.innerHTML = `
+        <p class="movie-flex">
+            <a class="title" title="See all ${user_ratings.length} ratings">
+                <bdi>See all ${user_ratings.length} ratings</bdi>
+            </a>
+        </p>`;
+    document.getElementById("user-ratings").appendChild(show_moreEl);
+}
+
+async function showUserWatchlist(user_watchlist){
+    htmlScrollers("user-watchlist", ` ${user_data.username}'s most recent movies in watchlist:`, "watchlist-scroller")
+    if (user_watchlist.length > 10) {
+        for (i = 0; i < 10; i++) {
+            showWatchlistScroller(user_watchlist[i], "watchlist-scroller");
+        }
+    }
+    else {
+        for (const movie of user_watchlist) {
+            showWatchlistScroller(movie, "watchlist-scroller");
+        }
+    }
+    const show_moreEl = document.createElement('div');
+    show_moreEl.classList.add('scroller-item-more');
+    show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/watchlist';`);
+    show_moreEl.innerHTML = `
+        <p class="movie-flex">
+            <a class="title" title="See all ${user_watchlist.length} ratings">
+                <bdi>See whole watchlist (${user_watchlist.length})</bdi>
+            </a>
+        </p>`;
+    document.getElementById("user-watchlist").appendChild(show_moreEl);
 }
 
 async function userRecommendations(){
@@ -57,7 +92,6 @@ async function userRecommendations(){
     for (const movie of responseJSON){
         showRecommendationScroller(movie, "recommendation-scroller")
     }
-
 }
 
 function styleTitle(title){
@@ -70,14 +104,12 @@ function styleTitle(title){
 }
 
 function formatDate(date){
-    //console.log(date);
+    console.log(date);
     year = date.substring(0, 4)
-    //console.log(year);
     month = date.substring(5,7)
-    //console.log(month)
-    return `${month}.${year}`
+    day = date.substring(8,10)
+    return `${day}.${month}.${year}`
 }
-
 function htmlScrollers(div_to_append, h3_text, div2_id){
     let h3 = document.createElement('h3'); 
     h3.textContent = h3_text;
@@ -111,6 +143,24 @@ function showRatingScroller(data, appendto){
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
 
+function showWatchlistScroller(data, appendto){
+    const movieEl = document.createElement('div');
+    movieEl.classList.add('scroller-item');
+    movieEl.setAttribute("onclick",`location.href='/details/${data.id}';`);      
+    movieEl.innerHTML = `
+    <div class="image_content">
+        <a title="${data.title}">
+            <img loading="lazy" class="poster" src="/${data.poster}">
+        </a>
+    </div>
+    <p class="movie-flex">
+        <a class="title" title="${data.title}">
+            ${styleTitle(data.title)}
+        </a>
+    </p>`;
+    document.getElementById(`${appendto}`).appendChild(movieEl);
+}
+
 function showRecommendationScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
@@ -130,7 +180,9 @@ function showRecommendationScroller(data, appendto){
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
 
-window.onload = function() {
-    userData();
+
+window.addEventListener('load', async function() {
+    await userData();
+    userWatchlist();
     userRatings();
-}
+});

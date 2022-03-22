@@ -1,0 +1,25 @@
+{% extends "../register/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
+<div class="user-profile">
+    <script src="{% static 'js/user.js' %}"></script>
+    <div class="user-content">
+        <div class="user-info">
+            <h3 class="username" id="username"><!--Username--></h3> 
+            <p class="date-joined" id="date-joined"><!--Member since June 2017--></p>
+        </div>
+        <div class="user-scroller-top" id="user-ratings">
+        </div>
+        <div class="user-scroller-top" id="user-watchlist">
+        </div>
+        <div class="user-scroller-top" id="recommended-user">
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

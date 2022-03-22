@@ -26,11 +26,11 @@ def register(response):
 
     return render(response, "register/register.html", {"form":form})
 
+def user(request, user_id):
+    return render(request, "register/user.html")
+
 def userRatings(request, user_id):
     return render(request, "register/userRatings.html")
-
-def userRatingsAll(request, user_id):
-    return render(request, "register/userRatingsAll.html")
 
 def userWatchlist(request, user_id):
     return render(request, "register/userWatchlist.html")

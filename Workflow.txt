@@ -1,10 +1,11 @@
 Do poprawy:
 - Dodanie strony panelu użytkownika (dodanie własnych list i rekomendacji do nich)
 - Rekomendacja
-- Zaimportować oceny z innej bazy danych
+- Większa baza danych filmów
+- Więcej ocen
 
 Do dodania:
-- Timestamp do oceny
+- Deploy na Pythonanywhere
 
 Zrobione:
 - Dodanie podobnych filmów
@@ -23,6 +24,7 @@ Zrobione:
 - Search by keyword
 - Search Dropdown (Title/Keyword)
 - Wymiana ocen z TMDB na oceny z bazy
+- Timestamp do oceny
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)
