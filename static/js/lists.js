@@ -7,6 +7,18 @@ async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}'s lists:`
+    if(user_id == document.getElementById('user_id').innerHTML){
+        let div = document.createElement('div');
+        div.innerHTML = `
+        <div class="scroller-item-more" onclick="location.href='/list/create'">
+            <p class="movie-flex">
+                <a class="title" title="Create a new list">
+                    Create a new list
+                </a>    
+            </p>
+        </div>`
+        document.getElementById('lists-user').appendChild(div);
+    }
 }
 
 function styleTitle(title){

@@ -25,24 +25,55 @@ function styleTitle(title, release_date){
 }
 
 async function appendMovie(data){
-    const ratingElement = document.createElement('div');
-    ratingElement.classList.add('watchlist-item');
-    ratingElement.setAttribute("onclick",`getMovieDetails(${data.id})`);      
-    ratingElement.innerHTML = `
-    <div class="item-poster">
-        <a href="/details/${data.id}" title="${data.title}">
-            <img loading="lazy" class="poster" src="/${data.poster}">
-        </a>
-    </div>
-    <div class="item-data">
-        <a class="item-title" href="/details/${data.id}" title="${data.title}">
-            <bdi>${styleTitle(data.title, data.release_date)}</bdi>
-        </a>
-        <a class="item-overview">
-            <bdi>${data.overview}</bdi>
-        </a>
-    </div>`;
-    document.getElementById(`watchlist-content`).appendChild(ratingElement);
+    const Element = document.createElement('div');
+    Element.id = `list-item-${data.tmdb_id}`
+    Element.classList.add('list-item');
+    if(user_id == document.getElementById('user_id').innerHTML){
+        Element.innerHTML = `
+        <div class="item-poster">
+            <a href="/details/${data.id}" title="${data.title}">
+                <img loading="lazy" class="poster" src="/${data.poster}">
+            </a>
+        </div>
+        <div class="item-data">
+            <a class="item-title" href="/details/${data.id}" title="${data.title}">
+                ${styleTitle(data.title, data.release_date)}
+            </a>
+            <a class="item-remove" id="${data.tmdb_id}" title="Remove from list">
+            Remove from list
+            </a>
+            <a class="item-overview">
+                ${data.overview}
+            </a>
+        </div>`;
+    }
+    else{
+        Element.innerHTML = `
+        <div class="item-poster">
+            <a href="/details/${data.id}" title="${data.title}">
+                <img loading="lazy" class="poster" src="/${data.poster}">
+            </a>
+        </div>
+        <div class="item-data">
+            <a class="item-title" href="/details/${data.id}" title="${data.title}">
+                ${styleTitle(data.title, data.release_date)}
+            </a>
+            <a class="item-overview">
+                ${data.overview}
+            </a>
+        </div>`;
+    }     
+    document.getElementById(`watchlist-content`).appendChild(Element);
+    if(user_id == document.getElementById('user_id').innerHTML){
+        document.getElementById(`${data.tmdb_id}`).onclick = async function(){
+            //alert(this.id)
+            let this_movie_tmdb_id = this.id;
+            const response = await fetch(`/addToList/${user_id}/${this_movie_tmdb_id}/${list_id}`,{method:'POST'});
+            const data = await response.json();
+            console.log("addToList:",data);
+            document.getElementById(`list-item-${this_movie_tmdb_id}`).remove();
+        }
+    }
 }
 
 async function showList(){

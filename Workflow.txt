@@ -4,7 +4,7 @@ Do poprawy:
 - Więcej ocen
 
 Do zrobienia:
-- See whole list
+- Show Lists in Your Activity
 - List Recommendations
 - Timestamp do watchlisty, listy
 - Deploy na Pythonanywhere
@@ -28,6 +28,8 @@ Zrobione:
 - Wymiana ocen z TMDB na oceny z bazy
 - Timestamp do oceny
 - Add to list, remove from list
+- See whole list
+- Watchlist and List control from Profile
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)

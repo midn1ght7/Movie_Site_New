@@ -19,7 +19,7 @@ div.watchlist-content{
     align-self: center;
 }
 
-div.watchlist-item {
+div.list-item {
     display: flex;
     flex-direction: row;
     width:100%;
@@ -55,4 +55,13 @@ div.item-data .item-title{
 
 div.item-data .item-overview{
     margin-top: 20px;
+}
+
+.item-remove{
+    font-size: 14px;
+}
+
+.item-remove:hover{
+    text-decoration: underline;
+    cursor: pointer;
 }

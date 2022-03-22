@@ -7,16 +7,16 @@ async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     user_data = data;
-    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}`
-    document.getElementById("date-joined").innerHTML=`Member since ${formatDate(data.date_joined)}`
+    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}`;
+    document.getElementById("date-joined").innerHTML=`Member since ${formatDate(data.date_joined)}`;
 }
 
 async function userRatings(){
     const response = await fetch(`/getUserRatings/${user_id}`,{method:'GET'});
-    const user_ratings = await response.json();
-    console.log(user_ratings);
-    if(user_ratings.user_ratings.length > 0){
-        showUserRatings(user_ratings.user_ratings)
+    const data = await response.json();
+    console.log(data);
+    if(data.user_ratings.length > 0){
+        showUserRatings(data.user_ratings)
         userRecommendations();
     }
     else{
@@ -27,10 +27,10 @@ async function userRatings(){
 
 async function userWatchlist(){
     const response = await fetch(`/getUserWatchlist/${user_id}`,{method:'GET'});
-    const user_data = await response.json();
-    console.log(user_data);
-    if(user_data.user_watchlist.length > 0){
-        showUserWatchlist(user_data.user_watchlist)
+    const data = await response.json();
+    console.log(data);
+    if(data.user_watchlist.length > 0){
+        showUserWatchlist(data.user_watchlist)
     }
     else{
         htmlScrollers("user-watchlist", `${user_data.username} doesn't have any movie in watchlist.`, "watchlist-scroller")
