@@ -15,7 +15,7 @@ async function listData(){
     const response = await fetch(`/getList/${list_id}`,{method:'GET'});
     const data = await response.json();
     list_data = data;
-    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${user_data.username}'s list: ${list_data.name}`
+    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${user_data.user_id}'><i class="fa fa-user"></i> ${user_data.username}</a>'s list: ${list_data.name}`
 }
 
 function styleTitle(title, release_date){

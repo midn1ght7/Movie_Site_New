@@ -50,3 +50,7 @@ div.register{
     align-self: center;
 }
 
+.profile-href:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

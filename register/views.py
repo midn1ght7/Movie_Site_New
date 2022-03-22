@@ -11,6 +11,7 @@ from django_pivot.pivot import pivot
 from movie.models import Movie
 from scipy import spatial
 import operator
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -48,6 +49,26 @@ def createListPage(request):
     else:
         form = ListForm()
         return render(request, "register/createList.html", {"form":form})
+
+def editListPage(request, list_id):
+    if request.method == "POST":
+        form = ListForm(request.POST)
+        if form.is_valid():
+            edit_list = List.objects.get(id = list_id, user_id = request.user.id)
+            edit_list.name = form.cleaned_data['name']
+            edit_list.save()
+            return redirect("/user/"+str(request.user.id)+"/lists")
+    else:
+        form = ListForm()
+        return render(request, "register/editList.html", {"form":form})
+
+@csrf_exempt
+def deleteList(request, list_id):
+    if request.method == "POST":
+        list_object = get_object_or_404(List, id=list_id)
+        list_object.delete()
+        return JsonResponse({'user_id': request.user.id, 'removed_list': list_id})
+
 
 def userLists(request, user_id):
     return render(request, "register/userLists.html")

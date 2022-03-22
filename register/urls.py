@@ -13,6 +13,8 @@ urlpatterns = [
     path('getUserRecommendations/<int:user_id>', views.getUserRecommendations, name="getUserRecommendations"),
     path('getUserWatchlist/<int:user_id>', views.getUserWatchlist, name="getUserWatchlist"),
     path('list/create', views.createListPage, name="createList_page"),
+    path('list/edit/<int:list_id>', views.editListPage, name="editList_page"),
+    path('list/delete/<int:list_id>', views.deleteList, name="deleteList"),
     path('getUserLists/<int:user_id>', views.getUserLists, name="getUserLists"),
     path('getList/<int:list_id>', views.getList, name="getList"),
 ] 

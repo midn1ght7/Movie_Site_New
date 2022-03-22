@@ -7,7 +7,7 @@ async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     user_data = data;
-    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}'s watchlist:`
+    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>'s watchlist:`
 }
 
 function styleTitle(title, release_date){

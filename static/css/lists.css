@@ -18,3 +18,12 @@
     padding-left: 30px;
     align-self: center;
 }
+
+.list-handlers {
+    margin-bottom: 15px;
+}
+
+.list-handlers a:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

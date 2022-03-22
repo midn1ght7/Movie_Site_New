@@ -6,7 +6,9 @@ let user_data = null;
 async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
-    document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}'s lists:`
+    console.log(data);
+    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>'s lists:`
+    document.getElementById("username").onclick = `location.href = '/user/${data.id}';`
     if(user_id == document.getElementById('user_id').innerHTML){
         let div = document.createElement('div');
         div.innerHTML = `
@@ -30,12 +32,13 @@ function styleTitle(title){
     return title;
 }
 
-function htmlScrollers(div_to_append, h3_text, div2_id, div0_id){
+async function htmlScrollers(div_to_append, h3_text, div2_id, div0_id, list_id){
     let div0 = document.createElement('div');
     div0.className = "user-scroller-top"
     div0.id = div0_id
     let h3 = document.createElement('h3'); 
     h3.textContent = h3_text;
+
     let div1 = document.createElement('div');
     div1.className = "user-scroller";
     let div2 = document.createElement('div');
@@ -43,8 +46,34 @@ function htmlScrollers(div_to_append, h3_text, div2_id, div0_id){
     div2.id = div2_id;
     div1.appendChild(div2);
     div0.appendChild(h3);
+    if(user_id == document.getElementById('user_id').innerHTML){
+        const handler_div = await htmlHandlers(list_id);
+        div0.appendChild(handler_div);
+    }
     div0.appendChild(div1);
     document.getElementById(`${div_to_append}`).appendChild(div0);
+}
+
+async function htmlHandlers(list_id){
+    let div = document.createElement('div');
+    div.className = 'list-handlers'
+    let a_edit = document.createElement('a');
+    a_edit.setAttribute("onclick", `location.href='/list/edit/${list_id}';`);
+    a_edit.innerHTML = `Edit this list`
+    let a_delete = document.createElement('a');
+    a_delete.id = `${list_id}`
+    a_delete.onclick = async function(){
+        const response = await fetch(`/list/delete/${this.id}`,{method:'POST'});
+        const data = await response.json();
+        console.log(data);
+        document.getElementById(`user-scroller-top-${this.id}`).remove();
+    }
+    a_delete.innerHTML = `Delete this list`
+    div.appendChild(a_edit);
+    div.innerHTML += ' | ';
+    div.appendChild(a_delete);
+    //document.getElementById(`user-scroller-top-${list_id}`).appendChild(div);
+    return div;
 }
 
 async function userLists(){
@@ -54,7 +83,7 @@ async function userLists(){
     if(user_lists.user_lists.length > 0){
         for (const list of user_lists.user_lists)
         {
-            htmlScrollers("lists-content", `${list.name}`, `${list.name}-scroller`, `user-scroller-top-${list.id}`)
+            await htmlScrollers("lists-content", `${list.name}`, `${list.name}-scroller`, `user-scroller-top-${list.id}`, `${list.id}`)
             if(list.movies.length > 0){
                 if (list.movies.length > 10) {
                     for (i = 0; i < 10; i++) {
