@@ -1,9 +1,9 @@
 from winreg import REG_QWORD
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
-from .forms import RegisterForm
+from .forms import RegisterForm, ListForm
 from django.http import HttpResponseRedirect, JsonResponse
-from rating.models import Rating, Watchlist
+from rating.models import Rating, Watchlist, List
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -35,8 +35,25 @@ def userRatings(request, user_id):
 def userWatchlist(request, user_id):
     return render(request, "register/userWatchlist.html")
 
+def createListPage(request):
+    if request.method == "POST":
+        form = ListForm(request.POST)
+        if form.is_valid():
+            new_list = List.objects.create(
+                name = form.cleaned_data['name'],
+                user_id = request.user.id,
+            )
+            new_list.save()
+            return redirect("/user/"+str(request.user.id)+"/lists")
+    else:
+        form = ListForm()
+        return render(request, "register/createList.html", {"form":form})
+
 def userLists(request, user_id):
     return render(request, "register/userLists.html")
+
+def userListSpecific(request, user_id, list_id):
+    return render(request, "register/userListSpecific.html")
 
 def getUser(request, user_id):
     try:
@@ -46,6 +63,19 @@ def getUser(request, user_id):
         print(error)
 
         return JsonResponse({'user_id': "null", 'username': "null", 'date_joined': "null"})
+
+def getList(request, list_id):
+    try:
+        list_object = List.objects.get(id = list_id)
+        movies = []
+        for movie in list_object.movie.all():
+            movie = movie.serialize()
+            movies.append(movie)
+
+        return JsonResponse({'id': list_object.id, 'name': list_object.name, 'movies': movies}, safe=False)
+    except Exception as error:
+        print(error)
+        return JsonResponse([], safe=False)
 
 def getUserRatings(request, user_id):
     try:
@@ -179,6 +209,25 @@ def getUserWatchlist(request, user_id):
             movies.append(movie)
 
         return JsonResponse({'user_id': user_id, 'user_watchlist': movies}, safe=False)
+    except Exception as error:
+        print(error)
+        return JsonResponse([], safe=False)
+
+def getUserLists(request, user_id):
+    try:
+        user_lists = list(List.objects.filter(user_id=user_id))
+        lists = []
+        for list_item in user_lists:
+            list_json = {'id': list_item.id, 'name': list_item.name}
+            
+            movies = []
+            for movie in list_item.movie.all():
+                movie = movie.serialize()
+                movies.append(movie)
+            
+            list_json['movies'] = movies
+            lists.append(list_json)
+        return JsonResponse({'user_id': user_id, 'user_lists': lists}, safe=False)
     except Exception as error:
         print(error)
         return JsonResponse([], safe=False)

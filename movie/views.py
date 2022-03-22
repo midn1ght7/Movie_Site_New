@@ -11,7 +11,7 @@ from .models import Movie, Binary
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
-from rating.models import Rating, Watchlist
+from rating.models import Rating, Watchlist, List
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 
@@ -170,7 +170,7 @@ def addRating(request, tmdb_id, rating):
                 query.timestamp = datetime.now()
                 query.save()
             except Rating.DoesNotExist:
-                print("Query does not exist")
+                print("Rating does not exist")
                 Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating, timestamp=datetime.now())
 
             return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
@@ -178,22 +178,24 @@ def addRating(request, tmdb_id, rating):
         else:
             return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
+@csrf_exempt
 def removeRating(request, tmdb_id):
-    print("Remove Rating: ",tmdb_id)
-    if request.user.is_authenticated:
-        current_user = request.user
-        try:
-            movie = Movie.objects.get(tmdb_id=tmdb_id)
-            query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
-            query.delete()
-            print("Removed rating from "+str(query.rating)+" of "+ current_user.id + " of movie " + movie)
-        except Rating.DoesNotExist:
-            print("Query does not exist")
+    if request.method == "POST":
+        print("Remove Rating: ",tmdb_id)
+        if request.user.is_authenticated:
+            current_user = request.user
+            try:
+                movie = Movie.objects.get(tmdb_id=tmdb_id)
+                query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
+                query.delete()
+                print("Removed rating from "+str(query.rating)+" of user "+ str(current_user.id) + " of movie " + str(movie.title))
+            except Rating.DoesNotExist:
+                print("Rating does not exist")
 
-        return JsonResponse({'user_id': current_user.id, 'user_rating': "remove"})
-            
-    else:
-        return JsonResponse({'user_id': "null", 'user_rating': "null"})
+            return JsonResponse({'user_id': current_user.id, 'user_rating': "remove"})
+                
+        else:
+            return JsonResponse({'user_id': "null", 'user_rating': "null"})
 
 def checkIfInWatchlist(request, tmdb_id):
     if request.user.is_authenticated:
@@ -233,6 +235,26 @@ def addToWatchlist(request, user_id, tmdb_id):
             user_watchlist.movie.add(movie)
 
             return JsonResponse({'user_id': user_id, 'added_to_watchlist': tmdb_id})
+
+@csrf_exempt
+def addTolist(request, user_id, tmdb_id, list_id):
+    if request.method == "POST":
+        movie = get_object_or_404(Movie, tmdb_id=tmdb_id)
+
+        # Check if the item already exists in that user watchlist
+        if List.objects.filter(id=list_id, user_id=user_id, movie=movie).exists():
+            print("Already in the watchlist - removing...")
+            query = List.objects.get(id=list_id, user_id=user_id, movie=movie)
+            query.movie.remove(movie)
+
+            return JsonResponse({'user_id': user_id, 'removed_from_list': list_id, 'movie of tmdb_id': tmdb_id})
+        else:        
+            # Get the user list or create it if it doesn't exists
+            user_list = List.objects.get(id=list_id, user_id=user_id)
+            # Add the item through the ManyToManyField (Watchlist => item)
+            user_list.movie.add(movie)
+
+            return JsonResponse({'user_id': user_id, 'added_to_list': list_id, 'movie of tmdb_id': tmdb_id})
 
 from django_pivot.pivot import pivot
 from django.db.models import Count

@@ -1,0 +1,20 @@
+.lists{
+    font-size: 1.1em;
+    display: flex;
+    justify-content: center;
+}
+
+.lists-content{
+    background-color: var(--primary-color);
+    max-width: var(--maxPrimaryPageWidth);
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-direction: column;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-right: 30px;
+    padding-left: 30px;
+    align-self: center;
+}

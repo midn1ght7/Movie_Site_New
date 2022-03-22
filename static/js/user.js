@@ -51,7 +51,7 @@ async function showUserRatings(user_ratings){
     }
     const show_moreEl = document.createElement('div');
     show_moreEl.classList.add('scroller-item-more');
-    show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings/all';`);
+    show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
             <a class="title" title="See all ${user_ratings.length} ratings">
@@ -62,7 +62,7 @@ async function showUserRatings(user_ratings){
 }
 
 async function showUserWatchlist(user_watchlist){
-    htmlScrollers("user-watchlist", ` ${user_data.username}'s most recent movies in watchlist:`, "watchlist-scroller")
+    htmlScrollers("user-watchlist", ` ${user_data.username}'s movies in watchlist:`, "watchlist-scroller")
     if (user_watchlist.length > 10) {
         for (i = 0; i < 10; i++) {
             showWatchlistScroller(user_watchlist[i], "watchlist-scroller");
@@ -97,14 +97,13 @@ async function userRecommendations(){
 function styleTitle(title){
     if(title.length > 19)
     {
-        title = title.substring(0, 19);
+        title = title.substring(0, 16);
         title = title + "...";
     }
     return title;
 }
 
 function formatDate(date){
-    console.log(date);
     year = date.substring(0, 4)
     month = date.substring(5,7)
     day = date.substring(8,10)

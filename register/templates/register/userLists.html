@@ -1,0 +1,26 @@
+{% extends "../register/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
+<div class="lists">
+    <script src="{% static 'js/lists.js' %}"></script>
+    <link href="{% static 'css/lists.css' %}" rel="stylesheet" type="text/css" />
+    <div class="lists-content" id="lists-content">
+        <div class="lists-user">
+            <h3 class="username" id="username"></h3> 
+            {% if user.is_authenticated %}
+            <div class="scroller-item-more" onclick="location.href='/list/create'">
+                <p class="movie-flex">
+                    <a class="title" title="Create a new list">
+                        Create a new list
+                    </a>    
+                </p>
+            </div>
+            {% else %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

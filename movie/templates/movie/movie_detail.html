@@ -33,7 +33,11 @@
                         </div>
                         <div class="rating_item">
                             <a id="rating_title">Watchlist</a>
-                            <span id="sp_watchlist">Add to watchlist</span>
+                            <span id="sp_watchlist"></span>
+                        </div>
+                        <div class="rating_item">
+                            <a id="rating_title">Lists</a>
+                            <span id="sp_list"><i class="fa fa-list"></i></span>
                         </div>
                         {% endif %}
                     </div>
@@ -84,11 +88,23 @@
 <div id="myModal" class="Modal is-hidden is-visuallyHidden">
     <!-- Modal content -->
     <div class="Modal-content">
-      <div class="div-rate">
-        <span id="closeModal" class="Close"><i class="fa fa-times"></i></span>
-            <p>Rate this movie</p>
+        <p class="Modal-title">Rate this movie<span id="closeRatingModal" class="Close"><i class="fa fa-times"></i></span></p>
+        <div class="modal-rate">
             <p class="p-rate"><a id="rate-1">1</a><a id="rate-2">2</a><a id="rate-3">3</a><a id="rate-4">4</a><a id="rate-5">5</a><a id="rate-6">6</a><a id="rate-7">7</a><a id="rate-8">8</a><a id="rate-9">9</a><a id="rate-10">10</a></p>
             <p class="p-remove"><a id="rate-remove">Remove rating</a></p>
+        </div>
+    </div>
+</div>
+<div id="listModal" class="Modal is-hidden is-visuallyHidden">
+    <div class="Modal-content">
+        <p class="Modal-title">Add this movie to a list<span id="closeListModal" class="Close"><i class="fa fa-times"></i></span></p>
+        <div class="modal-list" id="modal-list">
+            <!-- <div class="list-item">
+                <a><i class="fa fa-plus" aria-hidden="true"></i> List Name</a>
+            </div>
+            <div class="list-item">
+                <a><i class="fa fa-plus" aria-hidden="true"></i> List Name</a>
+            </div> -->
         </div>
     </div>
 </div>

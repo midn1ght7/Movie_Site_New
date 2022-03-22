@@ -33,8 +33,10 @@
             <div class="user-dropdown">
                 <button class="user-dropdown-btn"><i class="fa fa-user"></i> {{ user }} <i class="fa fa-caret-down"></i></button>
                 <div class="user-dropdown-content">
+                    <a href="/user/{{ user.id }}">Your Activity</a>
                     <a href="/user/{{ user.id }}/ratings">Your Ratings</a>
                     <a href="/user/{{ user.id }}/watchlist">Your Watchlist</a>
+                    <a href="/user/{{ user.id }}/lists">Your Lists</a>
                     <a href="/logout">Logout</a>
                 </div>
             </div>
@@ -52,4 +54,7 @@
     
             {% endblock %}
     </body>
+    {% if user.is_authenticated %}
+    <div id="user_id" class="user_id_hidden">{{ user.id }}</div>
+    {% endif %}
 </html>

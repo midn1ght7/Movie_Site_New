@@ -14,21 +14,20 @@ var url = window.location.pathname;
 var id = url.substring(9);
 var tmdb_id = null;
 var user_id = null;
-var user_valid = false;
 
 function getColor(vote){
     if(vote>=7)
     {
         return 'green';
     }
-    else if(vote>= 3){
+    else if(vote>=3){
         return 'orange';
     }
     else if(vote<3) {
         return 'red';
     }
     else {
-        return
+        return 'white'
     }
 }
 
@@ -51,6 +50,15 @@ function formatGenres(genres)
     return genres_string;
 }
 
+function styleTitle(title){
+    if(title.length > 24)
+    {
+        title = title.substring(0, 24);
+        title = title + "...";
+    }
+    return title;
+}
+
 async function showMovieDetails()
 {
     const response = await fetch(`/get_movie/${id}`,{method:'GET'});
@@ -66,25 +74,13 @@ async function showMovieDetails()
         document.getElementById("span-release-date").innerHTML = formatReleaseDate(data.release_date);
         document.getElementById("sp_tmdbrating").innerHTML = data.vote_average;
         document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
-        if(document.getElementById('sp_yourrating') !== null)
-        {
-            checkUserRating();
-        }
-        if(document.getElementById('sp_watchlist') !== null){
-            checkUserWatchlist();
-            document.getElementById("sp_watchlist").onclick = function (){
-                addToWatchlist()
-            }
-        }
         document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
         document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
         ${data.overview}`;
         moreMovieDetails(data);
-        getSimilar();
-        collabRecommendation();
     }
 }
-showMovieDetails();
+
 
 function moreMovieDetails(data){
     if(data.original_title){
@@ -136,15 +132,6 @@ function moreMovieDetails(data){
     }
 }
 
-function styleTitle(title){
-    if(title.length > 24)
-    {
-        title = title.substring(0, 24);
-        title = title + "...";
-    }
-    return title;
-}
-
 async function getSimilar()
 {
     const response = await fetch(`/get_similar/${id}`,{method:'GET'});
@@ -184,16 +171,15 @@ async function collabRecommendation()
 async function checkUserWatchlist(){
     const response = await fetch(`/checkIfInWatchlist/${tmdb_id}`,{method:'GET'});
     const data = await response.json();
-    console.log(data);
+    console.log("User Watchlist:",data);
     //console.log(data.user_ratings);
     if(data.user_id!="null")
     {
-        user_id = data.user_id;
         if (data.in_watchlist == true) {
-            document.getElementById("sp_watchlist").innerHTML = "Remove from watchlist";
+            document.getElementById("sp_watchlist").innerHTML = '<i class="fa fa-bookmark" title="Movie is in the watchlist"></i>';
         }
         else{
-            document.getElementById("sp_watchlist").innerHTML = "Add to watchlist";
+            document.getElementById("sp_watchlist").innerHTML = '<i class="fa fa-bookmark-o" title="Movie is not in the watchlist"></i>';
         }
     }
 }
@@ -210,16 +196,52 @@ async function addToWatchlist() {
     checkUserWatchlist()
 }
 
+async function checkUserLists(){
+    const response = await fetch(`/getUserLists/${user_id}`,{method:'GET'});
+    const data = await response.json();
+    console.log("User Lists:",data);
+    document.getElementById('modal-list').innerHTML = ``;
+    //console.log(data.user_ratings);
+    if (data.user_lists.length > 0) { 
+        for (const list of data.user_lists) {
+            let list_div = document.createElement('div');
+            list_div.className = "list-item";
+            list_div.onclick = async function(){
+                const response = await fetch(`/addToList/${user_id}/${tmdb_id}/${list.id}`,{method:'POST'});
+                const data = await response.json();
+                console.log("addToList:",data);
+                checkUserLists();
+            };
+            list_div.innerHTML = `<a><i class="fa fa-plus" aria-hidden="true"></i> ${list.name}</a>`
+            for (const movie of list.movies) {
+                if(movie.tmdb_id == tmdb_id){
+                    list_div.innerHTML = `<a><i class="fa fa-minus" aria-hidden="true"></i> ${list.name}</a>`
+                    break;
+                }
+            }
+            document.getElementById("modal-list").appendChild(list_div);
+        }
+    }
+    else {
+        let p = document.createElement('p');
+        p.innerHTML = "You don't have any list created."
+        document.getElementById("modal-list").appendChild(p);
+    }
+    let create_div = document.createElement('div');
+    create_div.className = "list-item";
+    create_div.setAttribute("onclick", `location.href='/list/create';`);
+    create_div.innerHTML = `<a>Create a new list here</a>`;
+    document.getElementById("modal-list").appendChild(create_div);
+}
+
 async function checkUserRating(){
     const response = await fetch(`/getRating/${tmdb_id}`,{method:'GET'});
     const data = await response.json();
-    console.log(data);
+    console.log("User Rating:",data);
     if(data.user_id!="null")
     {
-        user_valid = true;
-        user_id = data.user_id;
         if (data.user_rating == "null") {
-            document.getElementById("sp_yourrating").innerHTML = "Rate";
+            document.getElementById("sp_yourrating").innerHTML = '<i class="fa fa-star-o"></i>';
         }
         else{
             document.getElementById("sp_yourrating").innerHTML = data.user_rating;
@@ -237,6 +259,20 @@ async function postRating(rating){
         document.getElementById('main').parentElement.className = "";
     }
     else{
+        throw new Error("Error fetching");
+    }
+    checkUserRating();
+}
+
+async function removeRating() {
+    const response = await fetch(`/removeRating/${tmdb_id}`, { method: 'POST' });
+    if (response.ok) {
+        document.getElementById('myModal').className = "Modal is-hidden is-visuallyHidden";
+        document.getElementsByTagName('body').className = "";
+        document.getElementById('main').className = "MainContainer";
+        document.getElementById('main').parentElement.className = "";
+    }
+    else {
         throw new Error("Error fetching");
     }
     checkUserRating();
@@ -278,30 +314,63 @@ function showScroller(data, appendto){
 }
 
 
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
+    await showMovieDetails();
+    getSimilar();
+    collabRecommendation();
+
     // Get the modal
-    var modal = document.getElementById('myModal');
+    var ratingModal = document.getElementById('myModal');
+    var listModal = document.getElementById('listModal');
     // Get the main container and the body
     var body = document.getElementsByTagName('body');
     var container = document.getElementById('main');
+
+    // Get User Stuff
+    if (document.getElementById('user_id')!=null){
+        user_id = document.getElementById('user_id').innerHTML;
+        checkUserRating();
+        checkUserWatchlist();
+        document.getElementById("sp_watchlist").onclick = function (){
+            addToWatchlist()
+        }
+        checkUserLists();
+    }
+
     if(document.getElementById('sp_yourrating') !== null)
     {
         document.getElementById("sp_yourrating").onclick = function() {
-            modal.className = "Modal is-visuallyHidden";
+            ratingModal.className = "Modal is-visuallyHidden";
             setTimeout(function() {
             container.className = "MainContainer is-blurred";
-            modal.className = "Modal";
+            ratingModal.className = "Modal";
             }, 100);
             container.parentElement.className = "ModalOpen";
         }
     }
-    // Get the close button
-    var btnClose = document.getElementById("closeModal");
-    // Close the modal
-    btnClose.onclick = modalClose
 
-    function modalClose(){
-        modal.className = "Modal is-hidden is-visuallyHidden";
+    if(document.getElementById('sp_list') !== null)
+    {
+        document.getElementById("sp_list").onclick = function() {
+            listModal.className = "Modal is-visuallyHidden";
+            setTimeout(function() {
+            container.className = "MainContainer is-blurred";
+            listModal.className = "Modal";
+            }, 100);
+            container.parentElement.className = "ModalOpen";
+        }
+    }
+
+    // Close the modal
+    document.getElementById("closeRatingModal").onclick = function(){
+        ratingModal.className = "Modal is-hidden is-visuallyHidden";
+        body.className = "";
+        container.className = "MainContainer";
+        container.parentElement.className = "";
+    }
+
+    document.getElementById("closeListModal").onclick = function(){
+        listModal.className = "Modal is-hidden is-visuallyHidden";
         body.className = "";
         container.className = "MainContainer";
         container.parentElement.className = "";
@@ -309,8 +378,14 @@ window.addEventListener('load', function() {
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.className = "Modal is-hidden";
+        if (event.target == ratingModal) {
+            ratingModal.className = "Modal is-hidden";
+            body.className = "";
+            container.className = "MainContainer";
+            container.parentElement.className = "";
+        }
+        if (event.target == listModal) {
+            listModal.className = "Modal is-hidden";
             body.className = "";
             container.className = "MainContainer";
             container.parentElement.className = "";
@@ -349,27 +424,6 @@ window.addEventListener('load', function() {
     }
     document.getElementById('rate-remove').onclick = function(){
         removeRating()
-    }
-
-
-
-    function removeRating(){
-        if(user_valid==true){
-            console.log("USER VALID!");
-            fetch(`/removeRating/${tmdb_id}`).then((response) => {
-                if (response.ok) {
-                    modalClose()
-                    return response.json();
-                }
-                else{
-                    throw new Error("Error fetching: "+item);
-                }
-            })
-            checkUserRating();
-        }
-        else{
-            console.log("USER INVALID!");
-        }
     }
 });
 

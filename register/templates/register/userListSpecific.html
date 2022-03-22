@@ -1,0 +1,16 @@
+{% extends "../register/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
+<div class="watchlist">
+    <script src="{% static 'js/list_specific.js' %}"></script>
+    <link href="{% static 'css/watchlist.css' %}" rel="stylesheet" type="text/css" />
+    <div class="watchlist-content" id="watchlist-content">
+        <div class="watchlist-user">
+            <h3 class="username" id="username"></h3> 
+        </div>
+    </div>
+</div>
+{% endblock %}

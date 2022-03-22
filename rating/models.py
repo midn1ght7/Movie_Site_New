@@ -23,3 +23,8 @@ class Rating(models.Model):
 class Watchlist(models.Model):
     user_id = models.IntegerField()
     movie = models.ManyToManyField(Movie)
+
+class List(models.Model):
+    user_id = models.IntegerField()
+    name = models.CharField(max_length=100)
+    movie = models.ManyToManyField(Movie)
