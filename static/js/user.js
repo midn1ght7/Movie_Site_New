@@ -14,7 +14,7 @@ async function userData(){
 async function userRatings(){
     const response = await fetch(`/getUserRatings/${user_id}`,{method:'GET'});
     const data = await response.json();
-    console.log(data);
+    console.log("User ratings:",data);
     if(data.user_ratings.length > 0){
         showUserRatings(data.user_ratings)
         userRecommendations();
@@ -28,12 +28,24 @@ async function userRatings(){
 async function userWatchlist(){
     const response = await fetch(`/getUserWatchlist/${user_id}`,{method:'GET'});
     const data = await response.json();
-    console.log(data);
+    console.log("User watchlist:",data);
     if(data.user_watchlist.length > 0){
         showUserWatchlist(data.user_watchlist)
     }
     else{
         htmlScrollers("user-watchlist", `${user_data.username} doesn't have any movie in watchlist.`, "watchlist-scroller")
+    }
+}
+
+async function userLists(){
+    const response = await fetch(`/getUserLists/${user_id}`,{method:'GET'});
+    const data = await response.json();
+    console.log("User lists:",data);
+    if(data.user_lists.length > 0){
+        showUserLists(data.user_lists);
+    }
+    else{
+        htmlScrollers("user-lists", `${user_data.username} doesn't have any list.`, "lists-rows")
     }
 }
 
@@ -85,6 +97,30 @@ async function showUserWatchlist(user_watchlist){
     document.getElementById("user-watchlist").appendChild(show_moreEl);
 }
 
+async function showUserLists(user_lists){
+    htmlRows("user-lists", `${user_data.username} lists:`, "lists-rows")
+    if (user_lists.length > 5) {
+        for (i = 0; i < 5; i++) {
+            showListsRows(user_lists[i], "lists-rows");
+        }
+    }
+    else {
+        for (const list of user_lists) {
+            showListsRows(list, "lists-rows");
+        }
+    }
+    const show_moreEl = document.createElement('div');
+    show_moreEl.classList.add('scroller-item-more');
+    show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/lists';`);
+    show_moreEl.innerHTML = `
+        <p class="movie-flex">
+            <a class="title" title="See all lists (${user_lists.length})">
+                See all lists (${user_lists.length})
+            </a>
+        </p>`;
+    document.getElementById("user-lists").appendChild(show_moreEl);
+}
+
 async function userRecommendations(){
     htmlScrollers("recommended-user", `Recommended for ${user_data.username} based on similar users:`, "recommendation-scroller")
     const response = await fetch(`/getUserRecommendations/${user_id}`,{method:'GET'});
@@ -122,6 +158,18 @@ function htmlScrollers(div_to_append, h3_text, div2_id){
     document.getElementById(`${div_to_append}`).appendChild(div1);
 }
 
+function htmlRows(div_to_append, h3_text, div2_id){
+    let h3 = document.createElement('h3'); 
+    h3.textContent = h3_text;
+    let div1 = document.createElement('div');
+    div1.className = "user-rows";
+    let div2 = document.createElement('div');
+    div2.className = "rows";
+    div2.id = div2_id;
+    div1.appendChild(div2);
+    document.getElementById(`${div_to_append}`).appendChild(h3);
+    document.getElementById(`${div_to_append}`).appendChild(div1);
+}
 
 function showRatingScroller(data, appendto){
     const movieEl = document.createElement('div');
@@ -160,6 +208,33 @@ function showWatchlistScroller(data, appendto){
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
 
+function showListsRows(data, appendto){
+    if(data.movies.length > 0){
+        const Element = document.createElement('div');
+        Element.classList.add('list-item');
+        let overview = `${data.movies.length} titles`
+        if(data.movies.length == 1){
+            overview = `${data.movies.length} title`
+        }
+        Element.innerHTML = `
+            <div class="item-poster">
+                <a href="/user/${user_id}/list/${data.id}" title="${data.name}">
+                    <img loading="lazy" class="poster" src="/${data.movies[0].poster}">
+                </a>
+            </div>
+            <div class="item-data">
+                <a class="item-title" href="/user/${user_id}/list/${data.id}" title="${data.name}">
+                    ${data.name}
+                </a>
+                <a class="item-overview">
+                    ${overview}
+                </a>
+            </div>`;
+        document.getElementById(`${appendto}`).appendChild(Element);
+    }
+
+}
+
 function showRecommendationScroller(data, appendto){
     const movieEl = document.createElement('div');
     movieEl.classList.add('scroller-item');
@@ -184,4 +259,5 @@ window.addEventListener('load', async function() {
     await userData();
     userWatchlist();
     userRatings();
+    userLists();
 });

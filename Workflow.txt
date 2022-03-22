@@ -4,7 +4,8 @@ Do poprawy:
 - Więcej ocen
 
 Do zrobienia:
-- Show Lists in Your Activity
+- Delete lists
+- Search by director
 - List Recommendations
 - Timestamp do watchlisty, listy
 - Deploy na Pythonanywhere
@@ -30,6 +31,7 @@ Zrobione:
 - Add to list, remove from list
 - See whole list
 - Watchlist and List control from Profile
+- Show Lists in Your Activity
 
 Filmy do sprawdzenia:
 - Taxi Driver (za mało ocen)
