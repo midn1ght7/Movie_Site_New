@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 from rating.models import Rating, Watchlist
 from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
 
 from scipy import spatial
 import operator
@@ -164,13 +165,13 @@ def addRating(request, tmdb_id, rating):
             try:
                 movie = Movie.objects.get(tmdb_id=tmdb_id)
                 query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
-                print("Query exists")
                 print("Changed rating from "+str(query.rating)+" to "+str(rating))
                 query.rating = rating
+                query.timestamp = datetime.now()
                 query.save()
             except Rating.DoesNotExist:
                 print("Query does not exist")
-                Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating)
+                Rating.objects.create(user_id=current_user.id, tmdb_id = movie, rating=rating, timestamp=datetime.now())
 
             return JsonResponse({'user_id': current_user.id, 'user_rating': rating})
                 
@@ -184,7 +185,6 @@ def removeRating(request, tmdb_id):
         try:
             movie = Movie.objects.get(tmdb_id=tmdb_id)
             query = Rating.objects.get(user_id=current_user.id, tmdb_id = movie)
-            print("Query exists")
             query.delete()
             print("Removed rating from "+str(query.rating)+" of "+ current_user.id + " of movie " + movie)
         except Rating.DoesNotExist:

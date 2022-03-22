@@ -50,12 +50,13 @@ def getUser(request, user_id):
 def getUserRatings(request, user_id):
     try:
         result = []
-        user_ratings = list(Rating.objects.filter(user_id = user_id).order_by('tmdb_id'))
+        user_ratings = list(Rating.objects.filter(user_id = user_id).order_by('-timestamp'))
         for rating in user_ratings:
             movie = rating.tmdb_id
             movie = movie.serialize()
             movie["user_id"] = rating.user_id
             movie["user_rating"] = rating.rating
+            movie["user_rating_timestamp"] = rating.timestamp
             result.append(movie)
 
         return JsonResponse({'user_id': user_id, 'user_ratings': result}, safe=False)

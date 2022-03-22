@@ -61,3 +61,9 @@ div.item-data .item-overview{
     margin-top: 5px;
     align-self:flex-start;
 }
+
+.item-timestamp{
+    margin-top: 5px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5)
+}

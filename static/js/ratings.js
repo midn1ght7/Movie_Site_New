@@ -15,6 +15,25 @@ function styleTitle(title, release_date){
     return title + " " + release_date
 }
 
+function formatDate(date){
+    console.log(date);
+    year = date.substring(0, 4)
+    //console.log(year);
+    month = date.substring(5,7)
+    //console.log(month)
+    day = date.substring(8,10)
+    return `${day}.${month}.${year}`
+}
+
+function formatOverview(overview){
+    if(overview.length > 495)
+    {
+        overview = overview.substring(0, 492);
+        overview = overview + "...";
+    }
+    return overview;
+}
+
 async function appendMovie(data){
     const ratingElement = document.createElement('div');
     ratingElement.classList.add('ratings-item');   
@@ -29,8 +48,9 @@ async function appendMovie(data){
             ${styleTitle(data.title, data.release_date)}
         </a>
         <span class="item-rating"><a><i class="fa fa-star"></i> </a>${data.user_rating}</span>
+        <a class="item-timestamp">Rated on: ${formatDate(data.user_rating_timestamp)}</a>
         <a class="item-overview">
-            ${data.overview}
+            ${formatOverview(data.overview)}
         </a>
     </div>`;
     document.getElementById(`ratings-content`).appendChild(ratingElement);

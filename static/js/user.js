@@ -104,7 +104,7 @@ function showRatingScroller(data, appendto){
     </div>
     <p class="movie-flex">
         <a class="title" title="${data.title}">
-            <bdi>${styleTitle(data.title)}</bdi>
+            ${styleTitle(data.title)}
         </a>
         <span class="rating"><a><i class="fa fa-star"></i> </a>${data.user_rating}</span>
     </p>`;
@@ -123,7 +123,7 @@ function showRecommendationScroller(data, appendto){
     </div>
     <p class="movie-flex">
         <a class="title" title="${data.title}">
-            <bdi>${styleTitle(data.title)}</bdi>
+            ${styleTitle(data.title)}
         </a>
         <span class="rating"><a><i class="fa fa-percent"></i> </a>${parseInt(data.shared_by_percentage)}</span>
     </p>`;
