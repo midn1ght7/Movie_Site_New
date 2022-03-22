@@ -67,7 +67,7 @@ async function showUserRatings(user_ratings){
     show_moreEl.innerHTML = `
         <p class="movie-flex">
             <a class="title" title="See all ${user_ratings.length} ratings">
-                <bdi>See all ${user_ratings.length} ratings</bdi>
+                See all ${user_ratings.length} ratings
             </a>
         </p>`;
     document.getElementById("user-ratings").appendChild(show_moreEl);
@@ -90,8 +90,8 @@ async function showUserWatchlist(user_watchlist){
     show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/watchlist';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
-            <a class="title" title="See all ${user_watchlist.length} ratings">
-                <bdi>See whole watchlist (${user_watchlist.length})</bdi>
+            <a class="title" title="See whole watchlist (${user_watchlist.length})">
+                See whole watchlist (${user_watchlist.length})
             </a>
         </p>`;
     document.getElementById("user-watchlist").appendChild(show_moreEl);
@@ -114,8 +114,8 @@ async function showUserLists(user_lists){
     show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/lists';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
-            <a class="title" title="See all lists (${user_lists.length})">
-                See all lists (${user_lists.length})
+            <a class="title" title="See all ${user_lists.length} lists">
+                See all ${user_lists.length} lists
             </a>
         </p>`;
     document.getElementById("user-lists").appendChild(show_moreEl);

@@ -252,3 +252,153 @@ def getUserLists(request, user_id):
     except Exception as error:
         print(error)
         return JsonResponse([], safe=False)
+
+
+from collections import Counter
+from movie.models import Binary
+
+def getListRecommendations(request, list_id):
+    list_obj = List.objects.get(id=list_id)
+    tmdb_ids = list(list_obj.movie.all().values_list('tmdb_id', flat=True).order_by('tmdb_id'))
+    genres = []
+    keywords = []
+
+    for movie in list_obj.movie.all():
+        for genre in movie.genres:
+            genres.append(genre['name'])
+        for keyword in movie.keywords["keywords"]:
+            keywords.append(keyword['name'])
+        
+    binary_objects = Binary.objects.filter(tmdb_id__in=tmdb_ids)
+
+    genre_bin_lists = []
+    keywords_bin_lists = []
+    directors_bin_lists = []
+    languages_bin_lists = []
+    for movie_bin in binary_objects:
+        genre_bin_list = bin_str_tolist(movie_bin.genres)
+        genre_bin_lists.append(genre_bin_list)
+        keywords_bin_list = bin_str_tolist(movie_bin.keywords)
+        keywords_bin_lists.append(keywords_bin_list)
+        directors_bin_list = bin_str_tolist(movie_bin.directors)
+        directors_bin_lists.append(directors_bin_list)
+        languages_bin_list = bin_str_tolist(movie_bin.languages)
+        languages_bin_lists.append(languages_bin_list)
+        
+
+    genres_bin = genre_bin_lists[0]
+    keywords_bin = keywords_bin_lists[0]
+    directors_bin = directors_bin_lists[0]
+    languages_bin = languages_bin_lists[0]
+
+    #Adding same occurences
+    def fuse_binary_lists(base_list, list_of_lists):
+        for list_obj in list_of_lists[1:]:
+            for i, item in enumerate(list_obj):
+                base_list[i] += item
+
+    #Just Add "1" where they are missing
+    # def fuse_binary_lists(base_list, list_of_lists):
+    #     for list_obj in list_of_lists:
+    #         for i, item in enumerate(list_obj):
+    #             if(base_list[i] != item):
+    #                 if (base_list[i] == 0):
+    #                     base_list[i] = item
+
+
+    fuse_binary_lists(genres_bin, genre_bin_lists)
+    fuse_binary_lists(keywords_bin, keywords_bin_lists)
+    fuse_binary_lists(directors_bin, directors_bin_lists)
+    fuse_binary_lists(languages_bin, languages_bin_lists)
+
+    fusedBin = Binary(id=0, tmdb_id=0, genres=genres_bin, keywords = keywords_bin, directors = directors_bin, languages = languages_bin)
+
+    filtered_tmdb_ids = []
+
+    genre_query = Q()
+    for genre in genres:
+        genre_query = genre_query | Q(genres__icontains=genre)
+
+    keyword_query = Q()
+    for keyword in keywords:
+        keyword_query = keyword_query | Q(keywords__icontains=keyword)
+
+    for movie in Movie.objects.filter(genre_query & keyword_query & Q(vote_count__gte=100)):
+        filtered_tmdb_ids.append(movie.tmdb_id)
+
+    print("Filtered movies for content-based recommendation:", len(filtered_tmdb_ids))
+
+    binary_set = Binary.objects.filter(tmdb_id__in=filtered_tmdb_ids)
+
+    def getNeighbors(K):
+        distances = []
+    
+        for movie in binary_set:
+            if movie.tmdb_id not in tmdb_ids:
+                if "1" in movie.genres and "1" in movie.keywords and "1" in movie.directors and "1" in movie.languages:
+                    dist = Similarity(fusedBin, movie)
+                    print(dist)
+                    distances.append((movie.tmdb_id, dist))
+        
+        distances.sort(key=operator.itemgetter(1))
+        neighbors = []
+        
+    
+        for x in range(K):
+            neighbors.append(distances[x])
+        return neighbors
+
+    K = 10
+    neighbors = getNeighbors(K)
+
+    id_list = []
+    score_list = []
+    print('\nContent-based recommended movies: \n')
+    for neighbor in neighbors:
+        id_list.append(neighbor[0])
+        score_list.append(neighbor[1])
+
+    movies = list(Movie.objects.filter(tmdb_id__in=id_list))
+    return JsonResponse(similar_response(movies, id_list, score_list), safe=False)
+
+
+def Similarity(baseMovie, compMovie):
+    genreDistance = (spatial.distance.cosine(baseMovie.genres, multiply_binaries(baseMovie.genres,bin_str_tolist(compMovie.genres))))*0.5
+    wordsDistance = spatial.distance.cosine(baseMovie.keywords, multiply_binaries(baseMovie.keywords,bin_str_tolist(compMovie.keywords)))
+    directorDistance = (spatial.distance.cosine(baseMovie.directors, multiply_binaries(baseMovie.directors,bin_str_tolist(compMovie.directors))))*0.3
+    languageDistance = (spatial.distance.cosine(baseMovie.languages, multiply_binaries(baseMovie.languages,bin_str_tolist(compMovie.languages))))*0.2
+    return (genreDistance + wordsDistance + directorDistance + languageDistance)*0.5
+
+
+# def Similarity(baseMovie, compMovie):
+#     genreDistance = (spatial.distance.cosine(baseMovie.genres, bin_str_tolist(compMovie.genres)))*0.5
+#     wordsDistance = spatial.distance.cosine(baseMovie.keywords, bin_str_tolist(compMovie.keywords))
+#     directorDistance = (spatial.distance.cosine(baseMovie.directors, bin_str_tolist(compMovie.directors)))*0.3
+#     languageDistance = (spatial.distance.cosine(baseMovie.languages, bin_str_tolist(compMovie.languages)))*0.2
+#     return genreDistance + wordsDistance + directorDistance + languageDistance
+
+def bin_str_tolist(binary_string):
+    binary_string = binary_string.replace(",","")
+    binary_list = []
+    for char in binary_string:
+        binary_list.append(int(char))
+    return binary_list
+
+def multiply_binaries(base_binary_list, comp_binary_list):
+    for i, item in enumerate(base_binary_list):
+        if item != 0:
+            comp_binary_list[i] = comp_binary_list[i] * item
+    return comp_binary_list
+
+def similar_response(movies,id_list,score_list):
+    result = []
+    for movie in movies:
+        tmdb_id = movie.tmdb_id
+        movie = movie.serialize()
+        movie["similarity_score"] = (score_list[id_list.index(tmdb_id)])
+        result.append(movie)
+    result = sorted(result, key=lambda d: d["similarity_score"])
+    return result
+
+
+

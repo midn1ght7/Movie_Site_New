@@ -83,16 +83,17 @@ async function userLists(){
     if(user_lists.user_lists.length > 0){
         for (const list of user_lists.user_lists)
         {
-            await htmlScrollers("lists-content", `${list.name}`, `${list.name}-scroller`, `user-scroller-top-${list.id}`, `${list.id}`)
+            await htmlScrollers("lists-content", `${list.name}`, `${list.id}-scroller`, `user-scroller-top-${list.id}`, `${list.id}`)
             if(list.movies.length > 0){
                 if (list.movies.length > 10) {
                     for (i = 0; i < 10; i++) {
-                        appendToScroller(list.movies[i], `${list.name}-scroller`);
+                        appendToScroller(list.movies[i], `${list.id}-scroller`);
+                        
                     }
                 }
                 else {
                     for (const movie of list.movies) {
-                        appendToScroller(movie, `${list.name}-scroller`);
+                        appendToScroller(movie, `${list.id}-scroller`);
                     }
                 }
                 const show_moreEl = document.createElement('div');
@@ -105,14 +106,14 @@ async function userLists(){
                         </a>
                     </p>`;
                 document.getElementById(`user-scroller-top-${list.id}`).appendChild(show_moreEl);
+                listRecommendations(list);
             }
             else{
                 //alert(list.name+"empty!")
                 let h3 = document.createElement('h3'); 
                 h3.textContent = "This list is empty.";
-                document.getElementById(`${list.name}-scroller`).appendChild(h3);
+                document.getElementById(`${list.id}-scroller`).appendChild(h3);
             }
-
         }
     }
 }
@@ -131,6 +132,46 @@ function appendToScroller(data, appendto){
         <a class="title" title="${data.title}">
             ${styleTitle(data.title)}
         </a>
+    </p>`;
+    document.getElementById(`${appendto}`).appendChild(movieEl);
+}
+
+async function listRecommendations(list){
+    const response = await fetch(`/getListRecommendations/${list.id}`,{method:'GET'});
+    const responseJSON = await response.json();
+    console.log("Recommendations for:",list.id,":",responseJSON);
+
+    let h3 = document.createElement('h3');
+    h3.textContent = `Content-based recommendations for "${list.name}"`
+    let div0 = document.createElement('div');
+    let div1 = document.createElement('div');
+    div0.className = "user-scroller";
+    div1.className = "scroller"
+    div1.id = `${list.id}-recommendation-scroller`
+    div0.appendChild(div1);
+    document.getElementById(`user-scroller-top-${list.id}`).appendChild(h3);
+    document.getElementById(`user-scroller-top-${list.id}`).appendChild(div0);
+    for (const movie of responseJSON){
+        showRecommendationScroller(movie, `${list.id}-recommendation-scroller`)
+    }
+}
+
+function showRecommendationScroller(data, appendto){
+    percent = data.similarity_score
+    const movieEl = document.createElement('div');
+    movieEl.classList.add('scroller-item');
+    movieEl.setAttribute("onclick",`location.href='/details/${data.id}';`);      
+    movieEl.innerHTML = `
+    <div class="image_content">
+        <a title="${data.title}">
+            <img loading="lazy" class="poster" src="/${data.poster}">
+        </a>
+    </div>
+    <p class="movie-flex">
+        <a class="title" title="${data.title}">
+            ${styleTitle(data.title)}
+        </a>
+        <span class="rating"><a><i class="fa fa-percent"></i> </a>${Math.round((1-data.similarity_score)*100)}</span>
     </p>`;
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
