@@ -53,8 +53,18 @@ async function showKeyword(){
     }
 }
 
+async function showDirector(){
+    const response = await fetch(`/getDirector/${searchTerm}`,{method:'GET'});
+    var data = await response.json();
+    if(data){
+        console.log(data);
+        for (const movie of data){
+            appendMovie(movie);
+        }
+    }
+}
 
-window.onload=function(){
+window.addEventListener('load', function() {
     let type = url_split[url_split.length-2];
     if (type == "search"){
         showSearch()
@@ -62,5 +72,7 @@ window.onload=function(){
     if (type == "keyword"){
         showKeyword();
     }
-
-}   
+    if (type == "director"){
+        showDirector();
+    }
+});

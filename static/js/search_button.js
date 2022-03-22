@@ -14,6 +14,10 @@ window.addEventListener('load', function() {
         type = "Keyword";
         searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`; 
     }
+    document.getElementById("drop-director").onclick = function(){
+        type = "Director";
+        searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`; 
+    }
     
     //SEARCH BUTTON
     var search_form = document.getElementById("form-search");
@@ -26,6 +30,9 @@ window.addEventListener('load', function() {
             }
             if (type == "Keyword"){
                 window.location = `/keyword/${searchTerm}`;
+            }
+            if (type == "Director"){
+                window.location = `/director/${searchTerm}`;
             }
         }
     })
