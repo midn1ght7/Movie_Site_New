@@ -81,7 +81,7 @@ def get_similar(request, pk):
     id_list = []
     score_list = []
     print('\nContent-based recommended movies: \n')
-    for index, neighbor in enumerate(neighbors):
+    for neighbor in neighbors:
         print(neighbor)
         id_list.append(neighbor[0])
         score_list.append(neighbor[1])
@@ -115,6 +115,12 @@ def predict_score(baseMovie):
     def getNeighbors(K):
         distances = []
     
+        #Deal with bin_str_to_list for baseMovie -- once
+        baseMovieBin.genres = bin_str_tolist(baseMovieBin.genres)
+        baseMovieBin.keywords = bin_str_tolist(baseMovieBin.keywords)
+        baseMovieBin.directors = bin_str_tolist(baseMovieBin.directors)
+        baseMovieBin.languages = bin_str_tolist(baseMovieBin.languages)
+
         for movie in binary_set:
             if movie.tmdb_id != baseMovie.tmdb_id:
                 if "1" in movie.genres and "1" in movie.keywords and "1" in movie.directors and "1" in movie.languages:
@@ -134,12 +140,11 @@ def predict_score(baseMovie):
     return neighbors
 
 def Similarity(baseMovie, compMovie):
-
-    genreDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.genres), bin_str_tolist(compMovie.genres)))*0.5
-    wordsDistance = spatial.distance.cosine(bin_str_tolist(baseMovie.keywords), bin_str_tolist(compMovie.keywords))
-    directorDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.directors), bin_str_tolist(compMovie.directors)))*0.3
-    languageDistance = (spatial.distance.cosine(bin_str_tolist(baseMovie.languages), bin_str_tolist(compMovie.languages)))*0.2
-    return genreDistance + wordsDistance + directorDistance + languageDistance
+    genreDistance = (spatial.distance.cosine(baseMovie.genres, bin_str_tolist(compMovie.genres)))*0.5
+    wordsDistance = spatial.distance.cosine(baseMovie.keywords, bin_str_tolist(compMovie.keywords))
+    directorDistance = (spatial.distance.cosine(baseMovie.directors, bin_str_tolist(compMovie.directors)))*0.3
+    languageDistance = (spatial.distance.cosine(baseMovie.languages, bin_str_tolist(compMovie.languages)))*0.2
+    return (genreDistance + wordsDistance + directorDistance + languageDistance)/2
 
 def bin_str_tolist(binary_string):
     binary_string = binary_string.replace(",","")
@@ -281,7 +286,7 @@ def collabRecommendation(request, tmdb_id):
             break
     
     if(movie_in_ratings == True):
-        #make a list of only userr ids of users who liked the requested movie:
+        #make a list of only user ids of users who liked the requested movie:
         rating_val=6
         users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id', flat = True).order_by('user_id'))
         while(len(users_who_liked) > 1500):
@@ -350,8 +355,8 @@ def collabRecommendation(request, tmdb_id):
             our_movie = values_array[filtered_tmdb_ids.index(tmdb_id)]
 
             distances = []
-            our_movie_avg = sum(our_movie)/len(our_movie)
-            print("Our Movie average vote:",our_movie_avg)
+            #our_movie_avg = sum(our_movie)/len(our_movie)
+            #print("Our Movie average vote:",our_movie_avg)
             for index, value in enumerate(values_array):
                 if our_movie != value:
                     ratings = []
@@ -359,10 +364,11 @@ def collabRecommendation(request, tmdb_id):
                         if (rating != 0):
                             ratings.append(rating)
                     rating_avg = sum(ratings)/len(ratings)
+                    percent_of_users = (len(ratings)/len(users_who_liked))*100
 
-                    if (len(ratings) >= 10 and rating_avg>5):
-                        print("Rating average:",rating_avg)
-                        dist = spatial.distance.cosine(our_movie, value) * ((10-rating_avg)*0.5)
+                    if(percent_of_users>10 and rating_avg>5):
+                        print("Rating average of:",filtered_tmdb_ids[index],":",rating_avg,"similarity:",spatial.distance.cosine(our_movie, value), "percent:", percent_of_users)
+                        dist = (spatial.distance.cosine(our_movie, value) + (10-rating_avg)/5)/2
                         distances.append((filtered_tmdb_ids[index], dist))
 
             distances.sort(key=operator.itemgetter(1))
@@ -379,7 +385,6 @@ def collabRecommendation(request, tmdb_id):
                 print(neighbor)
                 id_list.append(neighbor[0])
                 score_list.append(neighbor[1])
-
 
             movies = list(Movie.objects.filter(tmdb_id__in=id_list))
             return JsonResponse(similar_response(movies, id_list, score_list), safe=False)

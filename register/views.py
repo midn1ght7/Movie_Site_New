@@ -367,7 +367,7 @@ def Similarity(baseMovie, compMovie):
     wordsDistance = spatial.distance.cosine(baseMovie.keywords, multiply_binaries(baseMovie.keywords,bin_str_tolist(compMovie.keywords)))
     directorDistance = (spatial.distance.cosine(baseMovie.directors, multiply_binaries(baseMovie.directors,bin_str_tolist(compMovie.directors))))*0.3
     languageDistance = (spatial.distance.cosine(baseMovie.languages, multiply_binaries(baseMovie.languages,bin_str_tolist(compMovie.languages))))*0.2
-    return (genreDistance + wordsDistance + directorDistance + languageDistance)*0.5
+    return (genreDistance + wordsDistance + directorDistance + languageDistance)/2
 
 
 # def Similarity(baseMovie, compMovie):

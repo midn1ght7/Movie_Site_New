@@ -144,14 +144,18 @@ async function getSimilar()
         })
     }
     else{
-        console.log("/collabRecommendation returned an empty array");
+        console.log("/get_similar returned an empty array");
     }
 }
 
 async function collabRecommendation()
 {
+    let before = Date.now()
     const response = await fetch(`/collabRecommendation/${tmdb_id}`,{method:'GET'});
     const responseJSON = await response.json();
+    let after = Date.now();
+    let time = after - before;
+    console.log("It took",time,"to execute collab");
     console.log("Collaborative Recommendation response:",responseJSON);
     if (responseJSON.length !== 0){
         htmlRecommendations("Collaborative recommendation", "scroller-rec");
@@ -303,12 +307,12 @@ function showScroller(data, appendto){
     </div>
     <p class="movie-flex">
         <a class="title" title="${data.title}">
-            <bdi>${styleTitle(data.title)}</bdi>
+            ${styleTitle(data.title)}
         </a>
         <span class="vote_average">${data.vote_average}</span>
     </p>
     <a class="title"">
-    Distance: ${Math.round(data.similarity_score*1000)/1000}
+    Similarity: ${Math.round((1-data.similarity_score)*100)} %
     </a>`;
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }
