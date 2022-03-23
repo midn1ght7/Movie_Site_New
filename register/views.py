@@ -1,4 +1,3 @@
-from winreg import REG_QWORD
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from .forms import RegisterForm, ListForm
@@ -337,7 +336,7 @@ def getListRecommendations(request, list_id):
             if movie.tmdb_id not in tmdb_ids:
                 if "1" in movie.genres and "1" in movie.keywords and "1" in movie.directors and "1" in movie.languages:
                     dist = Similarity(fusedBin, movie)
-                    print(dist)
+                    #print(dist)
                     distances.append((movie.tmdb_id, dist))
         
         distances.sort(key=operator.itemgetter(1))

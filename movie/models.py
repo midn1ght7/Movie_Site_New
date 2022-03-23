@@ -1,4 +1,3 @@
-from msilib import _directories
 from django.db import models
 import jsonfield
 from django.contrib.auth.models import User
