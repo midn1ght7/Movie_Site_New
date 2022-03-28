@@ -7,7 +7,7 @@ async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     user_data = data;
-    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>'s watchlist:`
+    document.getElementById("username").innerHTML=`${gettext('user-watchlist')} <a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>:`
 }
 
 function styleTitle(title, release_date){
@@ -31,8 +31,8 @@ async function appendMovie(data){
             <a class="item-title" href="/details/${data.id}" title="${data.title}">
                 ${styleTitle(data.title, data.release_date)}
             </a>
-            <a class="item-remove" id="${data.tmdb_id}" title="Remove from watchlist">
-            Remove from watchlist
+            <a class="item-remove" id="${data.tmdb_id}" title="${gettext('watchlist-remove')}">
+            ${gettext('watchlist-remove')}
             </a>
             <a class="item-overview">
                 ${data.overview}
@@ -60,7 +60,7 @@ async function appendMovie(data){
         document.getElementById(`${data.tmdb_id}`).onclick = async function(){
             //alert(this.id)
             let this_movie_tmdb_id = this.id;
-            const response = await fetch(`/addToWatchlist/${user_id}/${this_movie_tmdb_id}`,{method:'POST'});
+            const response = await fetch(`../../addToWatchlist/${user_id}/${this_movie_tmdb_id}`,{method:'POST'});
             const data = await response.json();
             console.log("addToWatchlist:",data);
             document.getElementById(`list-item-${this_movie_tmdb_id}`).remove();
@@ -80,7 +80,7 @@ async function showWatchlist(){
     }
     else{
         let h3 = document.createElement('h3'); 
-        h3.textContent = `${user_data.username} watchlist is empty`;
+        h3.textContent = `${gettext('watchlist-empty-1')} ${user_data.username} ${gettext('watchlist-empty-2')}`;
         document.getElementById(`watchlist-content`).appendChild(h3);
     }
 }

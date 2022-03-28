@@ -1,17 +1,7 @@
-//TMDB
-
-const API_KEY = 'api_key=8cc7b14fbd7e6745695ae4dd54391660';
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const BACKDROP_URL = 'https://image.tmdb.org/t/p/w1920_and_h800_multi_faces';
-const SEARCH_URL = BASE_URL+'/search/movie?'+API_KEY;
-const LANG = '&language=en-US';
-
-const POPULAR = BASE_URL+ '/discover/tv?'+API_KEY+'&sort_by=popularity.desc&';
-const EXAMPLE = BASE_URL + '/movie/550?'+API_KEY+'&query=';
 
 var url = window.location.pathname;
-var id = url.substring(9);
+var url_split = url.split('/')
+var id = url_split[url_split.length-1];
 var tmdb_id = null;
 var user_id = null;
 
@@ -75,7 +65,7 @@ async function showMovieDetails()
         document.getElementById("sp_tmdbrating").innerHTML = data.vote_average;
         document.getElementById("sp_tmdbrating").className = `${getColor(data.vote_average)}`;
         document.getElementById("a-genres").text=`${formatGenres(data.genres)}`;
-        document.getElementById("details-overview").innerHTML = `<h3>Overview</h3>
+        document.getElementById("details-overview").innerHTML = `<h3>${gettext('overview')}</h3>
         ${data.overview}`;
         moreMovieDetails(data);
     }
@@ -85,7 +75,7 @@ async function showMovieDetails()
 function moreMovieDetails(data){
     if(data.original_title){
         let h3 = document.createElement('h3');
-        h3.textContent = "Original Title"
+        h3.textContent = gettext("original-title");
         document.getElementById("original_title").appendChild(h3);
         let p = document.createElement('p');
         p.textContent = data.original_title;
@@ -93,7 +83,7 @@ function moreMovieDetails(data){
     }
     if(data.director){
         let h3 = document.createElement('h3');
-        h3.textContent = "Director"
+        h3.textContent =  gettext("director");
         document.getElementById("director").appendChild(h3);
         let p = document.createElement('p');
         p.textContent = data.director;
@@ -101,7 +91,7 @@ function moreMovieDetails(data){
     }
     if(data.tagline){
         let h3 = document.createElement('h3');
-        h3.textContent = "Tagline"
+        h3.textContent = gettext("tagline");
         document.getElementById("tagline").appendChild(h3);
         let p = document.createElement('p');
         p.textContent = data.tagline;
@@ -109,7 +99,7 @@ function moreMovieDetails(data){
     }
     if(data.status){
         let h3 = document.createElement('h3');
-        h3.textContent = "Status"
+        h3.textContent = gettext("status");
         document.getElementById("status").appendChild(h3);
         let p = document.createElement('p');
         p.textContent = data.status;
@@ -126,7 +116,7 @@ function moreMovieDetails(data){
             li.innerHTML= `<a class="rounded" href="/keyword/${keyword.name}">${keyword.name}</a>`
             ul.appendChild(li);
         })
-        h3.textContent = "Keywords"
+        h3.textContent = gettext("keywords");
         document.getElementById("keywords").appendChild(h3);
         document.getElementById("keywords").appendChild(ul);
     }
@@ -138,7 +128,8 @@ async function getSimilar()
     const responseJSON = await response.json();
     console.log("Content-based Recommendation response:",responseJSON);
     if (responseJSON.length !== 0){
-        htmlRecommendations("Content-based recommendation", "scroller-sim");
+
+        htmlRecommendations(gettext("content-recommendation"), "scroller-sim");
         responseJSON.forEach(item => {
             showScroller(item, "scroller-sim");
         })
@@ -158,7 +149,7 @@ async function collabRecommendation()
     console.log("It took",time,"to execute collab");
     console.log("Collaborative Recommendation response:",responseJSON);
     if (responseJSON.length !== 0){
-        htmlRecommendations("Collaborative recommendation", "scroller-rec");
+        htmlRecommendations(gettext("collab-recommendation"), "scroller-rec");
         responseJSON.forEach(item => {
             showScroller(item, "scroller-rec");
         })
@@ -167,7 +158,7 @@ async function collabRecommendation()
         console.log("/collabRecommendation returned an empty array");
         let div = document.createElement("div");
         div.className = "recommendations-empty"
-        div.innerHTML = `<h3>There is not enough ratings for this movie in the database to create Collaborative Recommendations.</h3>`
+        div.innerHTML = `<h3>${gettext('collab-recommendation-not-enough')}</h3>`
         document.getElementById('recommendations').appendChild(div);
     }
 }
@@ -180,16 +171,16 @@ async function checkUserWatchlist(){
     if(data.user_id!="null")
     {
         if (data.in_watchlist == true) {
-            document.getElementById("sp_watchlist").innerHTML = '<i class="fa fa-bookmark" title="Movie is in the watchlist"></i>';
+            document.getElementById("sp_watchlist").innerHTML = `<i class="fa fa-bookmark" title='${gettext('movie-in-watchlist')}'></i>`;
         }
         else{
-            document.getElementById("sp_watchlist").innerHTML = '<i class="fa fa-bookmark-o" title="Movie is not in the watchlist"></i>';
+            document.getElementById("sp_watchlist").innerHTML = `<i class="fa fa-bookmark-o" title='${gettext('movie-not-in-watchlist')}'></i>`;
         }
     }
 }
 
 async function addToWatchlist() {
-    const response = await fetch(`/addToWatchlist/${user_id}/${tmdb_id}`,{method:'POST'});
+    const response = await fetch(`../addToWatchlist/${user_id}/${tmdb_id}`,{method:"POST"});
     if (response.ok){
         const data = await response.json();
         console.log(data);
@@ -211,7 +202,7 @@ async function checkUserLists(){
             let list_div = document.createElement('div');
             list_div.className = "list-item";
             list_div.onclick = async function(){
-                const response = await fetch(`/addToList/${user_id}/${tmdb_id}/${list.id}`,{method:'POST'});
+                const response = await fetch(`../addToList/${user_id}/${tmdb_id}/${list.id}`,{method:'POST'});
                 const data = await response.json();
                 console.log("addToList:",data);
                 checkUserLists();
@@ -234,7 +225,7 @@ async function checkUserLists(){
     let create_div = document.createElement('div');
     create_div.className = "list-item";
     create_div.setAttribute("onclick", `location.href='/list/create';`);
-    create_div.innerHTML = `<a>Create a new list here</a>`;
+    create_div.innerHTML = `<a>${gettext('create-list')}</a>`;
     document.getElementById("modal-list").appendChild(create_div);
 }
 
@@ -255,7 +246,7 @@ async function checkUserRating(){
 }
 
 async function postRating(rating){
-    const response = await fetch(`/addRating/${tmdb_id}/${rating}`,{method:'POST'});
+    const response = await fetch(`../addRating/${tmdb_id}/${rating}`,{method:'POST'});
     if (response.ok){
         document.getElementById('myModal').className = "Modal is-hidden is-visuallyHidden";
         document.getElementsByTagName('body').className = "";
@@ -269,7 +260,7 @@ async function postRating(rating){
 }
 
 async function removeRating() {
-    const response = await fetch(`/removeRating/${tmdb_id}`, { method: 'POST' });
+    const response = await fetch(`../removeRating/${tmdb_id}`, { method: 'POST' });
     if (response.ok) {
         document.getElementById('myModal').className = "Modal is-hidden is-visuallyHidden";
         document.getElementsByTagName('body').className = "";
@@ -312,7 +303,7 @@ function showScroller(data, appendto){
         <span class="vote_average">${data.vote_average}</span>
     </p>
     <a class="title"">
-    Similarity: ${Math.round((1-data.similarity_score)*100)} %
+    ${gettext('similarity')}: ${Math.round((1-data.similarity_score)*100)} %
     </a>`;
     document.getElementById(`${appendto}`).appendChild(movieEl);
 }

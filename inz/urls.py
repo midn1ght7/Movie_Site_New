@@ -18,14 +18,25 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from register import views as v
+from django.conf.urls.i18n import i18n_patterns
+from django.views.i18n import JavaScriptCatalog
 
-urlpatterns = [
+
+app_name = 'inz'
+
+# urlpatterns = [
+#     path('i18n/', include('django.conf.urls.i18n')),
+# ] 
+
+urlpatterns = i18n_patterns(
+    path('jsi18n/', JavaScriptCatalog.as_view(domain="django"), name='javascript-catalog'),
     path('admin/', admin.site.urls),
     path('register/', v.register, name="register"),
-    path('', include('movie.urls')),
+    path('', include('movie.urls', namespace='movies_name')),
     path('', include("django.contrib.auth.urls")),
-    path('', include('register.urls'))
-] 
+    path('', include('register.urls', namespace='registers_name')),
+    prefix_default_language=True,
+)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

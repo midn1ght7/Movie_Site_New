@@ -1,16 +1,16 @@
 {% extends "../register/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% load i18n %} 
 {% block content %}
 <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
 <div class="register-base">
     <div class="register">
-        <h3>Create an Account</h3>
+        <h3>{% translate 'create-account' %}</h3>
         <form method = "POST" class="form-group">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="btn btn-success">Register</button>
+            <button type="submit" class="btn btn-success">{% translate 'register' %}</button>
         </form>
     </div>
 </div>

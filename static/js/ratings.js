@@ -6,7 +6,7 @@ let user_data = null;
 async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
-    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>'s all ratings:`
+    document.getElementById("username").innerHTML=`${gettext('user-ratings')} <a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>:`
 }
 
 function styleTitle(title, release_date){
@@ -46,7 +46,7 @@ async function appendMovie(data){
             ${styleTitle(data.title, data.release_date)}
         </a>
         <span class="item-rating"><a><i class="fa fa-star"></i> </a>${data.user_rating}</span>
-        <a class="item-timestamp">Rated on: ${formatDate(data.user_rating_timestamp)}</a>
+        <a class="item-timestamp">${gettext('rated-on')}: ${formatDate(data.user_rating_timestamp)}</a>
         <a class="item-overview">
             ${formatOverview(data.overview)}
         </a>

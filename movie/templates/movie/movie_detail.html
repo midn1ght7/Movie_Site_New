@@ -1,6 +1,7 @@
 {% extends "../movie/base.html" %}
 {% load static %}
 {% block content %}
+{% load i18n %} 
 <link href="{% static 'css/details.css' %}" rel="stylesheet" type="text/css" />
 <script src="{% static 'js/scripts_details.js' %}"></script>
 <main id="main">
@@ -23,26 +24,25 @@
                     </div>
                     <div class="rating_div">
                         <div class="rating_item">
-                            <a id="rating_title">TMDB Rating</a>
+                            <a id="rating_title">{% translate "tmdb-rating" %}</a>
                             <span id="sp_tmdbrating"></span>
                         </div>
                         {% if user.is_authenticated %}
                         <div class="rating_item">
-                            <a id="rating_title">Your Rating</a>
+                            <a id="rating_title">{% translate "your-rating" %}</a>
                             <span id="sp_yourrating"></span>
                         </div>
                         <div class="rating_item">
-                            <a id="rating_title">Watchlist</a>
+                            <a id="rating_title">{% translate "watchlist" %}</a>
                             <span id="sp_watchlist"></span>
                         </div>
                         <div class="rating_item">
-                            <a id="rating_title">Lists</a>
+                            <a id="rating_title">{% translate "lists" %}</a>
                             <span id="sp_list"><i class="fa fa-list"></i></span>
                         </div>
                         {% endif %}
                     </div>
                     <div class="details-overview" id="details-overview">
-                        <h3>Overview</h3>
                     </div>
                 </div>
             </div>
@@ -51,34 +51,14 @@
     <div class= "movie-content">
         <div class="facts" id="facts">
             <section id="original_title">
-                <!-- <h3>Original Title</h3>
-                らんま½ -->
             </section>
             <section id="director">
-                <!-- <h3>Original Title</h3>
-                らんま½ -->
             </section>
             <section id="tagline">
-                <!-- <h3>Tagline</h3>
-                In the Dark Ages, Magic was a weapon. Love was a mystery. Adventure was everywhere... And Dragons were real. -->
             </section>
             <section id="status">
-                <!-- <h3>Status</h3>
-                Ended -->
             </section>
             <section class="keywords" id="keywords">
-                <!-- <h3>Keywords</h3>
-                <ul>
-                    <li>    
-                        <a class="rounded">mixed martial arts</a>
-                    </li>
-                    <li>
-                        <a class="rounded">curse</a>
-                    </li>
-                    <li>
-                        <a class="rounded">based on manga</a>
-                    </li>
-                </ul> -->
             </section>
         </div>
         <div class="recommendations" id="recommendations">
@@ -88,23 +68,17 @@
 <div id="myModal" class="Modal is-hidden is-visuallyHidden">
     <!-- Modal content -->
     <div class="Modal-content">
-        <p class="Modal-title">Rate this movie<span id="closeRatingModal" class="Close"><i class="fa fa-times"></i></span></p>
+        <p class="Modal-title">{% translate "rate-this-movie" %}<span id="closeRatingModal" class="Close"><i class="fa fa-times"></i></span></p>
         <div class="modal-rate">
             <p class="p-rate"><a id="rate-1">1</a><a id="rate-2">2</a><a id="rate-3">3</a><a id="rate-4">4</a><a id="rate-5">5</a><a id="rate-6">6</a><a id="rate-7">7</a><a id="rate-8">8</a><a id="rate-9">9</a><a id="rate-10">10</a></p>
-            <p class="p-remove"><a id="rate-remove">Remove rating</a></p>
+            <p class="p-remove"><a id="rate-remove">{% translate "remove-rating" %}</a></p>
         </div>
     </div>
 </div>
 <div id="listModal" class="Modal is-hidden is-visuallyHidden">
     <div class="Modal-content">
-        <p class="Modal-title">Add this movie to a list<span id="closeListModal" class="Close"><i class="fa fa-times"></i></span></p>
+        <p class="Modal-title">{% translate "add-movie-to-list" %}<span id="closeListModal" class="Close"><i class="fa fa-times"></i></span></p>
         <div class="modal-list" id="modal-list">
-            <!-- <div class="list-item">
-                <a><i class="fa fa-plus" aria-hidden="true"></i> List Name</a>
-            </div>
-            <div class="list-item">
-                <a><i class="fa fa-plus" aria-hidden="true"></i> List Name</a>
-            </div> -->
         </div>
     </div>
 </div>

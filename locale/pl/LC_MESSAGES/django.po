@@ -1,0 +1,313 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-25 14:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+#: .\inz\settings.py:149
+msgid "English"
+msgstr "Angielski"
+
+#: .\inz\settings.py:150
+msgid "Polish"
+msgstr "Polski"
+
+#: .\movie\templates\movie\base.html:29
+msgid "title"
+msgstr "Tytuł"
+
+#: .\movie\templates\movie\base.html:30
+msgid "keyword"
+msgstr "Słowo klucz"
+
+#: .\movie\templates\movie\base.html:36
+msgid "search-placeholder"
+msgstr "Wyszukaj..."
+
+#: .\movie\templates\movie\base.html:43
+msgid "your-activity"
+msgstr "Twoja aktywność"
+
+#: .\movie\templates\movie\base.html:44
+msgid "your-ratings"
+msgstr "Twoje oceny"
+
+#: .\movie\templates\movie\base.html:45
+msgid "your-watchlist"
+msgstr "Do obejrzenia"
+
+#: .\movie\templates\movie\base.html:46
+msgid "your-lists"
+msgstr "Twoje listy"
+
+#: .\movie\templates\movie\base.html:47
+msgid "logout"
+msgstr "Wyloguj się"
+
+#: .\movie\templates\movie\base.html:52
+msgid "sign-in"
+msgstr "Zaloguj się"
+
+#: .\movie\templates\movie\movie_detail.html:27
+msgid "tmdb-rating"
+msgstr "Ocena TMDB"
+
+#: .\movie\templates\movie\movie_detail.html:32
+msgid "your-rating"
+msgstr "Twoja Ocena"
+
+#: .\movie\templates\movie\movie_detail.html:36
+msgid "watchlist"
+msgstr "Do obejrzenia"
+
+#: .\movie\templates\movie\movie_detail.html:40
+msgid "lists"
+msgstr "Listy"
+
+#: .\movie\templates\movie\movie_detail.html:46
+msgid "overview"
+msgstr "Opis"
+
+#: .\movie\templates\movie\movie_detail.html:92
+msgid "rate-this-movie"
+msgstr "Oceń ten film"
+
+#: .\movie\templates\movie\movie_detail.html:95
+msgid "remove-rating"
+msgstr "Usuń ocenę"
+
+#: .\movie\templates\movie\movie_detail.html:101
+msgid "add-movie-to-list"
+msgstr "Dodaj ten film do listy"
+
+#: .\movie\templates\movie\movie_list.html:9
+msgid "most-popular"
+msgstr "Najbardziej popularne"
+
+#: .\movie\templates\movie\movie_list.html:10
+msgid "top-rated"
+msgstr "Najwyżej oceniane"
+
+#: .\movie\templates\movie\movie_list.html:18
+msgid "load-more"
+msgstr "Wczytaj więcej"
+
+#: scripts.js
+msgid "most-popular-title"
+msgstr "Najbardziej popularne filmy"
+
+#: scripts.js
+msgid "top-rated-title"
+msgstr "Najwyżej oceniane filmy"
+
+#: scripts-details.js
+msgid "original-title"
+msgstr "Oryginalny tytuł"
+
+#: .\movie\templates\movie\base.html:26 & #: scripts-details.js
+msgid "director"
+msgstr "Reżyser"
+
+#: scripts-details.js
+msgid "tagline"
+msgstr "Slogan"
+
+#: scripts-details.js
+msgid "status"
+msgstr "Status"
+
+#: scripts-details.js
+msgid "keywords"
+msgstr "Słowa kluczowe"
+
+#: scripts-details.js
+msgid "content-recommendation"
+msgstr "Rekomendacja na podstawie cech"
+
+#: scripts-details.js
+msgid "collab-recommendation"
+msgstr "Rekomendacja na podstawie użytkowników"
+
+#: scripts-details.js
+msgid "collab-recommendation-not-enough"
+msgstr "W bazie nie ma wystarczająco dużo ocen aby stworzyć rekomendacje na podstawie użytkowników."
+
+#: scripts-details.js
+msgid "similarity"
+msgstr "Podobieństwo"
+
+#: scripts-details.js
+msgid "movie-in-watchlist"
+msgstr "Film jest na liście do obejrzenia."
+
+#: scripts-details.js
+msgid "movie-not-in-watchlist"
+msgstr "Film nie jest na liście do obejrzenia."
+
+#: scripts-details.js
+msgid "create-list"
+msgstr "Stwórz nową listę"
+
+#: createList.html
+msgid "create"
+msgstr "Stwórz"
+
+#: editList.html
+msgid "edit-list"
+msgstr "Edytuj listę"
+
+#: editList.html
+msgid "edit"
+msgstr "Edytuj"
+
+#: register.html
+msgid "create-account"
+msgstr "Stwórz konto"
+
+#: register.html
+msgid "register"
+msgstr "Zarejestruj się"
+
+#: login.html
+msgid "login"
+msgstr "Zaloguj się"
+
+#: login.html
+msgid "dont-have-an-account"
+msgstr "Nie masz konta? Stwórz je"
+
+#: login.html
+msgid "here"
+msgstr "tutaj"
+
+#: register/forms.py
+msgid "list-name"
+msgstr "Nazwa listy:"
+
+#: list_specific.js
+msgid "user-list"
+msgstr "lista o nazwie"
+
+#: list_specific.js
+msgid "remove-from-list"
+msgstr "Usuń z listy"
+
+#: lists.js
+msgid "user-lists"
+msgstr "Listy stworzone przez"
+
+#: lists.js
+msgid "edit-list-specific"
+msgstr "Edytuj tę listę"
+
+#: lists.js
+msgid "delete-list-specific"
+msgstr "Usuń tę listę"
+
+#: lists.js
+msgid "see-list"
+msgstr "Zobacz listę"
+
+#: lists.js
+msgid "list-recommendations"
+msgstr "Rekomendacja na podstawie cech dla listy"
+
+#: lists.js
+msgid "list-empty"
+msgstr "Ta lista jest pusta."
+
+#: ratings.js
+msgid "user-ratings"
+msgstr "Wszystkie oceny"
+
+#: ratings.js
+msgid "rated-on"
+msgstr "Ocenione"
+
+#: watchlist.js
+msgid "user-watchlist"
+msgstr "Do obejrzenia"
+
+#: watchlist.js
+msgid "watchlist-remove"
+msgstr "Usuń z 'Do obejrzenia'"
+
+#: watchlist.js
+msgid "watchlist-empty-1"
+msgstr "'Do obejrzenia' użytkownika"
+
+#: watchlist.js
+msgid "watchlist-empty-2"
+msgstr "jest pusta."
+
+#: user.js
+msgid "member-since"
+msgstr "Użytkownik od"
+
+#: user.js
+msgid "no-movies-ratings"
+msgstr "nie posiada żadnej oceny."
+
+#: user.js
+msgid "no-movies-ratings-recommendations"
+msgstr "Tutaj znajdziesz rekomendowane filmy dla"
+
+#: user.js
+msgid "no-movies-watchlist"
+msgstr "nie ma żadnego filmu na liście 'Do obejrzenia'."
+
+#: user.js
+msgid "no-lists"
+msgstr "nie ma żadnej listy."
+
+#: user.js
+msgid "recently-rated"
+msgstr "Najnowsze oceny"
+
+#: user.js
+msgid "see-all-ratings"
+msgstr "Zobacz wszystkie oceny"
+
+#: user.js
+msgid "see-lists"
+msgstr "Zobacz wszystkie listy"
+
+#: user.js
+msgid "see-watchlist"
+msgstr "Zobacz filmy na liście 'Do obejrzenia'"
+
+#: user.js
+msgid "user-recommendation-1"
+msgstr "Rekomendacje dla"
+
+#: user.js
+msgid "user-recommendation-2"
+msgstr "na podstawie podobnych użytkowników"
+
+#: user.js
+msgid "list-title"
+msgstr "tytuł"
+
+#: user.js
+msgid "list-titles"
+msgstr "tytułów"
+
+#: user.js
+msgid "list-titles-alt"
+msgstr "tytuły"

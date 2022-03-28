@@ -1,0 +1,311 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-25 13:42+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\inz\settings.py:153
+msgid "English"
+msgstr "English"
+
+#: .\inz\settings.py:154
+msgid "Polish"
+msgstr "Polish"
+
+#: .\movie\templates\movie\base.html:24
+msgid "title"
+msgstr "Title"
+
+#: .\movie\templates\movie\base.html:25
+msgid "keyword"
+msgstr "Keyword"
+
+#: .\movie\templates\movie\base.html:36
+msgid "search-placeholder"
+msgstr "Search..."
+
+#: .\movie\templates\movie\base.html:38
+msgid "your-activity"
+msgstr "Your Activity"
+
+#: .\movie\templates\movie\base.html:39
+msgid "your-ratings"
+msgstr "Your Ratings"
+
+#: .\movie\templates\movie\base.html:40
+msgid "your-watchlist"
+msgstr "Your Watchlist"
+
+#: .\movie\templates\movie\base.html:41
+msgid "your-lists"
+msgstr "Your Lists"
+
+#: .\movie\templates\movie\base.html:47
+msgid "logout"
+msgstr "Logout"
+
+#: .\movie\templates\movie\base.html:47
+msgid "sign-in"
+msgstr "Sign In"
+
+#: .\movie\templates\movie\movie_detail.html:27
+msgid "tmdb-rating"
+msgstr "TMDB Rating"
+
+#: .\movie\templates\movie\movie_detail.html:32
+msgid "your-rating"
+msgstr "Your Rating"
+
+#: .\movie\templates\movie\movie_detail.html:36
+msgid "watchlist"
+msgstr "Watchlist"
+
+#: .\movie\templates\movie\movie_detail.html:40
+msgid "lists"
+msgstr "Lists"
+
+#: .\movie\templates\movie\movie_detail.html:46
+msgid "overview"
+msgstr "Overview"
+
+#: .\movie\templates\movie\movie_detail.html:92
+msgid "rate-this-movie"
+msgstr "Rate this movie"
+
+#: .\movie\templates\movie\movie_detail.html:95
+msgid "remove-rating"
+msgstr "Remove rating"
+
+#: .\movie\templates\movie\movie_detail.html:101
+msgid "add-movie-to-list"
+msgstr "Add this movie to a list"
+
+#: .\movie\templates\movie\movie_list.html:9
+msgid "most-popular"
+msgstr "Most Popular"
+
+#: .\movie\templates\movie\movie_list.html:10
+msgid "top-rated"
+msgstr "Top Rated"
+
+#: .\movie\templates\movie\movie_list.html:18
+msgid "load-more"
+msgstr "Load more"
+
+#: scripts.js
+msgid "most-popular-title"
+msgstr "Most popular movies"
+
+#: scripts.js
+msgid "top-rated-title"
+msgstr "Top rated movies"
+
+#: scripts-details.js
+msgid "original-title"
+msgstr "Original Title"
+
+#: .\movie\templates\movie\base.html:26 & #: scripts-details.js
+msgid "director"
+msgstr "Director"
+
+#: scripts-details.js
+msgid "tagline"
+msgstr "Tagline"
+
+#: scripts-details.js
+msgid "status"
+msgstr "Status"
+
+#: scripts-details.js
+msgid "keywords"
+msgstr "Keywords"
+
+#: scripts-details.js
+msgid "content-recommendation"
+msgstr "Content-based recommendation"
+
+#: scripts-details.js
+msgid "collab-recommendation"
+msgstr "Collaborative recommendation"
+
+#: scripts-details.js
+msgid "collab-recommendation-not-enough"
+msgstr "There is not enough ratings for this movie in the database to create Collaborative Recommendations."
+
+#: scripts-details.js
+msgid "similarity"
+msgstr "Similarity"
+
+#: scripts-details.js
+msgid "movie-in-watchlist"
+msgstr "Movie is in the watchlist."
+
+#: scripts-details.js
+msgid "movie-not-in-watchlist"
+msgstr "Movie is not in the watchlist."
+
+#: scripts-details.js #: createList.html #: lists.js
+msgid "create-list" 
+msgstr "Create a new list here"
+
+#: createList.html
+msgid "create"
+msgstr "Create"
+
+#: editList.html
+msgid "edit-list"
+msgstr "Edit a list"
+
+#: editList.html
+msgid "edit"
+msgstr "Edit"
+
+#: register.html
+msgid "create-account"
+msgstr "Create an account"
+
+#: register.html
+msgid "register"
+msgstr "Register"
+
+#: login.html
+msgid "login"
+msgstr "Login"
+
+#: login.html
+msgid "dont-have-an-account"
+msgstr "Don't have an account? Create one"
+
+#: login.html
+msgid "here"
+msgstr "here"
+
+#: register/forms.py
+msgid "list-name"
+msgstr "List name:"
+
+#: list_specific.js
+msgid "user-list"
+msgstr "list"
+
+#: list_specific.js
+msgid "remove-from-list"
+msgstr "Remove from list"
+
+#: lists.js
+msgid "user-lists"
+msgstr "Lists made by"
+
+#: lists.js
+msgid "edit-list-specific"
+msgstr "Edit this list"
+
+#: lists.js
+msgid "delete-list-specific"
+msgstr "Delete this list"
+
+#: lists.js
+msgid "see-list"
+msgstr "See list"
+
+#: lists.js
+msgid "list-recommendations"
+msgstr "Content-based recommendations for"
+
+#: lists.js
+msgid "list-empty"
+msgstr "This list is empty."
+
+#: ratings.js
+msgid "user-ratings"
+msgstr "All ratings of"
+
+#: ratings.js
+msgid "rated-on"
+msgstr "Rated on"
+
+#: watchlist.js #: user.js
+msgid "user-watchlist"
+msgstr "Watchlist of"
+
+#: watchlist.js
+msgid "watchlist-remove"
+msgstr "Remove from watchlist"
+
+#: watchlist.js
+msgid "watchlist-empty-1"
+msgstr "Watchlist of user"
+
+#: watchlist.js
+msgid "watchlist-empty-2"
+msgstr "is empty."
+
+#: user.js
+msgid "member-since"
+msgstr "Member since"
+
+#: user.js
+msgid "no-movies-ratings"
+msgstr "haven't rated any movie yet."
+
+#: user.js
+msgid "no-movies-ratings-recommendations"
+msgstr "Here you will find recommended movies for"
+
+#: user.js
+msgid "no-movies-watchlist"
+msgstr "doesn't have any movie in watchlist."
+
+#: user.js
+msgid "no-lists"
+msgstr "doesn't have any list."
+
+#: user.js
+msgid "recently-rated"
+msgstr "Most recently rated movies of"
+
+#: user.js
+msgid "see-all-ratings"
+msgstr "See all ratings"
+
+#: user.js
+msgid "see-lists"
+msgstr "See all lists"
+
+#: user.js
+msgid "see-watchlist"
+msgstr "See watchlist"
+
+#: user.js
+msgid "user-recommendation-1"
+msgstr "Recommended for"
+
+#: user.js
+msgid "user-recommendation-2"
+msgstr "based on similar users"
+
+#: user.js
+msgid "list-title"
+msgstr "title"
+
+#: user.js
+msgid "list-titles"
+msgstr "titles"
+
+#: user.js
+msgid "list-titles-alt"
+msgstr "titles"

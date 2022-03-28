@@ -6,7 +6,7 @@
 
 .register .btn-success{
     margin-top: 15px;
-    max-width: 150px;
+    max-width: 200px;
     padding: 10px 15px;
     background: var(--secondary-color);
     color: var(--primaryFontColor);

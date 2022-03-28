@@ -1,20 +1,21 @@
 {% extends "../movie/base.html" %}
 {% load static %}
 {% block content %}
+{% load i18n %} 
     <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
     <script src="{% static 'js/scripts.js' %}"></script>
     <div class="welcome">
         <div class="buttons">
-            <button class="btn-switch" id="btn_popular">Most Popular</button>
-            <button class="btn-switch" id="btn_top">Top Rated</button>
+            <button class="btn-switch" id="btn_popular">{% translate "most-popular" %}</button>
+            <button class="btn-switch" id="btn_top">{% translate "top-rated" %}</button>
         </div>
     </div>  
     <main id="main">
-        <h2 id="current-list">Current List</h2>
+        <h2 id="current-list"></h2>
         <div id="list-movies">
         </div>
         <div class="buttons">
-            <button class="btn-switch" id="btn-load-more">Load more</button>
+            <button class="btn-switch" id="btn-load-more">{% translate "load-more" %}</button>
         </div>
     </main>
 {% endblock %}

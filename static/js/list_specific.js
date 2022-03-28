@@ -5,6 +5,7 @@ let list_id = url_split[url_split.length-1];
 let user_data = null;
 let list_data = null;
 
+
 async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
@@ -15,7 +16,7 @@ async function listData(){
     const response = await fetch(`/getList/${list_id}`,{method:'GET'});
     const data = await response.json();
     list_data = data;
-    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${user_data.user_id}'><i class="fa fa-user"></i> ${user_data.username}</a>'s list: ${list_data.name}`
+    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${user_data.user_id}'><i class="fa fa-user"></i> ${user_data.username}</a> ${gettext('user-list')}: ${list_data.name}`
 }
 
 function styleTitle(title, release_date){
@@ -39,8 +40,8 @@ async function appendMovie(data){
             <a class="item-title" href="/details/${data.id}" title="${data.title}">
                 ${styleTitle(data.title, data.release_date)}
             </a>
-            <a class="item-remove" id="${data.tmdb_id}" title="Remove from list">
-            Remove from list
+            <a class="item-remove" id="${data.tmdb_id}" title=${gettext('remove-from-list')}>
+            ${gettext('remove-from-list')}
             </a>
             <a class="item-overview">
                 ${data.overview}
@@ -68,7 +69,7 @@ async function appendMovie(data){
         document.getElementById(`${data.tmdb_id}`).onclick = async function(){
             //alert(this.id)
             let this_movie_tmdb_id = this.id;
-            const response = await fetch(`/addToList/${user_id}/${this_movie_tmdb_id}/${list_id}`,{method:'POST'});
+            const response = await fetch(`../../../addToList/${user_id}/${this_movie_tmdb_id}/${list_id}`,{method:'POST'});
             const data = await response.json();
             console.log("addToList:",data);
             document.getElementById(`list-item-${this_movie_tmdb_id}`).remove();

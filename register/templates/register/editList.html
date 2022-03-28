@@ -1,16 +1,16 @@
 {% extends "../register/base.html" %}
 {% load static %}
-
+{% load i18n %} 
 
 {% block content %}
 <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css" />
 <div class="register-base">
     <div class="register">
-        <h3>Edit a list</h3>
+        <h3>{% translate 'edit-list' %}</h3>
         <form method = "POST" class="form-group">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Edit</button>
+            <button type="submit" class="btn btn-success">{% translate 'edit' %}</button>
         </form>
     </div>
 </div>

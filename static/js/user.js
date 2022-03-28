@@ -8,7 +8,7 @@ async function userData(){
     const data = await response.json();
     user_data = data;
     document.getElementById("username").innerHTML=`<i class="fa fa-user"></i>  ${data.username}`;
-    document.getElementById("date-joined").innerHTML=`Member since ${formatDate(data.date_joined)}`;
+    document.getElementById("date-joined").innerHTML=`${gettext('member-since')}: ${formatDate(data.date_joined)}`;
 }
 
 async function userRatings(){
@@ -20,8 +20,8 @@ async function userRatings(){
         userRecommendations();
     }
     else{
-        htmlScrollers("user-ratings", `${user_data.username} haven't rated any movie yet.`, "ratings-scroller")
-        htmlScrollers("recommended-user", `Here you will find recommended movies for ${user_data.username}.`, "recommendation-scroller")
+        htmlScrollers("user-ratings", `${user_data.username} ${gettext('no-movies-ratings')}`, "ratings-scroller")
+        htmlScrollers("recommended-user", `${gettext('no-movies-ratings-recommendations')} ${user_data.username}.`, "recommendation-scroller")
     }
 }
 
@@ -33,7 +33,7 @@ async function userWatchlist(){
         showUserWatchlist(data.user_watchlist)
     }
     else{
-        htmlScrollers("user-watchlist", `${user_data.username} doesn't have any movie in watchlist.`, "watchlist-scroller")
+        htmlScrollers("user-watchlist", `${user_data.username} ${gettext('no-movies-watchlist')}`, "watchlist-scroller")
     }
 }
 
@@ -45,12 +45,12 @@ async function userLists(){
         showUserLists(data.user_lists);
     }
     else{
-        htmlScrollers("user-lists", `${user_data.username} doesn't have any list.`, "lists-rows")
+        htmlScrollers("user-lists", `${user_data.username} ${gettext('no-lists')}`, "lists-rows")
     }
 }
 
 async function showUserRatings(user_ratings){
-    htmlScrollers("user-ratings", ` ${user_data.username}'s most recently rated:`, "ratings-scroller")
+    htmlScrollers("user-ratings", `${gettext('recently-rated')} ${user_data.username}:`, "ratings-scroller")
     if (user_ratings.length > 10) {
         for (i = 0; i < 10; i++) {
             showRatingScroller(user_ratings[i], "ratings-scroller");
@@ -66,15 +66,15 @@ async function showUserRatings(user_ratings){
     show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/ratings';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
-            <a class="title" title="See all ${user_ratings.length} ratings">
-                See all ${user_ratings.length} ratings
+            <a class="title" title="${gettext('see-all-ratings')} (${user_ratings.length})">
+            ${gettext('see-all-ratings')} (${user_ratings.length})
             </a>
         </p>`;
     document.getElementById("user-ratings").appendChild(show_moreEl);
 }
 
 async function showUserWatchlist(user_watchlist){
-    htmlScrollers("user-watchlist", ` ${user_data.username}'s movies in watchlist:`, "watchlist-scroller")
+    htmlScrollers("user-watchlist", `${gettext('user-watchlist')} ${user_data.username}:`, "watchlist-scroller")
     if (user_watchlist.length > 10) {
         for (i = 0; i < 10; i++) {
             showWatchlistScroller(user_watchlist[i], "watchlist-scroller");
@@ -90,15 +90,15 @@ async function showUserWatchlist(user_watchlist){
     show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/watchlist';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
-            <a class="title" title="See whole watchlist (${user_watchlist.length})">
-                See whole watchlist (${user_watchlist.length})
+            <a class="title" title="${gettext('see-watchlist')} (${user_watchlist.length})">
+            ${gettext('see-watchlist')} (${user_watchlist.length})
             </a>
         </p>`;
     document.getElementById("user-watchlist").appendChild(show_moreEl);
 }
 
 async function showUserLists(user_lists){
-    htmlRows("user-lists", `${user_data.username} lists:`, "lists-rows")
+    htmlRows("user-lists", `${gettext('user-lists')} ${user_data.username}:`, "lists-rows")
     if (user_lists.length > 5) {
         for (i = 0; i < 5; i++) {
             showListsRows(user_lists[i], "lists-rows");
@@ -114,15 +114,15 @@ async function showUserLists(user_lists){
     show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/lists';`);
     show_moreEl.innerHTML = `
         <p class="movie-flex">
-            <a class="title" title="See all ${user_lists.length} lists">
-                See all ${user_lists.length} lists
+            <a class="title" title="${gettext('see-lists')} (${user_lists.length})">
+            ${gettext('see-lists')} (${user_lists.length})
             </a>
         </p>`;
     document.getElementById("user-lists").appendChild(show_moreEl);
 }
 
 async function userRecommendations(){
-    htmlScrollers("recommended-user", `Recommended for ${user_data.username} based on similar users:`, "recommendation-scroller")
+    htmlScrollers("recommended-user", `${gettext('user-recommendation-1')} ${user_data.username} ${gettext('user-recommendation-2')}:`, "recommendation-scroller")
     const response = await fetch(`/getUserRecommendations/${user_id}`,{method:'GET'});
     const responseJSON = await response.json();
     for (const movie of responseJSON){
@@ -212,9 +212,13 @@ function showListsRows(data, appendto){
     if(data.movies.length > 0){
         const Element = document.createElement('div');
         Element.classList.add('list-item');
-        let overview = `${data.movies.length} titles`
+        let overview = `${data.movies.length} ${gettext('list-titles')}`
+        lastDigit = parseInt(data.movies.length.toString().slice(-1))
+        if(lastDigit == 2 || lastDigit == 3 || lastDigit == 4){
+            overview = `${data.movies.length} ${gettext('list-titles-alt')}`
+        }
         if(data.movies.length == 1){
-            overview = `${data.movies.length} title`
+            overview = `${data.movies.length} ${gettext('list-title')}`
         }
         Element.innerHTML = `
             <div class="item-poster">
@@ -232,7 +236,6 @@ function showListsRows(data, appendto){
             </div>`;
         document.getElementById(`${appendto}`).appendChild(Element);
     }
-
 }
 
 function showRecommendationScroller(data, appendto){

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+app_name = 'registers'
 
 urlpatterns = [
     path('user/<int:user_id>', views.user, name="user_page"),

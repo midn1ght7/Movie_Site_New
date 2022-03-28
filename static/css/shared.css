@@ -151,6 +151,9 @@ div.user, div.user-dropdown{
     cursor: pointer;
 }
 
+.dropdowns{
+    display: inline-flex;
+}
 
 /* Style The Dropdown Button */
 .user-dropdown-btn, .login-btn{
@@ -234,7 +237,7 @@ div.scroller::-webkit-scrollbar-thumb:hover {
     background-color: var(--secondaryHover);
 }
 
-.user_id_hidden { 
+.hidden_info { 
     display: none; 
     opacity: 0;
 }

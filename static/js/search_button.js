@@ -1,22 +1,41 @@
 var type = "Title";
+var type_locale = gettext("title");
+
+function hideAfterClicking(){
+    var dropdowns = document.getElementsByClassName("search-dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+}
 
 window.addEventListener('load', function() {
     //SEARCH DROPDOWN
     var searchDropBtn = document.getElementById("search-dropdown-btn")
-    searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`;
+    searchDropBtn.innerHTML=`${type_locale} <i class="fa fa-caret-down"></i>`;
     searchDropBtn.onclick=function(){document.getElementById("search-dropdown").classList.toggle("show");}
+
 
     document.getElementById("drop-title").onclick = function(){
         type = "Title";
-        searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`;
+        type_locale = gettext("title");
+        searchDropBtn.innerHTML=`${type_locale} <i class="fa fa-caret-down"></i>`;
+        hideAfterClicking();
     }
     document.getElementById("drop-keyword").onclick = function(){
         type = "Keyword";
-        searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`; 
+        type_locale = gettext("keyword");
+        searchDropBtn.innerHTML=`${type_locale} <i class="fa fa-caret-down"></i>`; 
+        hideAfterClicking();
     }
     document.getElementById("drop-director").onclick = function(){
         type = "Director";
-        searchDropBtn.innerHTML=`${type} <i class="fa fa-caret-down"></i>`; 
+        type_locale = gettext("director");
+        searchDropBtn.innerHTML=`${type_locale} <i class="fa fa-caret-down"></i>`; 
+        hideAfterClicking();
     }
     
     //SEARCH BUTTON

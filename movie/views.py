@@ -16,7 +16,9 @@ from datetime import datetime
 
 from scipy import spatial
 import operator
-
+from django import template
+from django.urls import reverse, resolve
+from django.utils.translation import activate
 
 def movie_list(request):
     return render(request, 'movie/movie_list.html')
@@ -229,7 +231,9 @@ def checkIfInWatchlist(request, tmdb_id):
 
 @csrf_exempt
 def addToWatchlist(request, user_id, tmdb_id):
+    print("Entered addToWatchlist")
     if request.method == "POST":
+        print("request.method == 'POST'")
         movie = get_object_or_404(Movie, tmdb_id=tmdb_id)
 
         # Check if the item already exists in that user watchlist
@@ -246,6 +250,8 @@ def addToWatchlist(request, user_id, tmdb_id):
             user_watchlist.movie.add(movie)
 
             return JsonResponse({'user_id': user_id, 'added_to_watchlist': tmdb_id})
+    else:
+        print("request.method != 'POST'")
 
 @csrf_exempt
 def addTolist(request, user_id, tmdb_id, list_id):

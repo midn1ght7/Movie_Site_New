@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from rating.models import List
+from django.utils.translation import gettext, gettext_lazy
 
 
 class RegisterForm(UserCreationForm):
@@ -16,4 +17,4 @@ class ListForm(forms.ModelForm):
     class Meta:
         model = List
         fields = ["name"]
-        labels = {'name': "List Name"}
+        labels = {'name': gettext_lazy("list-name")}

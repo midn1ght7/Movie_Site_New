@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 
+app_name = 'movies_name'
+
 urlpatterns = [
     path('', views.movie_list, name="movie_list"),
     path('details/<int:pk>',  views.movie_detail, name="movie_detail"),
@@ -24,3 +26,4 @@ urlpatterns = [
     path('addToWatchlist/<int:user_id>/<int:tmdb_id>', views.addToWatchlist, name="addToWatchlist"),
     path('addToList/<int:user_id>/<int:tmdb_id>/<int:list_id>', views.addTolist, name="addTolist"),
 ] 
+

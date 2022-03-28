@@ -25,13 +25,13 @@ async function showMovies(movies, title){
       movieEl.classList.add('movie');
       movieEl.setAttribute("onclick",`getMovieDetails(${id})`);      
       movieEl.innerHTML = `
-      <img src="${poster}" alt="${title}">
+      <img src="/${poster}" alt="${title}">
       <div class="movie-info">
           <h3>"${title}"</h3>
           <span class="${getColor(vote_average)}">${vote_average}</span>
       </div>
       <div class="overview">
-          <h3>Overview</h3>
+          <h3>${gettext("overview")}</h3>
           ${overview}
       </div>`;
       document.getElementById("list-movies").appendChild(movieEl);
@@ -53,7 +53,7 @@ async function getPopular(){
         }
     }).then(movies =>
     {
-        showMovies(movies, "Most Popular Movies");
+        showMovies(movies, gettext("most-popular-title"));
     })
 }
 
@@ -72,17 +72,13 @@ async function getTop(){
         }
     }).then(movies =>
     {
-        showMovies(movies, "Top Rated Movies");
+        showMovies(movies, gettext("top-rated-title"));
     })
 }
 getTop()
 
 function getMovieDetails(id)
 {
-    fetch(`/details/${id}`, 
-    {
-        method: 'GET',
-    });
     window.location = `/details/${id}`;
 }
 

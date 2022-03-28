@@ -7,15 +7,15 @@ async function userData(){
     const response = await fetch(`/getUser/${user_id}`,{method:'GET'});
     const data = await response.json();
     console.log(data);
-    document.getElementById("username").innerHTML=`<a class='profile-href' href='/user/${data.user_id}'><i class="fa fa-user"></i> ${data.username}</a>'s lists:`
+    document.getElementById("username").innerHTML=`${gettext('user-lists')} <a class='profile-href' href='/user/${data.user_id}'> <i class="fa fa-user"></i> ${data.username}</a>:`
     document.getElementById("username").onclick = `location.href = '/user/${data.id}';`
     if(user_id == document.getElementById('user_id').innerHTML){
         let div = document.createElement('div');
         div.innerHTML = `
         <div class="scroller-item-more" onclick="location.href='/list/create'">
             <p class="movie-flex">
-                <a class="title" title="Create a new list">
-                    Create a new list
+                <a class="title" title="${gettext('create-list')}">
+                ${gettext('create-list')}   
                 </a>    
             </p>
         </div>`
@@ -59,16 +59,16 @@ async function htmlHandlers(list_id){
     div.className = 'list-handlers'
     let a_edit = document.createElement('a');
     a_edit.setAttribute("onclick", `location.href='/list/edit/${list_id}';`);
-    a_edit.innerHTML = `Edit this list`
+    a_edit.innerHTML = gettext('edit-list-specific')
     let a_delete = document.createElement('a');
     a_delete.id = `${list_id}`
     a_delete.onclick = async function(){
-        const response = await fetch(`/list/delete/${this.id}`,{method:'POST'});
+        const response = await fetch(`../../list/delete/${this.id}`,{method:'POST'});
         const data = await response.json();
         console.log(data);
         document.getElementById(`user-scroller-top-${this.id}`).remove();
     }
-    a_delete.innerHTML = `Delete this list`
+    a_delete.innerHTML = gettext('delete-list-specific')
     div.appendChild(a_edit);
     div.innerHTML += ' | ';
     div.appendChild(a_delete);
@@ -88,7 +88,6 @@ async function userLists(){
                 if (list.movies.length > 10) {
                     for (i = 0; i < 10; i++) {
                         appendToScroller(list.movies[i], `${list.id}-scroller`);
-                        
                     }
                 }
                 else {
@@ -101,8 +100,8 @@ async function userLists(){
                 show_moreEl.setAttribute("onclick", `location.href='/user/${user_id}/list/${list.id}';`);
                 show_moreEl.innerHTML = `
                     <p class="movie-flex">
-                        <a class="title" title="See whole list (${list.movies.length})">
-                            See whole list (${list.movies.length})
+                        <a class="title" title="${gettext('see-list')} (${list.movies.length})">
+                        ${gettext('see-list')} (${list.movies.length})
                         </a>
                     </p>`;
                 document.getElementById(`user-scroller-top-${list.id}`).appendChild(show_moreEl);
@@ -111,7 +110,7 @@ async function userLists(){
             else{
                 //alert(list.name+"empty!")
                 let h3 = document.createElement('h3'); 
-                h3.textContent = "This list is empty.";
+                h3.textContent = gettext('list-empty');
                 document.getElementById(`${list.id}-scroller`).appendChild(h3);
             }
         }
@@ -142,7 +141,7 @@ async function listRecommendations(list){
     console.log("Recommendations for:",list.id,":",responseJSON);
 
     let h3 = document.createElement('h3');
-    h3.textContent = `Content-based recommendations for "${list.name}"`
+    h3.textContent = `${gettext('list-recommendations')} ${list.name}`
     let div0 = document.createElement('div');
     let div1 = document.createElement('div');
     div0.className = "user-scroller";
