@@ -1,4 +1,5 @@
 from email.mime import base
+from re import M
 from typing import final
 import weakref
 from django.shortcuts import get_object_or_404, render
@@ -360,8 +361,7 @@ def collabRecommendation(request, tmdb_id):
             our_movie = values_array[filtered_tmdb_ids.index(tmdb_id)]
 
             distances = []
-            #our_movie_avg = sum(our_movie)/len(our_movie)
-            #print("Our Movie average vote:",our_movie_avg)
+            max_distance = None
             for index, value in enumerate(values_array):
                 if our_movie != value:
                     ratings = []
@@ -370,15 +370,15 @@ def collabRecommendation(request, tmdb_id):
                             ratings.append(rating)
                     rating_avg = sum(ratings)/len(ratings)
                     percent_of_users = (len(ratings)/len(users_who_liked))*100
-
-                    if(percent_of_users>10 and rating_avg>5):
-                        #print("Rating average of:",filtered_tmdb_ids[index],":",rating_avg,"similarity:",spatial.distance.cosine(our_movie, value), "percent:", percent_of_users)
-                        dist = (spatial.distance.cosine(our_movie, value) + (10-rating_avg)/5)/2
-                        #dist = (spatial.distance.euclidean(our_movie, value))
-                        distances.append((filtered_tmdb_ids[index], dist))
+                    dist = spatial.distance.euclidean(our_movie, value) + (100 - (rating_avg * (10))) + (100 - percent_of_users)
+                    if max_distance == None or max_distance < dist:
+                        max_distance = dist
+                    distances.append((filtered_tmdb_ids[index], dist))
 
             distances.sort(key=operator.itemgetter(1))
             neighbors = []
+            #print(distances)
+            print(max_distance)
 
             if(len(distances)<n_movies_to_recommend):
                 for x in range(len(distances)):
@@ -387,10 +387,13 @@ def collabRecommendation(request, tmdb_id):
                 for x in range(n_movies_to_recommend):
                     neighbors.append(distances[x])
             
+            
+
             for neighbor in neighbors:
                 print(neighbor)
+                new_dist = neighbor[1] / max_distance
                 id_list.append(neighbor[0])
-                score_list.append(neighbor[1])
+                score_list.append(new_dist)
 
             movies = list(Movie.objects.filter(tmdb_id__in=id_list))
             return JsonResponse(similar_response(movies, id_list, score_list), safe=False)
