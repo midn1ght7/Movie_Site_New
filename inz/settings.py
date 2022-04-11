@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'register.apps.RegisterConfig',
     'rating.apps.RatingConfig',
     "django_pivot",
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

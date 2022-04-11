@@ -372,8 +372,9 @@ def collabRecommendation(request, tmdb_id):
                     percent_of_users = (len(ratings)/len(users_who_liked))*100
 
                     if(percent_of_users>10 and rating_avg>5):
-                        print("Rating average of:",filtered_tmdb_ids[index],":",rating_avg,"similarity:",spatial.distance.cosine(our_movie, value), "percent:", percent_of_users)
+                        #print("Rating average of:",filtered_tmdb_ids[index],":",rating_avg,"similarity:",spatial.distance.cosine(our_movie, value), "percent:", percent_of_users)
                         dist = (spatial.distance.cosine(our_movie, value) + (10-rating_avg)/5)/2
+                        #dist = (spatial.distance.euclidean(our_movie, value))
                         distances.append((filtered_tmdb_ids[index], dist))
 
             distances.sort(key=operator.itemgetter(1))
