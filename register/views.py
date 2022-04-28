@@ -125,6 +125,99 @@ def userRecommendationResponse(movies,id_list,percent_list):
     result = sorted(result, key=lambda d: d["shared_by_percentage"], reverse=True)
     return result
 
+def test(request, user_id):
+    try:
+        #make a list of rated movies by the user
+        user_movies = list(Rating.objects.filter(user_id = user_id).values_list('tmdb_id', flat=True).distinct().order_by('tmdb_id'))
+        #take only those movies that have been rated at least 20 times
+        filtered_tmdb_ids = list(Rating.objects.values_list('tmdb_id', flat=True).annotate(amount=Count('tmdb_id')).filter(tmdb_id__in = user_movies, amount__gte = 20).order_by('tmdb_id'))
+        print("made filtered_tmdb_ids of size:",len(filtered_tmdb_ids))
+        #create a variable for filtering user_ids
+        shared = int((len(filtered_tmdb_ids))/2)
+
+        #filter users who have watched at least half of the movies the user in question watched
+        filtered_users_ids = list(Rating.objects.values_list('user_id', flat=True).annotate(amount=Count('user_id')).filter(tmdb_id__in = filtered_tmdb_ids, amount__gte = shared).order_by('user_id'))
+        print("made filtered_users_ids of size:",len(filtered_users_ids))
+
+        final_queryset = Rating.objects.filter(user_id__in = filtered_users_ids, tmdb_id__in = filtered_tmdb_ids)
+
+        #filtering the dataset using our lists
+        final_dataset = pivot(final_queryset, 'user_id', 'tmdb_id_id', 'rating', default=0)
+        print("made the final_dataset! of size:",len(final_dataset))
+
+        values_array = []
+
+        print("Converting query_set to array...")
+
+        #convert the query_set to array of rating arrays
+        for user in final_dataset:
+            array = []
+            for movie in filtered_tmdb_ids:
+                data = user[str(movie)]
+                array.append(data)
+            values_array.append(array)
+            
+        print("length of values_array:", len(values_array))
+            
+        if len(filtered_users_ids)>50:
+            n_similar_users = 50
+        else:
+            n_similar_users = int(len(filtered_users_ids))
+
+        user_id_list = []
+        user_score_list = []
+
+        print("Calculating nearest neighbors...")
+        our_user = values_array[filtered_users_ids.index(user_id)]
+        print("User",user_id,"ratings:",len(our_user))
+
+        distances = []
+        for index, value in enumerate(values_array):
+            if our_user != value:
+                dist = spatial.distance.cosine(our_user, value)
+                distances.append((filtered_users_ids[index], dist))
+
+        distances.sort(key=operator.itemgetter(1))
+        neighbors = []
+            
+        for x in range(n_similar_users-1):
+            neighbors.append(distances[x])
+
+        for neighbor in neighbors:
+            user_id_list.append(neighbor[0])
+            user_score_list.append(neighbor[1])
+
+        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 7).exclude(tmdb_id__in = filtered_tmdb_ids)
+
+        tmdbs_ratings = [] 
+        for rating in ratings_by_similar_users:
+            tmdbs_ratings.append(rating.tmdb_id_id)
+
+        counted_movies = {i:tmdbs_ratings.count(i) for i in tmdbs_ratings}
+        counted_movies = sorted(counted_movies.items(), key=operator.itemgetter(1), reverse=True)
+
+        n_movies_to_recommend = 10
+        mv_id_list = []
+        mv_percent_list = []
+
+        if (len(counted_movies)>n_movies_to_recommend):
+            for i in range(0,10):
+                print(counted_movies[i])
+                mv_id_list.append(counted_movies[i][0])
+                mv_percent_list.append((counted_movies[i][1]/n_similar_users)*100)
+
+        else:
+            for movie in counted_movies:
+                mv_id_list.append(counted_movies[movie][0])
+                mv_percent_list.append(int((counted_movies[movie][1]/n_similar_users)*100))
+
+        movies = list(Movie.objects.filter(tmdb_id__in=mv_id_list))
+        return JsonResponse(userRecommendationResponse(movies, mv_id_list, mv_percent_list), safe=False)
+
+    except Exception as error:
+        print(error)
+        return JsonResponse([], safe=False)
+
 def getUserRecommendations(request, user_id):
     try:
         #make a list of rated movies by the user
@@ -187,7 +280,7 @@ def getUserRecommendations(request, user_id):
             user_id_list.append(neighbor[0])
             user_score_list.append(neighbor[1])
 
-        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 8).exclude(tmdb_id__in = filtered_tmdb_ids)
+        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 7).exclude(tmdb_id__in = filtered_tmdb_ids)
 
         tmdbs_ratings = [] 
         for rating in ratings_by_similar_users:
@@ -203,6 +296,102 @@ def getUserRecommendations(request, user_id):
         if (len(counted_movies)>n_movies_to_recommend):
             for i in range(0,10):
                 print(counted_movies[i])
+                mv_id_list.append(counted_movies[i][0])
+                mv_percent_list.append((counted_movies[i][1]/n_similar_users)*100)
+
+        else:
+            for movie in counted_movies:
+                mv_id_list.append(counted_movies[movie][0])
+                mv_percent_list.append(int((counted_movies[movie][1]/n_similar_users)*100))
+
+        movies = list(Movie.objects.filter(tmdb_id__in=mv_id_list))
+        return JsonResponse(userRecommendationResponse(movies, mv_id_list, mv_percent_list), safe=False)
+
+    except Exception as error:
+        print(error)
+        return JsonResponse([], safe=False)
+
+
+def getUserRecommendations(request, user_id):
+    try:
+        #make a list of rated movies by the user
+        user_movies = list(Rating.objects.filter(user_id = user_id).values_list('tmdb_id', flat=True).distinct().order_by('tmdb_id'))
+        #take only those movies that have been rated at least 20 times
+        filtered_tmdb_ids = list(Rating.objects.values_list('tmdb_id', flat=True).annotate(amount=Count('tmdb_id')).filter(tmdb_id__in = user_movies, amount__gte = 20).order_by('tmdb_id'))
+        print("made filtered_tmdb_ids of size:",len(filtered_tmdb_ids))
+        #create a variable for filtering user_ids
+        shared = int((len(filtered_tmdb_ids))/2)
+
+        #filter users who have watched at least half of the movies the user in question watched
+        filtered_users_ids = list(Rating.objects.values_list('user_id', flat=True).annotate(amount=Count('user_id')).filter(tmdb_id__in = filtered_tmdb_ids, amount__gte = shared).order_by('user_id'))
+        print("made filtered_users_ids of size:",len(filtered_users_ids))
+
+        final_queryset = Rating.objects.filter(user_id__in = filtered_users_ids, tmdb_id__in = filtered_tmdb_ids)
+
+        #filtering the dataset using our lists
+        final_dataset = pivot(final_queryset, 'user_id', 'tmdb_id_id', 'rating', default=0)
+        print("made the final_dataset! of size:",len(final_dataset))
+
+        values_array = []
+
+        print("Converting query_set to array...")
+
+        #convert the query_set to array of rating arrays
+        for user in final_dataset:
+            array = []
+            for movie in filtered_tmdb_ids:
+                data = user[str(movie)]
+                array.append(data)
+            values_array.append(array)
+            
+        print("length of values_array:", len(values_array))
+            
+        if len(filtered_users_ids)>50:
+            n_similar_users = 50
+        else:
+            n_similar_users = int(len(filtered_users_ids))
+
+        user_id_list = []
+        user_score_list = []
+
+        print("Calculating nearest neighbors...")
+        our_user = values_array[filtered_users_ids.index(user_id)]
+        print("User",user_id,"ratings:",len(our_user))
+
+        distances = []
+        for index, value in enumerate(values_array):
+            if our_user != value:
+                dist = spatial.distance.cosine(our_user, value)
+                distances.append((filtered_users_ids[index], dist))
+
+        distances.sort(key=operator.itemgetter(1))
+        neighbors = []
+            
+        for x in range(n_similar_users-1):
+            neighbors.append(distances[x])
+
+        for neighbor in neighbors:
+            user_id_list.append(neighbor[0])
+            user_score_list.append(neighbor[1])
+
+        ratings_by_similar_users = Rating.objects.filter(user_id__in = user_id_list, rating__gte = 7).exclude(tmdb_id__in = filtered_tmdb_ids)
+
+        tmdbs_ratings = [] 
+        for rating in ratings_by_similar_users:
+            tmdbs_ratings.append(rating.tmdb_id_id)
+
+        counted_movies = {i:tmdbs_ratings.count(i) for i in tmdbs_ratings}
+        counted_movies = sorted(counted_movies.items(), key=operator.itemgetter(1), reverse=True)
+
+        print(counted_movies)
+
+        n_movies_to_recommend = 10
+        mv_id_list = []
+        mv_percent_list = []
+
+        if (len(counted_movies)>n_movies_to_recommend):
+            for i in range(0,10):
+                #print(counted_movies[i])
                 mv_id_list.append(counted_movies[i][0])
                 mv_percent_list.append((counted_movies[i][1]/n_similar_users)*100)
 
@@ -296,15 +485,6 @@ def getListRecommendations(request, list_id):
             for i, item in enumerate(list_obj):
                 base_list[i] += item
 
-    #Just Add "1" where they are missing
-    # def fuse_binary_lists(base_list, list_of_lists):
-    #     for list_obj in list_of_lists:
-    #         for i, item in enumerate(list_obj):
-    #             if(base_list[i] != item):
-    #                 if (base_list[i] == 0):
-    #                     base_list[i] = item
-
-
     fuse_binary_lists(genres_bin, genre_bin_lists)
     fuse_binary_lists(keywords_bin, keywords_bin_lists)
     fuse_binary_lists(directors_bin, directors_bin_lists)
@@ -367,14 +547,6 @@ def Similarity(baseMovie, compMovie):
     directorDistance = (spatial.distance.cosine(baseMovie.directors, multiply_binaries(baseMovie.directors,bin_str_tolist(compMovie.directors))))*0.3
     languageDistance = (spatial.distance.cosine(baseMovie.languages, multiply_binaries(baseMovie.languages,bin_str_tolist(compMovie.languages))))*0.2
     return (genreDistance + wordsDistance + directorDistance + languageDistance)/2
-
-
-# def Similarity(baseMovie, compMovie):
-#     genreDistance = (spatial.distance.cosine(baseMovie.genres, bin_str_tolist(compMovie.genres)))*0.5
-#     wordsDistance = spatial.distance.cosine(baseMovie.keywords, bin_str_tolist(compMovie.keywords))
-#     directorDistance = (spatial.distance.cosine(baseMovie.directors, bin_str_tolist(compMovie.directors)))*0.3
-#     languageDistance = (spatial.distance.cosine(baseMovie.languages, bin_str_tolist(compMovie.languages)))*0.2
-#     return genreDistance + wordsDistance + directorDistance + languageDistance
 
 def bin_str_tolist(binary_string):
     binary_string = binary_string.replace(",","")

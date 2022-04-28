@@ -99,7 +99,7 @@ function moreMovieDetails(data){
     }
     if(data.status){
         let h3 = document.createElement('h3');
-        h3.textContent = gettext("status");
+        h3.textContent = gettext("status_");
         document.getElementById("status").appendChild(h3);
         let p = document.createElement('p');
         p.textContent = data.status;

@@ -280,18 +280,12 @@ from django.db.models import Count
 def collabRecommendation(request, tmdb_id):
     print("Starting Collaborative Recommendation of movie tmdb_id: "+str(tmdb_id))
     selected_movie = Movie.objects.get(tmdb_id=tmdb_id)
-    min_movie_ratings = 10
-    #make a list of only tmdb ids of movies who were rated at least x=(min_movie_ratings) times
-    no_users_voted = (Rating.objects.values_list('tmdb_id').annotate(ratings=Count('tmdb_id')).filter(ratings__gte=min_movie_ratings).order_by('tmdb_id'))
-    print("Length of no_users_voted:",len(no_users_voted))
-    #check if the movie was rated considering min_movie_ratings
-    movie_in_ratings = False
-    for i in no_users_voted:
-        if (tmdb_id == i[0]):
-            movie_in_ratings = True
-            break
+    min_movie_ratings = 50
+    selected_movie_ratings = list(Rating.objects.values_list('rating', flat=True).filter(tmdb_id=tmdb_id))
+    smr_length = len(selected_movie_ratings)
+    print("Length of selected movie ratings:",smr_length)
     
-    if(movie_in_ratings == True):
+    if(smr_length >= min_movie_ratings):
         #make a list of only user ids of users who liked the requested movie:
         rating_val=6
         users_who_liked = list(Rating.objects.filter(tmdb_id=tmdb_id, rating__gte=rating_val).values_list('user_id', flat = True).order_by('user_id'))
@@ -312,29 +306,23 @@ def collabRecommendation(request, tmdb_id):
             bm_genres = selected_movie.get_genres()
             bm_keywords = selected_movie.get_keywords()
 
-            query1 = Q()
+            genre_query = Q()
             for genre in bm_genres:
-                query1 = query1 | Q(genres__icontains=genre)
+                genre_query = genre_query | Q(genres__icontains=genre)
 
-            filtered_tmdb_ids = []
-            
-            for movie in Movie.objects.filter(query1):
-                shared_keywords = 0
-                for keyword in movie.get_keywords():
-                    for bm_keyword in bm_keywords:
-                        if keyword == bm_keyword:
-                            shared_keywords += 1
-                
-                if(shared_keywords >= 1):
-                    filtered_tmdb_ids.append(movie.tmdb_id)
-    
-            filter3 = Q(tmdb_id__in = filtered_tmdb_ids)
-            filter4 = Q(user_id__in = users_who_liked)
+            keyword_query = Q()
+            for keyword in bm_keywords:
+                keyword_query = keyword_query | Q(keywords__icontains=keyword)
+
+            filtered_tmdb_ids = list(Movie.objects.values_list('tmdb_id', flat=True).filter(genre_query & keyword_query))
+
+            movie_filter = Q(tmdb_id__in = filtered_tmdb_ids)
+            user_filter = Q(user_id__in = users_who_liked)
 
             print("length of filtered_tmdb_list:", len(filtered_tmdb_ids))
 
             #filtering the dataset using our lists
-            final_dataset = pivot(Rating.objects.filter(filter3 & filter4), 'tmdb_id_id', 'user_id', 'rating', default=0)
+            final_dataset = pivot(Rating.objects.filter(movie_filter & user_filter), 'tmdb_id_id', 'user_id', 'rating', default=0)
             print("made the final_dataset! of size:",len(final_dataset))
 
             values_array = []
@@ -351,13 +339,11 @@ def collabRecommendation(request, tmdb_id):
                     array.append(data)
                 values_array.append(array)
             
-            print("length of values_array:", len(values_array))
-            
             n_movies_to_recommend = 10
             id_list = []
             score_list = []
 
-            print("Calculating nearest neighbors V2...")
+            print("Calculating nearest neighbors...")
             our_movie = values_array[filtered_tmdb_ids.index(tmdb_id)]
 
             distances = []
@@ -377,8 +363,7 @@ def collabRecommendation(request, tmdb_id):
 
             distances.sort(key=operator.itemgetter(1))
             neighbors = []
-            #print(distances)
-            print(max_distance)
+            print("Maximum distance:",max_distance)
 
             if(len(distances)<n_movies_to_recommend):
                 for x in range(len(distances)):
@@ -386,8 +371,6 @@ def collabRecommendation(request, tmdb_id):
             else:
                 for x in range(n_movies_to_recommend):
                     neighbors.append(distances[x])
-            
-            
 
             for neighbor in neighbors:
                 print(neighbor)
@@ -402,5 +385,5 @@ def collabRecommendation(request, tmdb_id):
             print(error)
             return JsonResponse([], safe=False)
     else:
-        print("Not one rating for this movie exists in the database")
+        print("This movie does not have enough ratings.")
         return JsonResponse([], safe=False)

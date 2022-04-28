@@ -29,7 +29,7 @@ msgid "Polish"
 msgstr "Polski"
 
 #: .\movie\templates\movie\base.html:29
-msgid "title"
+msgid "title_"
 msgstr "Tytuł"
 
 #: .\movie\templates\movie\base.html:30
@@ -129,7 +129,7 @@ msgid "tagline"
 msgstr "Slogan"
 
 #: scripts-details.js
-msgid "status"
+msgid "status_"
 msgstr "Status"
 
 #: scripts-details.js

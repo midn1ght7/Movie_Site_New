@@ -27,7 +27,7 @@ msgid "Polish"
 msgstr "Polish"
 
 #: .\movie\templates\movie\base.html:24
-msgid "title"
+msgid "title_"
 msgstr "Title"
 
 #: .\movie\templates\movie\base.html:25
@@ -127,7 +127,7 @@ msgid "tagline"
 msgstr "Tagline"
 
 #: scripts-details.js
-msgid "status"
+msgid "status_"
 msgstr "Status"
 
 #: scripts-details.js

@@ -1,5 +1,5 @@
 var type = "Title";
-var type_locale = gettext("title");
+var type_locale = gettext("title_");
 
 function hideAfterClicking(){
     var dropdowns = document.getElementsByClassName("search-dropdown-content");
@@ -21,7 +21,7 @@ window.addEventListener('load', function() {
 
     document.getElementById("drop-title").onclick = function(){
         type = "Title";
-        type_locale = gettext("title");
+        type_locale = gettext("title_");
         searchDropBtn.innerHTML=`${type_locale} <i class="fa fa-caret-down"></i>`;
         hideAfterClicking();
     }
