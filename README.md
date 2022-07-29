@@ -4,7 +4,7 @@ A Django-based movie recommendation system that includes 4 types of recommender 
 Movie Recommendation App is my Engineer's Thesis project.
 
 You can download the necessary "media" folder and database from there:
-https://drive.google.com/drive/folders/13mg9sVEBo6GD3s_G_kUHbaKdIMOsETto?usp=sharing
+https://drive.google.com/drive/folders/1EKVAT5DhV5mdZaeraojxyOFc1l-TMTTn?usp=sharing
 
 Main Page:
 ![Main Page](previews/5_Main_TopRated.jpg)
